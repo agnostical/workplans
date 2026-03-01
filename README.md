@@ -12,6 +12,8 @@ A framework for managing AI-driven work plans using structured Markdown files. P
 
 ## Quick start
 
+### 1. Download the workplans folder
+
 The easiest way to add Workplans to an existing project is using `giget` to download the boilerplate framework:
 
 ```bash
@@ -32,7 +34,7 @@ workplans/
 
 Alternatively, you can manually copy the `init/workplans` folder from the [GitHub repo](https://github.com/agnostical/workplans) into your project root. Just paste it and it's ready to use.
 
-### Connecting Workplans to your AI Agent
+### 2. Connect Workplans to your AI Agent
 
 Since Workplans is 100% agnostic, it doesn't pollute your root directory with custom configuration files. You have two ways to activate the framework depending on your setup:
 
