@@ -75,6 +75,18 @@ Each plan follows a naming format: `TYPE-YYYY-MM-DD-author_description.md`
 
 See [workplans/README.md](init/workplans/README.md) for the complete template and rules.
 
+## Progress viewer
+
+The `workplans/progress/` folder includes an optional visual board that displays your plans as a Kanban-style dashboard organized by state. It is not required for the AI agent to work — the agent reads and manages plans directly from the Markdown files. The viewer is just a convenience for you to see the overall progress at a glance.
+
+To use it, serve the `workplans/` folder over HTTP and open `progress/` in your browser:
+
+```bash
+cd workplans && python3 -m http.server
+```
+
+Then open `http://localhost:8000/progress/`
+
 ## What gets scaffolded
 
 | File | Purpose |
