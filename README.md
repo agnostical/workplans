@@ -39,16 +39,22 @@ Since Workplans is 100% agnostic, it doesn't pollute your root directory with cu
 **Option A: Zero-Config Quick Start (For new projects)**
 If you don't have any AI configuration files, just open your terminal/IDE with your AI agent and paste this exact prompt:
 
-> `Read workplans/README.md and create a draft plan for a TODO app`
+```
+Read workplans/README.md and create a draft plan for a TODO app
+```
 
 **Option B: For existing projects (Cursor, Claude Code, Aider)**
 If you already have a `.cursorrules`, `CLAUDE.md`, `AGENTS.md`, or AI instructions file, simply add this single line to it:
 
-> `Manage tasks and plans by strictly following the rules defined in: workplans/README.md`
+```
+Manage tasks and plans by strictly following the rules defined in: workplans/README.md
+```
 
 Then just prompt your agent:
 
-> `Create a draft plan for a TODO app`
+```
+Create a draft plan for a TODO app
+```
 
 
 ## What gets scaffolded
