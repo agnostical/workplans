@@ -1,4 +1,4 @@
-# Workplans
+# Workplans v0.1.0
 
 > **Source of truth for the Workplans framework.** AI agents must follow these rules when creating, moving, or modifying plans.
 
