@@ -70,11 +70,14 @@ Create a draft plan for a TODO app
 
 ## Usage
 
-After scaffolding, connect Workplans to your AI agent using one of the options above. Then start creating plans:
+After setup, just prompt your AI agent in natural language to create and manage plans:
 
-```bash
-# Create a new plan in the backlog
-touch workplans/backlog/BACKLOG-2026-02-27-youruser_feature-name.md
+```
+Create a backlog plan for user authentication
+```
+
+```
+Move the dashboard-redesign plan to coding
 ```
 
 Each plan follows a naming format: `TYPE-YYYY-MM-DD-author_description.md`
