@@ -1,5 +1,7 @@
 # Workplans
 
+![version](https://img.shields.io/github/v/release/agnostical/workplans)
+
 A framework for managing AI-driven work plans using structured Markdown files. Plans flow through a defined lifecycle (`draft` -> `backlog` -> `coding` -> `done`), with YAML frontmatter metadata and a standardized template that guides AI agents through task execution.
 
 ## Features
