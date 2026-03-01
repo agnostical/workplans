@@ -59,15 +59,6 @@ Create a draft plan for a TODO app
 ```
 
 
-## What gets scaffolded
-
-| File | Purpose |
-|------|---------|
-| `workplans/README.md` | Source of truth for plan management: naming, frontmatter, template, and workflow rules |
-| `workplans/{backlog,coding,done,draft}/README.md` | Per-folder rules and examples for each plan state |
-| `workplans/progress/` | Visual Kanban board — serve via HTTP to visualize plans as cards by state |
-
-
 ## Usage
 
 After setup, just prompt your AI agent in natural language to create and manage plans:
@@ -83,6 +74,14 @@ Move the dashboard-redesign plan to coding
 Each plan follows a naming format: `TYPE-YYYY-MM-DD-author_description.md`
 
 See [workplans/README.md](init/workplans/README.md) for the complete template and rules.
+
+## What gets scaffolded
+
+| File | Purpose |
+|------|---------|
+| `workplans/README.md` | Source of truth for plan management: naming, frontmatter, template, and workflow rules |
+| `workplans/{backlog,coding,done,draft}/README.md` | Per-folder rules and examples for each plan state |
+| `workplans/progress/` | Visual Kanban board — serve via HTTP to visualize plans as cards by state |
 
 ## License
 
