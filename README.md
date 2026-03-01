@@ -7,7 +7,7 @@ A framework for managing AI-driven work plans using structured Markdown files. P
 - **Plan lifecycle** — Structured workflow with four states: draft, backlog, coding, done
 - **Standardized template** — YAML frontmatter + Markdown body with progress tracking, objectives, and implementation details
 - **Strict file rules** — Only structured plan files are allowed inside `workplans/`, preventing loose or unstructured content
-- **Visual progress board** — Kanban board (`progress/index.html`) that renders plans as cards with progress rings, dark mode, and live polling
+- **Visual progress board** — Kanban board that renders plans as cards with progress rings, dark mode, and live polling
 - **100% framework-agnostic** — No custom configuration files pollute your root directory; `workplans/README.md` is the single source of truth for AI agents
 
 ## Quick start
