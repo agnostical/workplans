@@ -1,5 +1,7 @@
 # Workplans
 
+v0.1.0
+
 > **Source of truth for the Workplans framework.** AI agents must follow these rules when creating, moving, or modifying plans.
 
 A plan is a structured Markdown file with states `draft` → `backlog` → `coding` → `done`. Each plan lives in the folder matching its current state.
@@ -122,6 +124,3 @@ The date in the filename always updates to reflect the transition.
 12. Every `.md` must follow the template and live in its state folder
 13. Do not create files or folders that alter the `workplans/` structure
 14. README files are system files — do not remove
-
----
-Workplans v0.1.0
