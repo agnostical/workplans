@@ -6,9 +6,10 @@ author_model: "claude-opus-4"
 assignee: "alexgarcia"
 assignee_model: "claude-sonnet-4"
 issue: ""
-backlog: "2026-01-05"
-coding: "2026-01-10"
-done: "2026-01-30"
+draft: ""
+backlog: "2026-01-05T09:00"
+doing: "2026-01-10T10:00"
+done: "2026-01-30T14:10"
 tags: "setup"
 ---
 

@@ -1,13 +1,14 @@
 ---
 plan: "Dashboard redesign"
-state: "coding"
+state: "doing"
 author: "sebastianserna"
 author_model: "claude-opus-4, gemini-pro"
 assignee: "alexgarcia"
 assignee_model: "claude-sonnet-4"
 issue: "https://github.com/user/repo/issues/75"
-backlog: "2026-01-20"
-coding: "2026-02-10"
+draft: ""
+backlog: "2026-01-20T10:00"
+doing: "2026-02-10T09:30"
 done: ""
 tags: "ui, enhancement"
 ---

@@ -6,35 +6,45 @@ author_model: "grok-3"
 assignee: ""
 assignee_model: ""
 issue: ""
+draft: "2026-02-25T11:00"
 backlog: ""
-coding: ""
+doing: ""
 done: ""
 tags: "feature, storage"
 ---
 
 # File upload system
 
+## Progress
+
+### Phase 1: Storage setup
+- [ ] Set up S3-compatible storage (MinIO for dev, S3 for prod)
+- [ ] Implement file upload API endpoint with presigned URLs
+- [ ] Add file metadata table in PostgreSQL
+- [ ] Define file size limits and allowed MIME types
+
+### Phase 2: Integration
+- [ ] Attach files to tasks and projects
+- [ ] Generate image thumbnails on upload
+- [ ] Build file browser UI component
+
 ## Objective
 
-Allow users to upload files (images, documents, etc.) associated with projects and tasks. Need to decide on storage strategy before moving to backlog.
-
-## Open Questions
-
-- Should we use local filesystem storage or S3-compatible object storage?
-- What are the file size limits? 10MB? 50MB?
-- Do we need image processing (thumbnails, resizing)?
+Allow users to upload files (images, documents) associated with projects and tasks. Users have requested the ability to attach screenshots to tasks and upload project assets.
 
 ## Context
 
-Currently the app has no file handling. Users have requested the ability to attach screenshots to tasks and upload project assets. The backend is Express with PostgreSQL.
+Currently the app has no file handling. The backend is Express with PostgreSQL. S3-compatible storage (MinIO for dev, AWS S3 for prod) is the preferred approach for scalability with the same API in both environments.
 
-## Options
+## Implementation
 
-### Option A: Local filesystem
-Simple to implement. Files stored in `/uploads` directory. Served by Express static middleware. No external dependencies.
+### Phase 1: Storage setup
 
-### Option B: S3-compatible storage
-More scalable. Works with AWS S3 or MinIO for self-hosted. Presigned URLs for direct upload from the browser.
+Use the AWS SDK with S3-compatible configuration pointing to MinIO locally and S3 in production. Browser uploads via presigned URLs to avoid proxying large files through the API. File metadata (name, size, MIME type, S3 key) stored in a `files` table.
+
+### Phase 2: Integration
+
+Files linked to tasks/projects via a `file_attachments` junction table. Image thumbnails generated with Sharp on upload. A reusable file browser component handles upload, preview, and deletion.
 
 ## Comments
 
@@ -42,4 +52,4 @@ More scalable. Works with AWS S3 or MinIO for self-hosted. Presigned URLs for di
 Initial draft. Leaning towards S3 for scalability but need to evaluate cost.
 
 ### 2026-02-26 — claude-opus-4
-Recommend Option B with MinIO for development and S3 for production. This gives you the same API locally without cloud costs during dev.
+Recommend MinIO for development and S3 for production. Same API locally without cloud costs during dev.

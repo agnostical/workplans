@@ -1,16 +1,19 @@
-// ─── State ───────────────────────────────────────────────────────
-let allPlans = [];
-let openPlanFile = null;
-let plansFingerprint = '';
-const POLL_INTERVAL = 3000;
-const STATES = ['draft', 'backlog', 'coding', 'done'];
-let layoutMode = null; // 'subfolders' or 'flat' — auto-detected
+// ─── Constants ───────────────────────────────────────────────────
+const POLL_INTERVAL = 1000;
+const STATES = ['draft', 'backlog', 'doing', 'done'];
 const STATE_COLORS = {
   draft:   'bg-draft',
   backlog: 'bg-backlog',
-  coding:  'bg-coding',
+  doing:   'bg-doing',
   done:    'bg-done',
 };
+const STATE_BADGE = {
+  draft:   'bg-draft-light text-neutral-700 dark:bg-neutral-800 dark:text-neutral-400',
+  backlog: 'bg-backlog-light text-neutral-700 dark:bg-blue-950 dark:text-blue-300',
+  doing:   'bg-doing-light text-neutral-700 dark:bg-amber-950 dark:text-amber-300',
+  done:    'bg-done-light text-neutral-700 dark:bg-green-950 dark:text-green-300',
+};
+let layoutMode = null;
 
 // ─── i18n ─────────────────────────────────────────────────────
 const I18N = {
@@ -19,7 +22,7 @@ const I18N = {
     headerTitle: 'Workplans',
     headerBadge: 'Progress',
     colDraft: 'Draft',    colBacklog: 'Backlog',
-    colCoding: 'Coding',  colDone: 'Done',
+    colDoing: 'Doing',  colDone: 'Done',
     loading: 'Loading plans...',
     errorMsg: 'To view plans in real time, run a local server from the workplans folder:',
     emptyState: 'No plans yet',
@@ -35,7 +38,7 @@ const I18N = {
     headerTitle: 'Workplans',
     headerBadge: 'Progreso',
     colDraft: 'Draft',    colBacklog: 'Backlog',
-    colCoding: 'Coding',  colDone: 'Done',
+    colDoing: 'Doing',  colDone: 'Done',
     loading: 'Cargando planes...',
     errorMsg: 'Para ver los planes en tiempo real, ejecuta un servidor local desde la carpeta workplans:',
     emptyState: 'Sin planes aún',
@@ -57,27 +60,6 @@ function t(key, vars = {}) {
     s = s.replace(`{${k}}`, v);
   return s;
 }
-
-function translateUI() {
-  document.title = t('pageTitle');
-  document.getElementById('header-title').textContent = t('headerTitle');
-  document.getElementById('header-badge').textContent = t('headerBadge');
-  document.getElementById('live-indicator').title = t('autoRefresh');
-  document.getElementById('live-label').textContent = t('live');
-  document.getElementById('theme-toggle').title = t('toggleDark');
-  document.getElementById('loading-text').textContent = t('loading');
-  document.getElementById('error-msg').textContent = t('errorMsg');
-  document.getElementById('heading-draft').textContent = t('colDraft');
-  document.getElementById('heading-backlog').textContent = t('colBacklog');
-  document.getElementById('heading-coding').textContent = t('colCoding');
-  document.getElementById('heading-done').textContent = t('colDone');
-  STATES.forEach(s => {
-    const btn = document.getElementById(`info-${s}`);
-    if (btn) btn.title = t('columnRules');
-  });
-}
-
-translateUI();
 
 // ─── Model Icons ──────────────────────────────────────────────
 const ICON_CDN = 'vendor/icons';
@@ -104,7 +86,14 @@ function getModelIcon(modelStr) {
       return { icon: `${ICON_CDN}/${val.file}`, name: modelStr.trim(), mono: val.mono };
     }
   }
-  return null;
+  return { icon: null, name: modelStr.trim(), mono: false, generic: true };
+}
+
+const GENERIC_MODEL_SVG = `<svg class="w-3.5 h-3.5 flex-shrink-0 text-neutral-400 dark:text-neutral-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20v2"/><path d="M12 2v2"/><path d="M17 20v2"/><path d="M17 2v2"/><path d="M2 12h2"/><path d="M2 17h2"/><path d="M2 7h2"/><path d="M20 12h2"/><path d="M20 17h2"/><path d="M20 7h2"/><path d="M7 20v2"/><path d="M7 2v2"/><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="8" y="8" width="8" height="8" rx="1"/></svg>`;
+
+function modelIconHtml(m, extraClass) {
+  if (m.generic) return `<span title="${m.name}" class="cursor-default">${GENERIC_MODEL_SVG}</span>`;
+  return `<img src="${m.icon}" alt="${m.name}" title="${m.name}" class="w-3.5 h-3.5 flex-shrink-0 ${extraClass || ''} ${m.mono ? 'invert dark:invert-0' : ''}" loading="lazy">`;
 }
 
 function getModelIcons(modelStr) {
@@ -113,12 +102,22 @@ function getModelIcons(modelStr) {
 }
 
 // ─── Dark Mode ───────────────────────────────────────────────────
+// Default: follow system preference.
+// When the user clicks the toggle button, their choice is saved to
+// localStorage and overrides the system preference on future loads.
 function initTheme() {
   const stored = localStorage.getItem('workplans-theme');
   if (stored === 'dark' || (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
     document.documentElement.classList.add('dark');
   }
   updateThemeIcons();
+
+  // Follow live system changes when no manual override is stored
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    if (localStorage.getItem('workplans-theme')) return;
+    document.documentElement.classList.toggle('dark', e.matches);
+    updateThemeIcons();
+  });
 }
 
 function updateThemeIcons() {
@@ -126,14 +125,6 @@ function updateThemeIcons() {
   document.getElementById('icon-sun').classList.toggle('hidden', !isDark);
   document.getElementById('icon-moon').classList.toggle('hidden', isDark);
 }
-
-document.getElementById('theme-toggle').addEventListener('click', () => {
-  document.documentElement.classList.toggle('dark');
-  localStorage.setItem('workplans-theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
-  updateThemeIcons();
-});
-
-initTheme();
 
 // ─── Directory Listing Parser ────────────────────────────────────
 function parseMdFilesFromListing(html) {
@@ -144,7 +135,6 @@ function parseMdFilesFromListing(html) {
   links.forEach(a => {
     const href = decodeURIComponent(a.getAttribute('href') || '');
     if (!href.endsWith('.md')) return;
-    // Extract just the filename (handles full paths from Live Server, etc.)
     const basename = href.split('/').filter(Boolean).pop() || '';
     if (basename.startsWith('.') || basename.toUpperCase() === 'README.MD') return;
     files.push(basename);
@@ -215,8 +205,9 @@ async function fetchPlansSubfolders() {
             assignee: meta.assignee || '',
             assignee_model: meta.assignee_model || '',
             tags: meta.tags || '',
+            draft: meta.draft || '',
             backlog: meta.backlog || '',
-            coding: meta.coding || '',
+            doing: meta.doing || '',
             done: meta.done || '',
             issue: meta.issue || '',
             progress: calcProgress(text),
@@ -260,7 +251,6 @@ async function fetchPlansFlat() {
       const text = await res.text();
       const { meta, body } = parseFrontmatter(text);
 
-      // Determine state: frontmatter first, then filename prefix
       let state = (meta.state || '').toLowerCase();
       if (!STATES.includes(state)) {
         const prefix = file.split('-')[0].toLowerCase();
@@ -276,8 +266,9 @@ async function fetchPlansFlat() {
         assignee: meta.assignee || '',
         assignee_model: meta.assignee_model || '',
         tags: meta.tags || '',
+        draft: meta.draft || '',
         backlog: meta.backlog || '',
-        coding: meta.coding || '',
+        doing: meta.doing || '',
         done: meta.done || '',
         issue: meta.issue || '',
         progress: calcProgress(text),
@@ -297,18 +288,10 @@ async function fetchPlansFlat() {
 async function fetchPlans() {
   if (!layoutMode) {
     layoutMode = await detectMode();
-    // Hide column info links in flat mode
-    if (layoutMode === 'flat') {
-      STATES.forEach(s => {
-        const el = document.getElementById(`info-${s}`);
-        if (el) el.classList.add('hidden');
-      });
-    }
   }
 
   if (layoutMode === 'flat') return fetchPlansFlat();
 
-  // Subfolder mode: also scan root for stray files (mixed support)
   const [subfolderPlans, rootPlans] = await Promise.all([
     fetchPlansSubfolders(),
     fetchPlansFlat(),
@@ -318,98 +301,13 @@ async function fetchPlans() {
   return [...subfolderPlans, ...strayPlans];
 }
 
-// ─── Render Card ─────────────────────────────────────────────────
-function createCard(plan) {
-  const card = document.createElement('div');
-  card.className = 'group bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-lg p-3 cursor-pointer hover:border-neutral-400 dark:hover:border-neutral-600 transition-all';
-
-  // Most recent date
-  const date = plan.done || plan.coding || plan.backlog || '';
-
-  // Tags
-  const tagsHtml = plan.tags
-    ? plan.tags.split(',').map(s => s.trim()).filter(Boolean).map(tag =>
-        `<span class="inline-block text-xs px-2 py-0.5 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400">${tag}</span>`
-      ).join('')
-    : '';
-
-  // Progress ring (compact, same size as side panel)
-  const r = 6, circ = 2 * Math.PI * r;
-  const p = plan.progress;
-  let progressHtml = '';
-  if (p) {
-    const offset = circ - (p.pct / 100) * circ;
-    const color = p.pct === 100 ? '#22c55e' : '#a3a3a3';
-    progressHtml = `
-      <div class="flex items-center gap-1 ml-auto flex-shrink-0" title="${t('steps', {checked: p.checked, total: p.total})}">
-        <span class="text-xs font-medium text-neutral-500 dark:text-neutral-500">${p.pct}%</span>
-        <svg width="16" height="16" viewBox="0 0 16 16" class="flex-shrink-0">
-          <circle cx="8" cy="8" r="${r}" fill="none" stroke-width="2" class="stroke-neutral-200 dark:stroke-neutral-700"/>
-          <circle cx="8" cy="8" r="${r}" fill="none" stroke-width="2" stroke="${color}" stroke-linecap="round"
-            stroke-dasharray="${circ}" stroke-dashoffset="${offset}"
-            transform="rotate(-90 8 8)" style="transition: stroke-dashoffset 0.4s ease"/>
-        </svg>
-      </div>`;
-  }
-
-  // Footer: author (left) + model icon(s) (right)
-  const models = getModelIcons(plan.author_model);
-  const hasFooter = plan.author || models.length;
-  let footerHtml = '';
-  if (hasFooter) {
-    let modelsHtml = '';
-    if (models.length) {
-      modelsHtml = `<span class="flex items-center gap-1">
-        ${models.map(m => `<img src="${m.icon}" alt="${m.name}" title="${m.name}" class="w-3.5 h-3.5 flex-shrink-0 cursor-default ${m.mono ? 'invert dark:invert-0' : ''}" loading="lazy">`).join('')}
-      </span>`;
-    }
-    footerHtml = `
-      <div class="flex items-center justify-between gap-2 mt-2 pt-1.5 border-t border-neutral-100 dark:border-neutral-800">
-        ${plan.author ? `<span class="flex items-center gap-1 text-[10px] text-neutral-400 dark:text-neutral-600">
-          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-          ${plan.author.split(',')[0].trim()}
-        </span>` : '<span></span>'}
-        ${modelsHtml}
-      </div>`;
-  }
-
-  const dotColor = STATE_COLORS[plan.state] || 'bg-neutral-400';
-  card.innerHTML = `
-    <div class="flex items-start gap-2">
-      <span class="w-2.5 h-2.5 rounded-full ${dotColor} flex-shrink-0 mt-1"></span>
-      <h3 class="font-medium text-sm leading-snug group-hover:text-neutral-600 dark:group-hover:text-white transition-colors flex-1">${plan.title}</h3>
-      ${progressHtml}
-    </div>
-    <div class="flex items-center gap-2 text-xs text-neutral-500 dark:text-neutral-500 mt-2 mb-2">
-      ${date ? `<span class="flex items-center gap-1">
-        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-        ${date}
-      </span>` : ''}
-    </div>
-    ${tagsHtml ? `<div class="flex flex-wrap gap-1">${tagsHtml}</div>` : ''}
-    ${footerHtml}
-  `;
-
-  card.addEventListener('click', () => openModal(plan));
-  return card;
-}
-
-// ─── Empty State ─────────────────────────────────────────────────
-function createEmptyState() {
-  const div = document.createElement('div');
-  div.className = 'text-center py-8 text-neutral-400 dark:text-neutral-600';
-  div.innerHTML = `
-    <svg class="w-10 h-10 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-    </svg>
-    <p class="text-sm">${t('emptyState')}</p>
-  `;
-  return div;
+// ─── Fingerprint ──────────────────────────────────────────────────
+function buildFingerprint(plans) {
+  return plans.map(p => p.file + ':' + p.state + ':' + p.raw.length + ':' + (p.progress ? p.progress.checked : 0)).join('|');
 }
 
 // ─── Comment Processing ─────────────────────────────────────────
 function processComments(container) {
-  // Find the "Comments" h2
   const headings = container.querySelectorAll('h2');
   let commentsH2 = null;
   for (const h of headings) {
@@ -420,28 +318,23 @@ function processComments(container) {
   }
   if (!commentsH2) return;
 
-  // Collect all sibling nodes after the Comments h2
   const siblings = [];
   let node = commentsH2.nextSibling;
   while (node) {
     const next = node.nextSibling;
-    // Stop if we hit another h2 (a different section)
     if (node.nodeType === 1 && node.tagName === 'H2') break;
     siblings.push(node);
     node = next;
   }
 
-  // Create a wrapper for the comments section
   const wrapper = document.createElement('div');
   wrapper.className = 'comments-section';
 
-  // Group siblings into comment blocks (each starts with an h3)
   let currentBlock = null;
   let currentBody = null;
 
   for (const el of siblings) {
     if (el.nodeType === 1 && el.tagName === 'H3') {
-      // Start a new comment block
       if (currentBlock) wrapper.appendChild(currentBlock);
 
       currentBlock = document.createElement('div');
@@ -459,246 +352,11 @@ function processComments(container) {
     } else if (currentBody && el.nodeType === 1) {
       currentBody.appendChild(el.cloneNode(true));
     }
-    // Remove original node from container
     el.parentNode && el.parentNode.removeChild(el);
   }
   if (currentBlock) wrapper.appendChild(currentBlock);
 
-  // Replace the original h2 text with styled version and insert wrapper
   commentsH2.insertAdjacentElement('afterend', wrapper);
-}
-
-// ─── Modal ───────────────────────────────────────────────────────
-function openModal(plan) {
-  const modal = document.getElementById('modal');
-  const stateColor = {
-    draft: 'bg-draft', backlog: 'bg-backlog',
-    coding: 'bg-coding', done: 'bg-done'
-  };
-  const stateBadge = {
-    draft: 'bg-draft-light text-neutral-700 dark:bg-neutral-800 dark:text-neutral-400',
-    backlog: 'bg-backlog-light text-neutral-700 dark:bg-blue-950 dark:text-blue-300',
-    coding: 'bg-coding-light text-neutral-700 dark:bg-amber-950 dark:text-amber-300',
-    done: 'bg-done-light text-neutral-700 dark:bg-green-950 dark:text-green-300'
-  };
-
-  openPlanFile = plan.file;
-  document.getElementById('modal-title').textContent = plan.title;
-  document.getElementById('modal-state-dot').className = `w-3 h-3 rounded-full ${stateColor[plan.state] || 'bg-neutral-400'}`;
-
-  // Meta info (state badge + progress ring inline + rest of meta)
-  const metaEl = document.getElementById('modal-meta');
-  const metaItems = [];
-  metaItems.push(`<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium capitalize ${stateBadge[plan.state] || 'bg-neutral-200 text-neutral-600'}">${plan.state}</span>`);
-
-  // Compact progress ring in meta bar
-  const mp = plan.progress;
-  if (mp) {
-    const r = 6, circ = 2 * Math.PI * r;
-    const offset = circ - (mp.pct / 100) * circ;
-    const color = mp.pct === 100 ? '#22c55e' : '#a3a3a3';
-    metaItems.push(`<span class="inline-flex items-center gap-1.5" title="${t('steps', {checked: mp.checked, total: mp.total})}"><span class="text-xs font-medium">${mp.pct}%</span><svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="${r}" fill="none" stroke-width="2" class="stroke-neutral-200 dark:stroke-neutral-700"/><circle cx="8" cy="8" r="${r}" fill="none" stroke-width="2" stroke="${color}" stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="${offset}" transform="rotate(-90 8 8)"/></svg></span>`);
-  }
-  const date = plan.done || plan.coding || plan.backlog || '';
-  if (date) metaItems.push(`<span class="flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>${date}</span>`);
-  if (plan.issue) metaItems.push(`<a href="${plan.issue}" target="_blank" rel="noopener" class="flex items-center gap-1 text-neutral-900 dark:text-neutral-100 underline hover:text-neutral-600 dark:hover:text-neutral-300"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.172 13.828a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>${t('issue')}</a>`);
-  if (plan.tags) {
-    plan.tags.split(',').map(s => s.trim()).filter(Boolean).forEach(tag => {
-      metaItems.push(`<span class="px-2 py-0.5 rounded-full text-xs bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400">${tag}</span>`);
-    });
-  }
-
-  metaEl.innerHTML = metaItems.join('');
-
-  // Author & Assignee row (separate from meta)
-  const authorsEl = document.getElementById('modal-authors');
-  const sameUser = plan.author && plan.assignee && plan.author === plan.assignee;
-  const sameModel = plan.author_model && plan.assignee_model && plan.author_model === plan.assignee_model;
-  const personIcon = `<svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>`;
-
-  function modelIconsHtml(modelStr) {
-    return getModelIcons(modelStr).map(m =>
-      `<img src="${m.icon}" alt="${m.name}" title="${m.name}" class="w-3.5 h-3.5 flex-shrink-0 ${m.mono ? 'invert dark:invert-0' : ''}">`
-    ).join('');
-  }
-
-  const authorItems = [];
-  if (sameUser && sameModel) {
-    authorItems.push(`<span class="flex items-center gap-1.5">${personIcon}${plan.author} ${modelIconsHtml(plan.author_model)}</span>`);
-  } else {
-    if (plan.author) {
-      const authorModels = modelIconsHtml(plan.author_model);
-      const label = plan.assignee ? `<span class="text-neutral-400 dark:text-neutral-600">${t('author')}</span> ` : '';
-      authorItems.push(`<span class="flex items-center gap-1.5">${personIcon}${label}${plan.author} ${authorModels}</span>`);
-    }
-    if (plan.assignee) {
-      const assigneeModels = modelIconsHtml(plan.assignee_model);
-      const label = plan.author ? `<span class="text-neutral-400 dark:text-neutral-600">${t('assignee')}</span> ` : '';
-      authorItems.push(`<span class="flex items-center gap-1.5">${personIcon}${label}${plan.assignee} ${assigneeModels}</span>`);
-    }
-  }
-
-  if (authorItems.length) {
-    authorsEl.innerHTML = authorItems.join('<span class="text-neutral-300 dark:text-neutral-700">|</span>');
-    authorsEl.classList.remove('hidden');
-  } else {
-    authorsEl.innerHTML = '';
-    authorsEl.classList.add('hidden');
-  }
-
-  // Body
-  const bodyEl = document.getElementById('modal-body');
-  bodyEl.innerHTML = marked.parse(plan.body);
-  processComments(bodyEl);
-
-  // Update URL hash (author_description only — stable across state/date changes)
-  history.replaceState(null, '', `#${planSlug(plan.file)}`);
-
-  // Show panel with animation
-  modal.classList.remove('hidden');
-  document.body.style.overflow = 'hidden';
-  requestAnimationFrame(() => {
-    document.getElementById('modal-backdrop').classList.remove('opacity-0');
-    document.getElementById('panel').classList.remove('translate-x-full');
-  });
-}
-
-function closeModal() {
-  openPlanFile = null;
-  // Clear URL hash
-  history.replaceState(null, '', window.location.pathname + window.location.search);
-
-  const backdrop = document.getElementById('modal-backdrop');
-  const panel = document.getElementById('panel');
-  backdrop.classList.add('opacity-0');
-  panel.classList.add('translate-x-full');
-  panel.addEventListener('transitionend', function handler() {
-    panel.removeEventListener('transitionend', handler);
-    document.getElementById('modal').classList.add('hidden');
-    document.body.style.overflow = '';
-  });
-}
-
-// ─── Open README in Side Panel ─────────────────────────────────
-async function openReadme(state) {
-  const stateColor = {
-    draft: 'bg-draft', backlog: 'bg-backlog',
-    coding: 'bg-coding', done: 'bg-done'
-  };
-  const stateBadge = {
-    draft: 'bg-draft-light text-neutral-700 dark:bg-neutral-800 dark:text-neutral-400',
-    backlog: 'bg-backlog-light text-neutral-700 dark:bg-blue-950 dark:text-blue-300',
-    coding: 'bg-coding-light text-neutral-700 dark:bg-amber-950 dark:text-amber-300',
-    done: 'bg-done-light text-neutral-700 dark:bg-green-950 dark:text-green-300'
-  };
-  try {
-    const res = await fetch(`../${state}/README.md`);
-    if (!res.ok) return;
-    const text = await res.text();
-
-    openPlanFile = null;
-    document.getElementById('modal-title').textContent = state.charAt(0).toUpperCase() + state.slice(1);
-    document.getElementById('modal-state-dot').className = `w-3 h-3 rounded-full ${stateColor[state] || 'bg-neutral-400'}`;
-
-    const metaEl = document.getElementById('modal-meta');
-    metaEl.innerHTML = `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium capitalize ${stateBadge[state] || 'bg-neutral-200 text-neutral-600'}">${state}</span><span class="text-xs">${t('columnRules')}</span>`;
-
-    const authorsEl = document.getElementById('modal-authors');
-    authorsEl.innerHTML = '';
-    authorsEl.classList.add('hidden');
-
-    const bodyEl = document.getElementById('modal-body');
-    bodyEl.innerHTML = marked.parse(text);
-
-    history.replaceState(null, '', `#readme-${state}`);
-
-    const modal = document.getElementById('modal');
-    modal.classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-    requestAnimationFrame(() => {
-      document.getElementById('modal-backdrop').classList.remove('opacity-0');
-      document.getElementById('panel').classList.remove('translate-x-full');
-    });
-  } catch {
-    // Silently ignore fetch errors
-  }
-}
-
-function openPlanFromHash() {
-  const hash = window.location.hash.slice(1);
-  if (!hash || !allPlans.length) return;
-  const plan = allPlans.find(p => planSlug(p.file) === hash);
-  if (plan) openModal(plan);
-}
-
-document.getElementById('modal-close').addEventListener('click', closeModal);
-document.getElementById('modal-backdrop').addEventListener('click', closeModal);
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') closeModal();
-});
-window.addEventListener('hashchange', openPlanFromHash);
-
-// ─── Render Board ────────────────────────────────────────────────
-function renderBoard(plans) {
-  const grouped = { draft: [], backlog: [], coding: [], done: [] };
-  plans.forEach(p => {
-    const st = grouped[p.state] !== undefined ? p.state : p.folder;
-    if (grouped[st] !== undefined) grouped[st].push(p);
-  });
-
-  let total = 0;
-  STATES.forEach(state => {
-    const col = document.getElementById(`col-${state}`);
-    const count = grouped[state].length;
-    total += count;
-    document.getElementById(`count-${state}`).textContent = count;
-
-    col.innerHTML = '';
-    if (count === 0) {
-      col.appendChild(createEmptyState());
-    } else {
-      grouped[state].forEach(plan => col.appendChild(createCard(plan)));
-    }
-  });
-
-  const countEl = document.getElementById('total-count');
-  const label = total !== 1 ? (strings.planMany || 'plans').replace('{total}', '') : (strings.planOne || 'plan').replace('{total}', '');
-  const countHtml = `${total}&nbsp;<span style="opacity:0.5">${label.trim()}</span>`;
-  countEl.innerHTML = countHtml;
-  countEl.classList.remove('hidden');
-
-  // Mobile: show count in second row and ensure row is visible
-  const mobileCount = document.getElementById('total-count-mobile');
-  if (mobileCount) {
-    mobileCount.innerHTML = countHtml;
-    document.getElementById('project-title-row').classList.remove('hidden');
-  }
-}
-
-// ─── Fingerprint ──────────────────────────────────────────────────
-function buildFingerprint(plans) {
-  return plans.map(p => p.file + ':' + p.raw.length + ':' + (p.progress ? p.progress.checked : 0)).join('|');
-}
-
-// ─── Refresh ────────────────────────────────────────────────────
-async function refresh() {
-  try {
-    const plans = await fetchPlans();
-    const fp = buildFingerprint(plans);
-    if (fp === plansFingerprint) return;
-
-    plansFingerprint = fp;
-    allPlans = plans;
-    renderBoard(plans);
-
-    // If a plan is open in the side panel, refresh its content
-    if (openPlanFile) {
-      const updated = plans.find(p => p.file === openPlanFile);
-      if (updated) openModal(updated);
-    }
-  } catch {
-    // Silently ignore polling errors
-  }
 }
 
 // ─── Project Title ──────────────────────────────────────────────
@@ -707,7 +365,6 @@ function formatTitle(name) {
 }
 
 async function detectProjectTitle() {
-  // 1. Try package.json
   try {
     const res = await fetch('../../package.json');
     if (res.ok) {
@@ -716,7 +373,6 @@ async function detectProjectTitle() {
     }
   } catch {}
 
-  // 2. Extract from URL path (parent of workplans/)
   const parts = window.location.pathname.split('/').filter(Boolean);
   const wpIdx = parts.lastIndexOf('workplans');
   if (wpIdx > 0) return formatTitle(decodeURIComponent(parts[wpIdx - 1]));
@@ -724,45 +380,405 @@ async function detectProjectTitle() {
   return null;
 }
 
-// ─── Init ────────────────────────────────────────────────────────
-async function init() {
-  try {
-    if (window.location.protocol === 'file:') {
-      const fullPath = decodeURIComponent(window.location.pathname);
-      const wpPath = fullPath.substring(0, fullPath.lastIndexOf('/progress/'));
-      const codeEl = document.querySelector('.error-code');
-      if (codeEl && wpPath) {
-        codeEl.dataset.clipboard = `cd "${wpPath}" && python3 -m http.server`;
+// ─── Alpine Component ────────────────────────────────────────────
+document.addEventListener('alpine:init', () => {
+  Alpine.data('workplansBoard', () => ({
+    // ── Reactive State ──
+    appState: 'loading',
+    plans: [],
+    fingerprint: '',
+    modalOpen: false,
+    modalPlan: null,
+    modalVersion: 0,
+    openPlanFile: null,
+    openPlanSlug: null,
+    projectTitle: null,
+    showInfoButtons: true,
+    states: STATES,
+
+    // ── Column Helpers ──
+    plansForState(state) {
+      return this.plans
+        .filter(p => {
+          const st = STATES.includes(p.state) ? p.state : p.folder;
+          return st === state;
+        })
+        .sort((a, b) => {
+          // Sort by the date the plan entered this state, newest first.
+          // Plans without a date sink to the bottom.
+          const dateA = a[state] || '';
+          const dateB = b[state] || '';
+          if (dateA && !dateB) return -1;
+          if (!dateA && dateB) return 1;
+          if (dateA !== dateB) return dateB.localeCompare(dateA);
+          return 0;
+        });
+    },
+
+    stateColor(state) {
+      return STATE_COLORS[state] || 'bg-neutral-400';
+    },
+
+    colKey(state) {
+      return 'col' + state.charAt(0).toUpperCase() + state.slice(1);
+    },
+
+    // ── Card Helpers ──
+    planDate(plan) {
+      const dt = plan.done || plan.doing || plan.backlog || plan.draft || '';
+      return dt.slice(0, 10);
+    },
+
+    planTags(plan) {
+      if (!plan.tags) return [];
+      return plan.tags.split(',').map(s => s.trim()).filter(Boolean);
+    },
+
+    stepsLabel(progress) {
+      if (!progress) return '';
+      return t('steps', { checked: progress.checked, total: progress.total });
+    },
+
+    hasModelIcons(modelStr) {
+      return getModelIcons(modelStr).length > 0;
+    },
+
+    cardModelIconsHtml(modelStr) {
+      return getModelIcons(modelStr).map(m => modelIconHtml(m, 'cursor-default')).join('');
+    },
+
+    totalCountHtml() {
+      const total = this.plans.length;
+      const label = total !== 1
+        ? (strings.planMany || 'plans').replace('{total}', '')
+        : (strings.planOne || 'plan').replace('{total}', '');
+      return `${total}&nbsp;<span style="opacity:0.5">${label.trim()}</span>`;
+    },
+
+    // ── Modal Helpers ──
+    modalMetaHtml() {
+      void this.modalVersion;
+      const plan = this.modalPlan;
+      if (!plan) return '';
+      const items = [];
+
+      items.push(`<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium capitalize ${STATE_BADGE[plan.state] || 'bg-neutral-200 text-neutral-600'}">${plan.state}</span>`);
+
+      if (plan._isReadme) {
+        items.push(`<span class="text-xs">${t('columnRules')}</span>`);
+        return items.join('');
       }
-      throw new Error('file:// protocol is not supported — use a local server');
-    }
-    const plans = await fetchPlans();
-    allPlans = plans;
-    plansFingerprint = buildFingerprint(plans);
-    document.getElementById('loading').classList.add('hidden');
-    document.getElementById('board').classList.remove('hidden');
-    renderBoard(plans);
-    openPlanFromHash();
 
-    // Update header with project title
-    const projectTitle = await detectProjectTitle();
-    if (projectTitle) {
-      document.getElementById('project-title').textContent = projectTitle;
-      document.getElementById('project-title-row').classList.remove('hidden');
-      const inlineEl = document.getElementById('project-title-inline');
-      inlineEl.textContent = projectTitle;
-      inlineEl.classList.remove('hidden');
-      inlineEl.classList.add('visible');
-    }
+      const mp = plan.progress;
+      if (mp) {
+        const r = 6, circ = 2 * Math.PI * r;
+        const offset = circ - (mp.pct / 100) * circ;
+        const color = mp.pct === 100 ? '#22c55e' : '#a3a3a3';
+        items.push(`<span class="inline-flex items-center gap-1.5" title="${t('steps', {checked: mp.checked, total: mp.total})}"><span class="text-xs font-medium">${mp.pct}%</span><svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="${r}" fill="none" stroke-width="2" class="stroke-neutral-200 dark:stroke-neutral-700"/><circle cx="8" cy="8" r="${r}" fill="none" stroke-width="2" stroke="${color}" stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="${offset}" transform="rotate(-90 8 8)"/></svg></span>`);
+      }
 
-    // Start live polling
-    document.getElementById('live-indicator').classList.remove('hidden');
-    setInterval(refresh, POLL_INTERVAL);
-  } catch (err) {
-    console.error('Failed to load plans:', err);
-    document.getElementById('loading').classList.add('hidden');
-    document.getElementById('error').classList.remove('hidden');
-  }
-}
+      const date = plan.done || plan.doing || plan.backlog || plan.draft || '';
+      if (date) {
+        const dateOnly = date.slice(0, 10);
+        const time = date.length > 10 ? date.slice(10).replace('T', ' ') : '';
+        items.push(`<span class="flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>${dateOnly}${time ? `<span class="opacity-50">${time}</span>` : ''}</span>`);
+      }
 
-init();
+      if (plan.issue) items.push(`<a href="${plan.issue}" target="_blank" rel="noopener" class="flex items-center gap-1 text-neutral-900 dark:text-neutral-100 underline hover:text-neutral-600 dark:hover:text-neutral-300"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.172 13.828a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>${t('issue')}</a>`);
+
+      if (plan.tags) {
+        plan.tags.split(',').map(s => s.trim()).filter(Boolean).forEach(tag => {
+          items.push(`<span class="px-2 py-0.5 rounded-full text-xs bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400">${tag}</span>`);
+        });
+      }
+
+      return items.join('');
+    },
+
+    modalAuthorsHtml() {
+      void this.modalVersion;
+      const plan = this.modalPlan;
+      if (!plan || plan._isReadme) return '';
+
+      const personIcon = `<svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>`;
+      const iconsHtml = (ms) => getModelIcons(ms).map(m => modelIconHtml(m)).join('');
+
+      const sameUser = plan.author && plan.assignee && plan.author === plan.assignee;
+      const sameModel = plan.author_model && plan.assignee_model && plan.author_model === plan.assignee_model;
+
+      const items = [];
+      if (sameUser && sameModel) {
+        items.push(`<span class="flex items-center gap-1.5">${personIcon}${plan.author} ${iconsHtml(plan.author_model)}</span>`);
+      } else {
+        if (plan.author) {
+          const authorModels = iconsHtml(plan.author_model);
+          const label = plan.assignee ? `<span class="text-neutral-400 dark:text-neutral-600">${t('author')}</span> ` : '';
+          items.push(`<span class="flex items-center gap-1.5">${personIcon}${label}${plan.author} ${authorModels}</span>`);
+        }
+        if (plan.assignee) {
+          const assigneeModels = iconsHtml(plan.assignee_model);
+          const label = plan.author ? `<span class="text-neutral-400 dark:text-neutral-600">${t('assignee')}</span> ` : '';
+          items.push(`<span class="flex items-center gap-1.5">${personIcon}${label}${plan.assignee} ${assigneeModels}</span>`);
+        }
+      }
+
+      return items.join('<span class="text-neutral-300 dark:text-neutral-700">|</span>');
+    },
+
+    modalBodyHtml() {
+      void this.modalVersion;
+      if (!this.modalPlan) return '';
+      return marked.parse(this.modalPlan.body);
+    },
+
+    // ── Modal Actions ──
+    openModal(plan) {
+      this.modalPlan = plan;
+      this.openPlanFile = plan.file;
+      this.openPlanSlug = planSlug(plan.file);
+      this.modalOpen = true;
+      history.replaceState(null, '', `#${this.openPlanSlug}`);
+      document.body.style.overflow = 'hidden';
+    },
+
+    closeModal() {
+      this.modalOpen = false;
+      this.openPlanFile = null;
+      this.openPlanSlug = null;
+      history.replaceState(null, '', window.location.pathname + window.location.search);
+      document.body.style.overflow = '';
+    },
+
+    async openReadme(state) {
+      try {
+        const res = await fetch(`../${state}/README.md`);
+        if (!res.ok) return;
+        const text = await res.text();
+        this.modalPlan = {
+          title: state.charAt(0).toUpperCase() + state.slice(1),
+          state,
+          body: text,
+          file: null,
+          progress: null,
+          tags: '', author: '', author_model: '',
+          assignee: '', assignee_model: '',
+          issue: '',
+          draft: '', backlog: '', doing: '', done: '',
+          _isReadme: true,
+        };
+        this.openPlanFile = null;
+        this.openPlanSlug = null;
+        this.modalOpen = true;
+        history.replaceState(null, '', `#readme-${state}`);
+        document.body.style.overflow = 'hidden';
+      } catch {}
+    },
+
+    openPlanFromHash() {
+      const hash = window.location.hash.slice(1);
+      if (!hash || !this.plans.length) return;
+      if (hash.startsWith('readme-')) {
+        const state = hash.replace('readme-', '');
+        if (STATES.includes(state)) this.openReadme(state);
+        return;
+      }
+      const plan = this.plans.find(p => planSlug(p.file) === hash);
+      if (plan) this.openModal(plan);
+    },
+
+    // ── FLIP Animation ──
+    _snapshotPositions() {
+      const map = {};
+      document.querySelectorAll('[data-plan-file]').forEach(el => {
+        const rect = el.getBoundingClientRect();
+        const slug = planSlug(el.dataset.planFile);
+        map[slug] = { left: rect.left, top: rect.top, width: rect.width, height: rect.height };
+      });
+      return map;
+    },
+
+    _animateTransitions(oldPositions, newDoneFiles = []) {
+      this.$nextTick(() => {
+        const doneFileSet = new Set(newDoneFiles);
+        let doneColumnFlashed = false;
+
+        document.querySelectorAll('[data-plan-file]').forEach(el => {
+          const slug = planSlug(el.dataset.planFile);
+          const oldPos = oldPositions[slug];
+          const isDoneFlash = doneFileSet.has(el.dataset.planFile);
+
+          if (!oldPos) {
+            // New card — cardIn animation plays naturally
+            // Flash if it's a new done card (appeared directly in done)
+            if (isDoneFlash) {
+              if (!doneColumnFlashed) { this._flashDoneColumn(); doneColumnFlashed = true; }
+              el.classList.add('card-done-flash');
+              el.addEventListener('animationend', () => el.classList.remove('card-done-flash'), { once: true });
+            }
+            return;
+          }
+
+          // Cancel cardIn BEFORE measuring so getBoundingClientRect
+          // reflects the true layout position (cardIn applies translateY(8px))
+          if (el.getAnimations) el.getAnimations().forEach(a => a.cancel());
+          el.classList.remove('card-animate');
+          el.style.opacity = '1';
+
+          const newRect = el.getBoundingClientRect();
+          const dx = oldPos.left - newRect.left;
+          const dy = oldPos.top - newRect.top;
+
+          if (Math.abs(dx) < 2 && Math.abs(dy) < 2) return;
+
+          const isColumnChange = Math.abs(dx) > 50;
+
+          if (isColumnChange) {
+            // Clone the card and animate it above everything with fixed positioning.
+            // This avoids touching scroll container overflow which causes scrollbar flicker.
+            const clone = el.cloneNode(true);
+            clone.setAttribute('x-ignore', '');
+            clone.removeAttribute('data-plan-file');
+            clone.style.position = 'fixed';
+            clone.style.top = newRect.top + 'px';
+            clone.style.left = newRect.left + 'px';
+            clone.style.width = newRect.width + 'px';
+            clone.style.zIndex = '40';
+            clone.style.margin = '0';
+            clone.style.pointerEvents = 'none';
+            document.body.appendChild(clone);
+
+            // Hide original instantly (bypass transition-all)
+            el.style.transition = 'none';
+            el.style.opacity = '0';
+
+            const tilt = dx > 0 ? -3 : 3; // lean in direction of movement
+
+            clone.animate([
+              { transform: `translate(${dx}px, ${dy}px) rotate(0deg)`, boxShadow: '0 1px 3px 0 rgba(0,0,0,0.1)' },
+              { transform: `translate(${dx * 0.4}px, ${dy * 0.4}px) scale(1.03) rotate(${tilt}deg)`, boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)', offset: 0.4 },
+              { transform: 'translate(0,0) rotate(0deg)', boxShadow: '0 1px 3px 0 rgba(0,0,0,0.1)' }
+            ], { duration: 500, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }).onfinish = () => {
+              if (isDoneFlash) {
+                // Flash clone and column when card arrives at done
+                if (!doneColumnFlashed) { this._flashDoneColumn(); doneColumnFlashed = true; }
+                clone.classList.add('card-done-flash');
+                clone.addEventListener('animationend', () => {
+                  clone.remove();
+                  el.style.opacity = '1';
+                  el.offsetHeight;
+                  el.style.transition = '';
+                }, { once: true });
+              } else {
+                clone.remove();
+                el.style.opacity = '1';
+                el.offsetHeight; // force reflow so the change is instant
+                el.style.transition = '';
+              }
+            };
+          } else {
+            // Same-column shift: smooth slide
+            el.animate([
+              { transform: `translate(${dx}px, ${dy}px)` },
+              { transform: 'translate(0,0)' }
+            ], { duration: 300, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' });
+          }
+        });
+      });
+    },
+
+    // ── Done Flash ──
+    _flashDoneColumn() {
+      const col = document.querySelector('[data-state="done"]');
+      if (!col) return;
+      col.classList.remove('done-flash');
+      void col.offsetHeight;
+      col.classList.add('done-flash');
+      col.addEventListener('animationend', () => col.classList.remove('done-flash'), { once: true });
+    },
+
+    _flashDoneCards(files) {
+      for (const file of files) {
+        const card = document.querySelector(`[data-plan-file="${file}"]`);
+        if (!card) continue;
+        card.classList.remove('card-done-flash');
+        void card.offsetHeight;
+        card.classList.add('card-done-flash');
+        card.addEventListener('animationend', () => card.classList.remove('card-done-flash'), { once: true });
+      }
+    },
+
+    // ── Polling ──
+    async refresh() {
+      try {
+        const plans = await fetchPlans();
+        const fp = buildFingerprint(plans);
+        if (fp === this.fingerprint) return;
+
+        const isDone = (p) => (STATES.includes(p.state) ? p.state : p.folder) === 'done';
+        const oldDoneFiles = new Set(this.plans.filter(isDone).map(p => p.file));
+
+        const oldPositions = this._snapshotPositions();
+
+        this.fingerprint = fp;
+        this.plans = plans;
+
+        const newDoneFiles = plans.filter(isDone).filter(p => !oldDoneFiles.has(p.file)).map(p => p.file);
+
+        if (this.openPlanSlug) {
+          const updated = plans.find(p => planSlug(p.file) === this.openPlanSlug);
+          if (updated) {
+            this.openPlanFile = updated.file;
+            this.modalPlan = updated;
+            this.modalVersion++;
+          }
+        }
+
+        this._animateTransitions(oldPositions, newDoneFiles);
+      } catch {}
+    },
+
+    // ── Theme ──
+    toggleTheme() {
+      document.documentElement.classList.toggle('dark');
+      localStorage.setItem('workplans-theme',
+        document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+      updateThemeIcons();
+    },
+
+    // ── Init ──
+    async init() {
+      initTheme();
+
+      if (window.location.protocol === 'file:') {
+        const fullPath = decodeURIComponent(window.location.pathname);
+        const wpPath = fullPath.substring(0, fullPath.lastIndexOf('/progress/'));
+        const codeEl = document.querySelector('.error-code');
+        if (codeEl && wpPath) {
+          codeEl.dataset.clipboard = `cd "${wpPath}" && python3 -m http.server`;
+        }
+        this.appState = 'error';
+        return;
+      }
+
+      try {
+        const plans = await fetchPlans();
+        this.plans = plans;
+        this.fingerprint = buildFingerprint(plans);
+        this.showInfoButtons = layoutMode !== 'flat';
+        this.appState = 'ready';
+
+        document.title = t('pageTitle');
+        this.$nextTick(() => this.openPlanFromHash());
+
+        const projectTitle = await detectProjectTitle();
+        if (projectTitle) this.projectTitle = projectTitle;
+
+        setInterval(() => this.refresh(), POLL_INTERVAL);
+        window.addEventListener('hashchange', () => this.openPlanFromHash());
+      } catch (err) {
+        console.error('Failed to load plans:', err);
+        this.appState = 'error';
+      }
+    },
+  }));
+});

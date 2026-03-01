@@ -6,9 +6,10 @@ author_model: "mistral-large"
 assignee: "alexgarcia"
 assignee_model: "claude-sonnet-4"
 issue: "https://github.com/user/repo/issues/70"
-backlog: "2026-01-25"
-coding: "2026-02-10"
-done: "2026-02-20"
+draft: ""
+backlog: "2026-01-25T09:30"
+doing: "2026-02-10T08:30"
+done: "2026-02-20T10:10"
 tags: "infra, ci/cd"
 ---
 
@@ -32,7 +33,13 @@ Improve the CI/CD pipeline to reduce build times from ~12 minutes to under 5 min
 
 ## Implementation
 
-Build time reduced from 12 min to 3.5 min by caching dependencies and running lint/typecheck/test in parallel jobs. Staging deploys automatically on merge to main. Production requires a manual approval in GitHub Actions.
+### Phase 1: Build optimization
+
+Reduced build time from 12 min to 3.5 min by caching `node_modules` across CI runs and running lint, type-check, and tests as parallel jobs. Added build artifact caching to avoid redundant rebuilds.
+
+### Phase 2: Deployment
+
+Staging auto-deploys on merge to main via GitHub Actions. Production deploys require a manual approval gate. Rollback uses the previous Docker image tag for instant recovery.
 
 ## Verification
 

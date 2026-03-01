@@ -23,13 +23,14 @@ Date = when the plan was completed.
 plan: "User authentication setup"
 state: "done"
 author: "sebastianserna"
-author_model: "claude-opus-4"
+author_model: "claude-opus-4-6"
 assignee: "sebastianserna"
-assignee_model: "claude-sonnet-4"
+assignee_model: "claude-sonnet-4-6"
 issue: ""
-backlog: "2026-01-15"
-coding: "2026-01-20"
-done: "2026-02-01"
+draft: ""
+backlog: "2026-01-15T10:00"
+doing: "2026-01-20T08:30"
+done: "2026-02-01T16:45"
 tags: "enhancement"
 ---
 
@@ -56,5 +57,5 @@ Create a `users` table with `id`, `email`, `password_hash`, `created_at`. Use bc
 ## Comments
 
 ### 2026-02-01 — sebastianserna
-All phases complete. Rate limiting set to 5 attempts per minute per IP. PR merged.
+All phases complete. Auth endpoints tested and working. PR merged.
 ```

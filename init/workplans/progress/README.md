@@ -1,6 +1,6 @@
 # Workplans Progress
 
-A single-file Kanban board that renders workplan Markdown files as cards organized by state: **Draft**, **Backlog**, **Coding**, and **Done**.
+A single-file Kanban board that renders workplan Markdown files as cards organized by state: **Draft**, **Backlog**, **Doing**, and **Done**.
 
 ## How to use
 
@@ -16,7 +16,7 @@ python3 -m http.server 8000
 
 The board auto-detects the folder layout (no configuration needed):
 
-- **Subfolders mode:** Plans in state-specific subfolders (`draft/`, `backlog/`, `coding/`, `done/`). Detected when any subfolder responds HTTP 200.
+- **Subfolders mode:** Plans in state-specific subfolders (`draft/`, `backlog/`, `doing/`, `done/`). Detected when any subfolder responds HTTP 200.
 - **Flat mode:** All plan files alongside `progress/` without subfolders. Activated when no state subfolders exist. State resolved from frontmatter `state` field → filename prefix → fallback `draft`.
 - **Mixed mode:** Subfolders exist but some files are in the root. Both locations are scanned; duplicates are skipped.
 

@@ -1,13 +1,14 @@
 ---
 plan: "API v2 endpoints"
-state: "coding"
+state: "doing"
 author: "sebastianserna"
 author_model: "claude-opus-4"
 assignee: "alexgarcia"
 assignee_model: "claude-opus-4"
 issue: ""
-backlog: "2026-02-05"
-coding: "2026-02-18"
+draft: ""
+backlog: "2026-02-05T11:00"
+doing: "2026-02-18T09:00"
 done: ""
 tags: "api, enhancement"
 ---

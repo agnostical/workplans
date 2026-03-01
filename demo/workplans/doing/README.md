@@ -1,18 +1,18 @@
-# Rules: coding/
+# Rules: doing/
 
 > Plans actively being worked on.
 
 ## Naming
 
 ```
-CODING-YYYY-MM-DD-author_description.md
+DOING-YYYY-MM-DD-author_description.md
 ```
 
 Date = when work started.
 
 ## Rules
 
-- Frontmatter: `state: "coding"` (see `workplans/README.md` for full format)
+- Frontmatter: `state: "doing"` (see `workplans/README.md` for full format)
 - Update progress checkboxes as steps are completed
 - When done: move to `done/`, rename prefix to `DONE`, update date and frontmatter
 - To pause: move back to `backlog/`, rename prefix to `BACKLOG`, update frontmatter
@@ -22,14 +22,15 @@ Date = when work started.
 ```markdown
 ---
 plan: "User authentication setup"
-state: "coding"
+state: "doing"
 author: "sebastianserna"
-author_model: "claude-opus-4"
+author_model: "claude-opus-4-6"
 assignee: "sebastianserna"
-assignee_model: "claude-sonnet-4"
+assignee_model: "claude-sonnet-4-6"
 issue: ""
-backlog: "2026-01-15"
-coding: "2026-01-20"
+draft: ""
+backlog: "2026-01-15T10:00"
+doing: "2026-01-20T08:30"
 done: ""
 tags: "enhancement"
 ---

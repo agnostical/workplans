@@ -6,9 +6,10 @@ author_model: "gpt-4o"
 assignee: "alexgarcia"
 assignee_model: "gpt-4o"
 issue: "https://github.com/user/repo/issues/42"
-backlog: "2026-01-10"
-coding: "2026-01-20"
-done: "2026-02-08"
+draft: ""
+backlog: "2026-01-10T10:15"
+doing: "2026-01-20T09:00"
+done: "2026-02-08T11:10"
 tags: "database, architecture"
 ---
 

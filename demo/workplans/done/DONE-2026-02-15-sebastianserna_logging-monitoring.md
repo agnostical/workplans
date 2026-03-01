@@ -6,9 +6,10 @@ author_model: "claude-opus-4"
 assignee: "alexgarcia"
 assignee_model: "claude-sonnet-4"
 issue: "https://github.com/user/repo/issues/65"
-backlog: "2026-01-20"
-coding: "2026-02-01"
-done: "2026-02-15"
+draft: ""
+backlog: "2026-01-20T11:00"
+doing: "2026-02-01T10:00"
+done: "2026-02-15T15:10"
 tags: "infra, observability"
 ---
 
@@ -52,7 +53,7 @@ Health check at `/health` reports database, Redis, and external service status. 
 ## Comments
 
 ### 2026-02-01 — sebastianserna
-Started coding. Winston setup is straightforward.
+Started work. Winston setup is straightforward.
 
 ### 2026-02-10 — claude-sonnet-4
 All logging and health checks are in place. Working on Grafana dashboards.

@@ -33,8 +33,9 @@ author_model: "claude-opus-4"
 assignee: ""
 assignee_model: ""
 issue: "https://github.com/user/repo/issues/60"
-backlog: "2026-01-15"
-coding: ""
+draft: ""
+backlog: "2026-01-15T14:20"
+doing: ""
 done: ""
 tags: "enhancement, auth"
 ---
@@ -88,8 +89,9 @@ author_model: "mistral-large"
 assignee: ""
 assignee_model: ""
 issue: ""
-backlog: "2026-02-01"
-coding: ""
+draft: ""
+backlog: "2026-02-01T09:15"
+doing: ""
 done: ""
 tags: "feature, notifications"
 ---
@@ -124,8 +126,9 @@ author_model: ""
 assignee: ""
 assignee_model: ""
 issue: ""
-backlog: "2026-02-20"
-coding: ""
+draft: ""
+backlog: "2026-02-20T15:45"
+doing: ""
 done: ""
 tags: "feature"
 ---
@@ -159,8 +162,9 @@ author_model: "gemini-2.5-pro"
 assignee: "alexgarcia"
 assignee_model: "gpt-4o"
 issue: "https://github.com/user/repo/issues/88"
-backlog: "2026-02-22"
-coding: ""
+draft: ""
+backlog: "2026-02-22T09:25"
+doing: ""
 done: ""
 tags: "auth, security"
 ---
@@ -200,20 +204,21 @@ Admin users can manage roles from a settings page. Frontend components condition
 Moved to backlog. Auth setup needs to be done first (dependency on user-auth-setup plan).
 EOF
 
-# ─── Coding plans ───────────────────────────────────────────────
-echo "==> Creating coding plans..."
+# ─── Doing plans ───────────────────────────────────────────────
+echo "==> Creating doing plans..."
 
-cat <<'EOF' > "$DEMO/coding/CODING-2026-02-10-sebastianserna_dashboard-redesign.md"
+cat <<'EOF' > "$DEMO/doing/DOING-2026-02-10-sebastianserna_dashboard-redesign.md"
 ---
 plan: "Dashboard redesign"
-state: "coding"
+state: "doing"
 author: "sebastianserna"
 author_model: "claude-opus-4, gemini-pro"
 assignee: "alexgarcia"
 assignee_model: "claude-sonnet-4"
 issue: "https://github.com/user/repo/issues/75"
-backlog: "2026-01-20"
-coding: "2026-02-10"
+draft: ""
+backlog: "2026-01-20T10:00"
+doing: "2026-02-10T09:30"
 done: ""
 tags: "ui, enhancement"
 ---
@@ -259,17 +264,18 @@ Breadcrumbs and activity feed widget completed. Still need to migrate old widget
 Activity feed looks great. Let's prioritize stats cards over quick actions for the MVP.
 EOF
 
-cat <<'EOF' > "$DEMO/coding/CODING-2026-02-18-sebastianserna_api-v2-endpoints.md"
+cat <<'EOF' > "$DEMO/doing/DOING-2026-02-18-sebastianserna_api-v2-endpoints.md"
 ---
 plan: "API v2 endpoints"
-state: "coding"
+state: "doing"
 author: "sebastianserna"
 author_model: "claude-opus-4"
 assignee: "alexgarcia"
 assignee_model: "claude-opus-4"
 issue: ""
-backlog: "2026-02-05"
-coding: "2026-02-18"
+draft: ""
+backlog: "2026-02-05T11:00"
+doing: "2026-02-18T09:00"
 done: ""
 tags: "api, enhancement"
 ---
@@ -303,17 +309,18 @@ Resource structure and cursor pagination implemented. Working on filter parser n
 Filter parser done with support for `eq`, `gt`, `lt`, `in` operators. Sorting also implemented with multi-field support. Only OpenAPI docs remaining.
 EOF
 
-cat <<'EOF' > "$DEMO/coding/CODING-2026-02-20-sebastianserna_websocket-realtime.md"
+cat <<'EOF' > "$DEMO/doing/DOING-2026-02-20-sebastianserna_websocket-realtime.md"
 ---
 plan: "WebSocket real-time updates"
-state: "coding"
+state: "doing"
 author: "sebastianserna"
 author_model: "deepseek-v3"
 assignee: "alexgarcia"
 assignee_model: "grok-3"
 issue: "https://github.com/user/repo/issues/82"
-backlog: "2026-02-05"
-coding: "2026-02-20"
+draft: ""
+backlog: "2026-02-05T14:00"
+doing: "2026-02-20T10:30"
 done: ""
 tags: "feature, real-time"
 ---
@@ -372,9 +379,10 @@ author_model: "claude-opus-4"
 assignee: "alexgarcia"
 assignee_model: "claude-sonnet-4"
 issue: ""
-backlog: "2026-01-05"
-coding: "2026-01-10"
-done: "2026-01-30"
+draft: ""
+backlog: "2026-01-05T09:00"
+doing: "2026-01-10T10:00"
+done: "2026-01-30T14:10"
 tags: "setup"
 ---
 
@@ -414,9 +422,10 @@ author_model: "gpt-4o"
 assignee: "alexgarcia"
 assignee_model: "gpt-4o"
 issue: "https://github.com/user/repo/issues/42"
-backlog: "2026-01-10"
-coding: "2026-01-20"
-done: "2026-02-08"
+draft: ""
+backlog: "2026-01-10T10:15"
+doing: "2026-01-20T09:00"
+done: "2026-02-08T11:10"
 tags: "database, architecture"
 ---
 
@@ -463,9 +472,10 @@ author_model: "claude-opus-4"
 assignee: "alexgarcia"
 assignee_model: "claude-sonnet-4"
 issue: "https://github.com/user/repo/issues/65"
-backlog: "2026-01-20"
-coding: "2026-02-01"
-done: "2026-02-15"
+draft: ""
+backlog: "2026-01-20T11:00"
+doing: "2026-02-01T10:00"
+done: "2026-02-15T15:10"
 tags: "infra, observability"
 ---
 
@@ -509,7 +519,7 @@ Health check at `/health` reports database, Redis, and external service status. 
 ## Comments
 
 ### 2026-02-01 — sebastianserna
-Started coding. Winston setup is straightforward.
+Started work. Winston setup is straightforward.
 
 ### 2026-02-10 — claude-sonnet-4
 All logging and health checks are in place. Working on Grafana dashboards.
@@ -527,9 +537,10 @@ author_model: "mistral-large"
 assignee: "alexgarcia"
 assignee_model: "claude-sonnet-4"
 issue: "https://github.com/user/repo/issues/70"
-backlog: "2026-01-25"
-coding: "2026-02-10"
-done: "2026-02-20"
+draft: ""
+backlog: "2026-01-25T09:30"
+doing: "2026-02-10T08:30"
+done: "2026-02-20T10:10"
 tags: "infra, ci/cd"
 ---
 
@@ -553,7 +564,13 @@ Improve the CI/CD pipeline to reduce build times from ~12 minutes to under 5 min
 
 ## Implementation
 
-Build time reduced from 12 min to 3.5 min by caching dependencies and running lint/typecheck/test in parallel jobs. Staging deploys automatically on merge to main. Production requires a manual approval in GitHub Actions.
+### Phase 1: Build optimization
+
+Reduced build time from 12 min to 3.5 min by caching \`node_modules\` across CI runs and running lint, type-check, and tests as parallel jobs. Added build artifact caching to avoid redundant rebuilds.
+
+### Phase 2: Deployment
+
+Staging auto-deploys on merge to main via GitHub Actions. Production deploys require a manual approval gate. Rollback uses the previous Docker image tag for instant recovery.
 
 ## Verification
 
@@ -586,31 +603,36 @@ author_model: ""
 assignee: ""
 assignee_model: ""
 issue: ""
+draft: "2026-02-10T11:30"
 backlog: ""
-coding: ""
+doing: ""
 done: ""
 tags: "architecture, api"
 ---
 
 # API rate limiting strategy
 
+## Progress
+
+### Phase 1: Rate limiting setup
+- [ ] Choose rate limiting library and strategy
+- [ ] Define rate limits per endpoint category
+- [ ] Implement rate limiting middleware
+- [ ] Add rate limit headers to API responses
+
+## Objective
+
+Add rate limiting to the API to prevent abuse and prepare for external consumers. After deploying authentication, we observed automated login attempts from multiple IPs.
+
 ## Context
 
-The API currently has no rate limiting. After deploying authentication, we observed automated login attempts from multiple IPs. We need a strategy before opening the API to external consumers.
+The API currently has no rate limiting. We already use Redis for sessions, so a Redis-based solution (`rate-limiter-flexible`) fits the existing infrastructure. Need to define limits per endpoint before promoting to backlog.
 
-## Options considered
+## Implementation
 
-### Option A: Express middleware (express-rate-limit)
-- Pros: simple setup, no external dependencies
-- Cons: per-instance only, not suitable for multi-instance deployments
+### Phase 1: Rate limiting setup
 
-### Option B: Redis-based (rate-limiter-flexible)
-- Pros: shared across instances, supports sliding window
-- Cons: requires Redis infrastructure
-
-## Decision
-
-Leaning towards Option B since we already use Redis for sessions. To be promoted to backlog once limits per endpoint are defined.
+Use `rate-limiter-flexible` with Redis backend for shared state across instances. Sliding window algorithm for smoother rate distribution. Different tiers: auth endpoints (stricter), read endpoints (relaxed), write endpoints (moderate). Include `X-RateLimit-*` headers in responses.
 EOF
 
 cat <<'EOF' > "$DEMO/draft/DRAFT-2026-02-15-sebastianserna_dark-mode-design.md"
@@ -622,29 +644,43 @@ author_model: "gpt-4o"
 assignee: ""
 assignee_model: ""
 issue: ""
+draft: "2026-02-15T15:30"
 backlog: ""
-coding: ""
+doing: ""
 done: ""
 tags: "design, ui"
 ---
 
 # Dark mode design system
 
+## Progress
+
+### Phase 1: Design tokens
+- [ ] Define semantic color tokens (background, surface, text, border)
+- [ ] Create dark palette based on existing brand colors
+- [ ] Implement theme toggle with Tailwind `class` strategy
+
+### Phase 2: Component migration
+- [ ] Update core UI components to use semantic tokens
+- [ ] Add user preference persistence (localStorage)
+
+## Objective
+
+Add dark mode support to the application. Users have requested it and it improves accessibility and reduces eye strain in low-light environments.
+
 ## Context
 
-Users have requested dark mode support. We need to define a color palette and component theming strategy before implementation.
+The app currently uses hardcoded colors. We already use Tailwind CSS, which has native dark mode support via the `class` strategy. Need to define semantic color tokens before implementation.
 
-## Options considered
+## Implementation
 
-### Option A: CSS custom properties with class toggle
-- Simple, no runtime cost, works with any framework
+### Phase 1: Design tokens
 
-### Option B: Tailwind dark mode with `class` strategy
-- Already using Tailwind, native support, minimal effort
+Define CSS custom properties for semantic colors (`--color-bg`, `--color-surface`, `--color-text-primary`, etc.) and map them to Tailwind's dark mode classes. Toggle via a `.dark` class on `<html>`.
 
-## Decision
+### Phase 2: Component migration
 
-Pending design review. Need to define semantic color tokens first.
+Replace hardcoded color classes (`bg-white`, `text-gray-900`) with semantic tokens across all components. Store user preference in localStorage and respect `prefers-color-scheme` as default.
 EOF
 
 cat <<'EOF' > "$DEMO/draft/DRAFT-2026-02-25-sebastianserna_file-upload-system.md"
@@ -656,35 +692,45 @@ author_model: "grok-3"
 assignee: ""
 assignee_model: ""
 issue: ""
+draft: "2026-02-25T11:00"
 backlog: ""
-coding: ""
+doing: ""
 done: ""
 tags: "feature, storage"
 ---
 
 # File upload system
 
+## Progress
+
+### Phase 1: Storage setup
+- [ ] Set up S3-compatible storage (MinIO for dev, S3 for prod)
+- [ ] Implement file upload API endpoint with presigned URLs
+- [ ] Add file metadata table in PostgreSQL
+- [ ] Define file size limits and allowed MIME types
+
+### Phase 2: Integration
+- [ ] Attach files to tasks and projects
+- [ ] Generate image thumbnails on upload
+- [ ] Build file browser UI component
+
 ## Objective
 
-Allow users to upload files (images, documents, etc.) associated with projects and tasks. Need to decide on storage strategy before moving to backlog.
-
-## Open Questions
-
-- Should we use local filesystem storage or S3-compatible object storage?
-- What are the file size limits? 10MB? 50MB?
-- Do we need image processing (thumbnails, resizing)?
+Allow users to upload files (images, documents) associated with projects and tasks. Users have requested the ability to attach screenshots to tasks and upload project assets.
 
 ## Context
 
-Currently the app has no file handling. Users have requested the ability to attach screenshots to tasks and upload project assets. The backend is Express with PostgreSQL.
+Currently the app has no file handling. The backend is Express with PostgreSQL. S3-compatible storage (MinIO for dev, AWS S3 for prod) is the preferred approach for scalability with the same API in both environments.
 
-## Options
+## Implementation
 
-### Option A: Local filesystem
-Simple to implement. Files stored in `/uploads` directory. Served by Express static middleware. No external dependencies.
+### Phase 1: Storage setup
 
-### Option B: S3-compatible storage
-More scalable. Works with AWS S3 or MinIO for self-hosted. Presigned URLs for direct upload from the browser.
+Use the AWS SDK with S3-compatible configuration pointing to MinIO locally and S3 in production. Browser uploads via presigned URLs to avoid proxying large files through the API. File metadata (name, size, MIME type, S3 key) stored in a `files` table.
+
+### Phase 2: Integration
+
+Files linked to tasks/projects via a `file_attachments` junction table. Image thumbnails generated with Sharp on upload. A reusable file browser component handles upload, preview, and deletion.
 
 ## Comments
 
@@ -692,7 +738,7 @@ More scalable. Works with AWS S3 or MinIO for self-hosted. Presigned URLs for di
 Initial draft. Leaning towards S3 for scalability but need to evaluate cost.
 
 ### 2026-02-26 — claude-opus-4
-Recommend Option B with MinIO for development and S3 for production. This gives you the same API locally without cloud costs during dev.
+Recommend MinIO for development and S3 for production. Same API locally without cloud costs during dev.
 EOF
 
 echo "==> Done! demo/workplans regenerated with 14 example plans."

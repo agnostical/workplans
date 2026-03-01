@@ -14,8 +14,8 @@ Date = when the plan was created.
 
 - Frontmatter: `state: "backlog"` (see `workplans/README.md` for full format)
 - Fill in `author` and other relevant frontmatter fields
-- To start work: move to `coding/`, rename prefix to `CODING`, update date and frontmatter
-- Plans returned from `coding/` come back here
+- To start work: move to `doing/`, rename prefix to `DOING`, update date and frontmatter
+- Plans returned from `doing/` come back here
 
 ## Example
 
@@ -24,12 +24,13 @@ Date = when the plan was created.
 plan: "User authentication setup"
 state: "backlog"
 author: "sebastianserna"
-author_model: "claude-opus-4"
+author_model: "claude-opus-4-6"
 assignee: ""
 assignee_model: ""
 issue: ""
-backlog: "2026-01-15"
-coding: ""
+draft: ""
+backlog: "2026-01-15T10:00"
+doing: ""
 done: ""
 tags: "enhancement"
 ---

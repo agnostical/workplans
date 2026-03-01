@@ -1,3 +1,39 @@
+/* Alpine.js cloak (prevent flash of unstyled templates) */
+[x-cloak] { display: none !important; }
+
+/* Card enter animation */
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.card-animate { animation: cardIn 0.3s ease-out; }
+
+/* Done column flash — green pulse when a plan reaches Done */
+@keyframes doneFlash {
+  0%, 15% { box-shadow: inset 0 0 0 200px rgba(34, 197, 94, 0.12); }
+  100%    { box-shadow: inset 0 0 0 200px rgba(34, 197, 94, 0); }
+}
+.done-flash { animation: doneFlash 1.5s ease-out; }
+
+@keyframes cardDoneFlash {
+  0%, 15% { box-shadow: inset 0 0 0 200px rgba(34, 197, 94, 0.22); }
+  100%    { box-shadow: inset 0 0 0 200px rgba(34, 197, 94, 0); }
+}
+.card-done-flash { animation: cardDoneFlash 1.5s ease-out; }
+
+/* Dark mode: stronger green flash for visibility */
+@keyframes doneFlashDark {
+  0%, 15% { box-shadow: inset 0 0 0 200px rgba(34, 197, 94, 0.18); }
+  100%    { box-shadow: inset 0 0 0 200px rgba(34, 197, 94, 0); }
+}
+.dark .done-flash { animation: doneFlashDark 1.5s ease-out; }
+
+@keyframes cardDoneFlashDark {
+  0%, 15% { box-shadow: inset 0 0 0 200px rgba(34, 197, 94, 0.35); }
+  100%    { box-shadow: inset 0 0 0 200px rgba(34, 197, 94, 0); }
+}
+.dark .card-done-flash { animation: cardDoneFlashDark 1.5s ease-out; }
+
 /* Header info (project title & plan count) */
 .header-info {
   font-size: 0.875rem;
@@ -24,6 +60,8 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  text-transform: lowercase;
+  font-family: Arial, sans-serif;
 }
 
 /* Project title: mobile row + desktop inline */
@@ -32,7 +70,7 @@
   padding-top: 0.625rem;
   padding-bottom: 0.625rem;
 }
-.project-title-desktop { display: none !important; }
+.project-title-desktop { display: none !important; text-transform: none; }
 
 @media (max-width: 639px) {
   .header-info-center { display: none !important; }
@@ -122,6 +160,9 @@
 .dark .error-open a { color: #d4d4d4; }
 .dark .error-open a:hover { color: #f5f5f5; }
 .dark .error-hint { color: #525252; }
+
+/* Card footer spacing */
+.card-footer { margin-top: 0.5rem; padding-top: 0.375rem; margin-bottom: -0.25rem; }
 
 /* Scrollbar */
 .scrollbar-thin::-webkit-scrollbar { width: 6px; }

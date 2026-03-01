@@ -1,13 +1,14 @@
 ---
 plan: "WebSocket real-time updates"
-state: "coding"
+state: "doing"
 author: "sebastianserna"
 author_model: "deepseek-v3"
 assignee: "alexgarcia"
 assignee_model: "grok-3"
 issue: "https://github.com/user/repo/issues/82"
-backlog: "2026-02-05"
-coding: "2026-02-20"
+draft: ""
+backlog: "2026-02-05T14:00"
+doing: "2026-02-20T10:30"
 done: ""
 tags: "feature, real-time"
 ---
