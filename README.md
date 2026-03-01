@@ -99,6 +99,6 @@ Then open `http://localhost:8000/progress/`
 
 The MIT License (MIT)
 
-Copyright (c) 2026 - Sebastian Serna
+Copyright (c) 2026 Agnostical
 
 This framework was created with the assistance of artificial intelligence tools powered by large language models (LLMs) such as Claude, Gemini, GPT, Mistral, among others. The use of these tools has been carefully guided and supervised by the author of the project.
