@@ -16,7 +16,7 @@ workplans/
 ├── done/          # Completed plans
 ├── extend/        # Optional extensions (created on demand)
 ├── RULES.md       # This file (source of truth)
-└── README.md      # Auto-generated plan index
+└── README.md      # Static workflow documentation
 ```
 
 ## Workflow
@@ -144,7 +144,7 @@ All 19 rules are mandatory. Ordered by criticality: **Structure** (framework int
 | 2 | Structure | `id` is the first frontmatter field, matches filename timestamp, immutable after creation |
 | 3 | Structure | `workplans/` only contains structured plan files. No notes, docs, or unstructured content |
 | 4 | Structure | Do not create files or folders that alter the `workplans/` structure |
-| 5 | Structure | README files and RULES.md are system files. Do not remove or edit manually |
+| 5 | Structure | README files are static documentation and RULES.md is the source of truth. Do not remove or edit manually |
 | 6 | Structure | Do not add custom frontmatter fields or markdown sections beyond the defined format |
 | 7 | Template | H1 must match the `title` field |
 | 8 | Template | H2 sections must use Title Case + `§` suffix. Only 5 valid sections allowed |
@@ -196,63 +196,14 @@ Before writing any datetime field, the agent **must** query the system clock. Ha
 
 If the command fails, the agent must report it to the user before continuing.
 
-## README Index Files
+## README Files
 
-The root `workplans/README.md` is the only auto-generated index. It is a **system file** — agents must regenerate it after creating, moving, or deleting plans. Never edit manually.
+All README files in the `workplans/` directory are **static documentation**. They describe the workflow and folder purposes but do not list individual plans. This avoids Git merge conflicts when multiple people create or move plans simultaneously.
 
-State folder READMEs (`backlog/README.md`, `doing/README.md`, `done/README.md`) are static descriptions with no dynamic content. They never need updating. Each links back to the root index with an anchor matching its state (e.g. `[View all plans](../README.md#doing)`).
+- `workplans/README.md` — Describes the workflow states, links to each folder, and references RULES.md
+- `backlog/README.md`, `doing/README.md`, `done/README.md` — Describe the purpose of each state folder
 
-### Root index (`workplans/README.md`)
-
-Shows all plans in a single continuous table. Structure: H1 `# Plans`, a generic description, and a single table with all plans grouped by state. No counters — the table itself is the visual inventory. Each state label row includes an HTML anchor (`<a id="state"></a>`) so folder READMEs can deep-link to it. Links use the subfolder path (e.g. `doing/filename.md`). State order: Backlog, Doing, Done.
-
-All three state groups (Backlog, Doing, Done) are always present in the table, even when empty. When a state has no plans, show a placeholder row with `_No plans_` in the Plan column:
-
-```markdown
-# Plans
-
-This file tracks all your plans organized by state.
-
-| ID | Plan | Author | Author Model |
-|----|------|--------|--------------|
-| | | | |
-| <a id="backlog"></a>**Backlog** | | | |
-| | _No plans_ | | |
-| | | | |
-| <a id="doing"></a>**Doing** | | | |
-| | _No plans_ | | |
-| | | | |
-| <a id="done"></a>**Done** | | | |
-| | _No plans_ | | |
-```
-
-When a state has plans, the placeholder row is replaced by plan rows:
-
-```markdown
-# Plans
-
-This file tracks all your plans organized by state.
-
-| ID | Plan | Author | Author Model |
-|----|------|--------|--------------|
-| | | | |
-| <a id="backlog"></a>**Backlog** | | | |
-| 2601551600 | [User authentication setup](backlog/2601551600_user-auth-setup.md) | sebastianserna | claude-opus-4 |
-| | | | |
-| <a id="doing"></a>**Doing** | | | |
-| 2603440500 | [WebSocket real-time updates](doing/2603440500_websocket-realtime.md) | sebastianserna | deepseek-v3 |
-| | | | |
-| <a id="done"></a>**Done** | | | |
-| 2600532400 | [Initial project setup](done/2600532400_project-setup.md) | sebastianserna | claude-opus-4 |
-```
-
-### Updating the index
-
-When a plan is created, moved, or deleted, the agent must update only the root `workplans/README.md`:
-
-1. Move the plan row from the source state group to the destination state group (or add/remove it)
-2. If a state becomes empty after removing a plan, add the placeholder row `| | _No plans_ | | |`
-3. If a state gains its first plan, remove the placeholder row and add the plan row
+README files do not need updating when plans are created, moved, or deleted. To browse plans, navigate the folders directly.
 
 ## Author detection
 
