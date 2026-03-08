@@ -1,6 +1,6 @@
 # Workplans
 
-This project tracks 14 plans organized by workflow state: backlog, doing, done, and draft.
+This project tracks all plans organized by workflow state: backlog, doing, done, and draft.
 
 ## Overview
 
