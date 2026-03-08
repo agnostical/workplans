@@ -62,7 +62,7 @@ The application currently has no authentication. The database is PostgreSQL and 
 
 ## Implementation
 ### Phase 1: Definition
-_No implementation needed — this phase tracks the completion of Objective, Context, and the definition of subsequent phases._
+This phase tracks the definition of Objective, Context, and subsequent phases.
 
 ### Phase 2: MVP
 
@@ -73,7 +73,7 @@ Create a `users` table with `id`, `email`, `password_hash`, `created_at`. Use bc
 Add a `password_reset_tokens` table. Implement a `/forgot-password` endpoint that sends a reset link and a `/reset-password` endpoint that validates the token and updates the password.
 
 ## Closing Summary
-_To be written when the last phase is completed._
+To be written when the last phase is completed.
 EOF
 
 cat <<'EOF' > "$DEMO/backlog/2602836000_notification-system.md"
@@ -111,14 +111,14 @@ The application has no email capabilities yet. We already use PostgreSQL for the
 
 ## Implementation
 ### Phase 1: Definition
-_No implementation needed — this phase tracks the completion of Objective, Context, and the definition of subsequent phases._
+This phase tracks the definition of Objective, Context, and subsequent phases.
 
 ### Phase 2: MVP
 
 Use SendGrid API with a simple queue backed by the existing PostgreSQL database. Templates will use Handlebars for variable interpolation. A background worker will process the queue every 30 seconds.
 
 ## Closing Summary
-_To be written when the last phase is completed._
+To be written when the last phase is completed.
 EOF
 
 cat <<'EOF' > "$DEMO/backlog/2604739600_search-functionality.md"
@@ -155,14 +155,14 @@ The application stores content in PostgreSQL. PostgreSQL has built-in full-text 
 
 ## Implementation
 ### Phase 1: Definition
-_No implementation needed — this phase tracks the completion of Objective, Context, and the definition of subsequent phases._
+This phase tracks the definition of Objective, Context, and subsequent phases.
 
 ### Phase 2: MVP
 
 Add GIN indexes on the relevant text columns. Create a `/api/search?q=term` endpoint that uses `ts_query` and ranks results by relevance. The frontend will have a search bar with debounced input and a results dropdown.
 
 ## Closing Summary
-_To be written when the last phase is completed._
+To be written when the last phase is completed.
 EOF
 
 cat <<'EOF' > "$DEMO/backlog/2604952200_role-permissions.md"
@@ -205,7 +205,7 @@ Authentication is already implemented with JWT. The database is PostgreSQL. The 
 
 ## Implementation
 ### Phase 1: Definition
-_No implementation needed — this phase tracks the completion of Objective, Context, and the definition of subsequent phases._
+This phase tracks the definition of Objective, Context, and subsequent phases.
 
 ### Phase 2: Core RBAC
 
@@ -216,7 +216,7 @@ Create `roles` and `permissions` tables. Each role has many permissions. Permiss
 Admin users can manage roles from a settings page. Frontend components conditionally render based on the current user's permissions using a `usePermission('resource:action')` hook.
 
 ## Closing Summary
-_To be written when the last phase is completed._
+To be written when the last phase is completed.
 EOF
 
 # ─── Doing plans ───────────────────────────────────────────────
@@ -262,7 +262,7 @@ The current dashboard uses a top navbar with a single-column layout. The fronten
 
 ## Implementation
 ### Phase 1: Definition
-_No implementation needed — this phase tracks the completion of Objective, Context, and the definition of subsequent phases._
+This phase tracks the definition of Objective, Context, and subsequent phases.
 
 ### Phase 2: Layout & navigation
 
@@ -273,7 +273,7 @@ Replace the top navbar with a collapsible sidebar. Use CSS Grid for the main con
 Each widget is a self-contained React component that fetches its own data. The dashboard layout will be configurable via drag-and-drop in a future phase.
 
 ## Closing Summary
-_To be written when the last phase is completed._
+To be written when the last phase is completed.
 EOF
 
 cat <<'EOF' > "$DEMO/doing/2603334200_api-v2-endpoints.md"
@@ -311,14 +311,14 @@ The v1 API uses offset-based pagination which performs poorly on large datasets.
 
 ## Implementation
 ### Phase 1: Definition
-_No implementation needed — this phase tracks the completion of Objective, Context, and the definition of subsequent phases._
+This phase tracks the definition of Objective, Context, and subsequent phases.
 
 ### Phase 2: Core endpoints
 
 All v2 endpoints live under `/api/v2/`. Pagination uses cursor-based navigation instead of offset. Filtering uses query parameters with operators (`?status=eq:active`). Error responses follow RFC 7807 Problem Details format.
 
 ## Closing Summary
-_To be written when the last phase is completed._
+To be written when the last phase is completed.
 EOF
 
 cat <<'EOF' > "$DEMO/doing/2603440500_websocket-realtime.md"
@@ -362,7 +362,7 @@ The application currently relies on polling for updates. The backend is Express 
 
 ## Implementation
 ### Phase 1: Definition
-_No implementation needed — this phase tracks the completion of Objective, Context, and the definition of subsequent phases._
+This phase tracks the definition of Objective, Context, and subsequent phases.
 
 ### Phase 2: Infrastructure
 
@@ -373,7 +373,7 @@ Using Socket.IO for WebSocket support with automatic fallback to long-polling. E
 When a task is updated via the REST API, the server emits an event to all clients in the project room. The frontend listens for these events and updates the local state accordingly.
 
 ## Closing Summary
-_To be written when the last phase is completed._
+To be written when the last phase is completed.
 EOF
 
 # ─── Done plans ─────────────────────────────────────────────────
@@ -415,7 +415,7 @@ Starting a new project from scratch. The team agreed on Node.js with TypeScript,
 
 ## Implementation
 ### Phase 1: Definition
-_No implementation needed — this phase tracks the completion of Objective, Context, and the definition of subsequent phases._
+This phase tracks the definition of Objective, Context, and subsequent phases.
 
 ### Phase 2: MVP
 
@@ -463,7 +463,7 @@ The project uses PostgreSQL 16 with node-pg-migrate for migrations. No tables ex
 
 ## Implementation
 ### Phase 1: Definition
-_No implementation needed — this phase tracks the completion of Objective, Context, and the definition of subsequent phases._
+This phase tracks the definition of Objective, Context, and subsequent phases.
 
 ### Phase 2: Core tables
 
@@ -517,7 +517,7 @@ The application currently uses `console.log` with no structure or correlation. P
 
 ## Implementation
 ### Phase 1: Definition
-_No implementation needed — this phase tracks the completion of Objective, Context, and the definition of subsequent phases._
+This phase tracks the definition of Objective, Context, and subsequent phases.
 
 ### Phase 2: Structured logging
 
@@ -573,7 +573,7 @@ The current CI pipeline runs on GitHub Actions but takes ~12 minutes because it 
 
 ## Implementation
 ### Phase 1: Definition
-_No implementation needed — this phase tracks the completion of Objective, Context, and the definition of subsequent phases._
+This phase tracks the definition of Objective, Context, and subsequent phases.
 
 ### Phase 2: Build optimization
 
@@ -628,14 +628,14 @@ The API currently has no rate limiting. We already use Redis for sessions, so a 
 
 ## Implementation
 ### Phase 1: Definition
-_No implementation needed — this phase tracks the completion of Objective, Context, and the definition of subsequent phases._
+This phase tracks the definition of Objective, Context, and subsequent phases.
 
 ### Phase 2: Rate limiting setup
 
 Use `rate-limiter-flexible` with Redis backend for shared state across instances. Sliding window algorithm for smoother rate distribution. Different tiers: auth endpoints (stricter), read endpoints (relaxed), write endpoints (moderate). Include `X-RateLimit-*` headers in responses.
 
 ## Closing Summary
-_To be written when the last phase is completed._
+To be written when the last phase is completed.
 EOF
 
 cat <<'EOF' > "$DEMO/backlog/2604655800_dark-mode-design.md"
@@ -676,7 +676,7 @@ The app currently uses hardcoded colors. We already use Tailwind CSS, which has 
 
 ## Implementation
 ### Phase 1: Definition
-_No implementation needed — this phase tracks the completion of Objective, Context, and the definition of subsequent phases._
+This phase tracks the definition of Objective, Context, and subsequent phases.
 
 ### Phase 2: Design tokens
 
@@ -687,7 +687,7 @@ Define CSS custom properties for semantic colors (`--color-bg`, `--color-surface
 Replace hardcoded color classes (`bg-white`, `text-gray-900`) with semantic tokens across all components. Store user preference in localStorage and respect `prefers-color-scheme` as default.
 
 ## Closing Summary
-_To be written when the last phase is completed._
+To be written when the last phase is completed.
 EOF
 
 cat <<'EOF' > "$DEMO/backlog/2605639600_file-upload-system.md"
@@ -730,7 +730,7 @@ Currently the app has no file handling. The backend is Express with PostgreSQL. 
 
 ## Implementation
 ### Phase 1: Definition
-_No implementation needed — this phase tracks the completion of Objective, Context, and the definition of subsequent phases._
+This phase tracks the definition of Objective, Context, and subsequent phases.
 
 ### Phase 2: Storage setup
 
@@ -741,7 +741,7 @@ Use the AWS SDK with S3-compatible configuration pointing to MinIO locally and S
 Files linked to tasks/projects via a `file_attachments` junction table. Image thumbnails generated with Sharp on upload. A reusable file browser component handles upload, preview, and deletion.
 
 ## Closing Summary
-_To be written when the last phase is completed._
+To be written when the last phase is completed.
 EOF
 
 # ─── Write static READMEs ────────────────────────────────────────

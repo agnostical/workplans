@@ -31,11 +31,11 @@ The application stores content in PostgreSQL. PostgreSQL has built-in full-text 
 
 ## Implementation
 ### Phase 1: Definition
-_No implementation needed — this phase tracks the completion of Objective, Context, and the definition of subsequent phases._
+This phase tracks the definition of Objective, Context, and subsequent phases.
 
 ### Phase 2: MVP
 
 Add GIN indexes on the relevant text columns. Create a `/api/search?q=term` endpoint that uses `ts_query` and ranks results by relevance. The frontend will have a search bar with debounced input and a results dropdown.
 
 ## Closing Summary
-_To be written when the last phase is completed._
+To be written when the last phase is completed.

@@ -38,7 +38,7 @@ The application currently relies on polling for updates. The backend is Express 
 
 ## Implementation
 ### Phase 1: Definition
-_No implementation needed — this phase tracks the completion of Objective, Context, and the definition of subsequent phases._
+This phase tracks the definition of Objective, Context, and subsequent phases.
 
 ### Phase 2: Infrastructure
 
@@ -49,4 +49,4 @@ Using Socket.IO for WebSocket support with automatic fallback to long-polling. E
 When a task is updated via the REST API, the server emits an event to all clients in the project room. The frontend listens for these events and updates the local state accordingly.
 
 ## Closing Summary
-_To be written when the last phase is completed._
+To be written when the last phase is completed.

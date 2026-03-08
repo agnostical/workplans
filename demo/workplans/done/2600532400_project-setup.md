@@ -33,7 +33,7 @@ Starting a new project from scratch. The team agreed on Node.js with TypeScript,
 
 ## Implementation
 ### Phase 1: Definition
-_No implementation needed — this phase tracks the completion of Objective, Context, and the definition of subsequent phases._
+This phase tracks the definition of Objective, Context, and subsequent phases.
 
 ### Phase 2: MVP
 

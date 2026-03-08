@@ -55,13 +55,13 @@ Relevant background, constraints, or references that inform the plan.
 
 ## Implementation
 ### Phase 1: Definition
-_No implementation needed — this phase tracks the completion of Objective, Context, and the definition of subsequent phases._
+This phase tracks the definition of Objective, Context, and subsequent phases.
 
 ### Phase 2: Define auth strategy
 Technical details, decisions, and approach for this phase.
 
 ## Closing Summary
-_To be written when the last phase is completed._
+To be written when the last phase is completed.
 ```
 
 ## Quick start
@@ -87,8 +87,8 @@ workplans/
 ├── backlog/       # Pending plans
 ├── doing/         # Work in progress
 ├── done/          # Completed plans
-├── RULES.md       # Framework rules (source of truth)
-└── README.md      # Static workflow description
+├── README.md      # General info
+└── RULES.md       # Framework rules (source of truth)
 ```
 
 ### 2. Connect Workplans to your AI Agent

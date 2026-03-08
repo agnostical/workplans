@@ -32,11 +32,11 @@ The application has no email capabilities yet. We already use PostgreSQL for the
 
 ## Implementation
 ### Phase 1: Definition
-_No implementation needed — this phase tracks the completion of Objective, Context, and the definition of subsequent phases._
+This phase tracks the definition of Objective, Context, and subsequent phases.
 
 ### Phase 2: MVP
 
 Use SendGrid API with a simple queue backed by the existing PostgreSQL database. Templates will use Handlebars for variable interpolation. A background worker will process the queue every 30 seconds.
 
 ## Closing Summary
-_To be written when the last phase is completed._
+To be written when the last phase is completed.

@@ -37,7 +37,7 @@ Authentication is already implemented with JWT. The database is PostgreSQL. The 
 
 ## Implementation
 ### Phase 1: Definition
-_No implementation needed — this phase tracks the completion of Objective, Context, and the definition of subsequent phases._
+This phase tracks the definition of Objective, Context, and subsequent phases.
 
 ### Phase 2: Core RBAC
 
@@ -48,4 +48,4 @@ Create `roles` and `permissions` tables. Each role has many permissions. Permiss
 Admin users can manage roles from a settings page. Frontend components conditionally render based on the current user's permissions using a `usePermission('resource:action')` hook.
 
 ## Closing Summary
-_To be written when the last phase is completed._
+To be written when the last phase is completed.

@@ -36,7 +36,7 @@ The application currently has no authentication. The database is PostgreSQL and 
 
 ## Implementation
 ### Phase 1: Definition
-_No implementation needed — this phase tracks the completion of Objective, Context, and the definition of subsequent phases._
+This phase tracks the definition of Objective, Context, and subsequent phases.
 
 ### Phase 2: MVP
 
@@ -47,4 +47,4 @@ Create a `users` table with `id`, `email`, `password_hash`, `created_at`. Use bc
 Add a `password_reset_tokens` table. Implement a `/forgot-password` endpoint that sends a reset link and a `/reset-password` endpoint that validates the token and updates the password.
 
 ## Closing Summary
-_To be written when the last phase is completed._
+To be written when the last phase is completed.

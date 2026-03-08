@@ -15,8 +15,8 @@ workplans/
 ├── doing/         # Work in progress
 ├── done/          # Completed plans
 ├── extend/        # Optional extensions (created on demand)
-├── RULES.md       # This file (source of truth)
-└── README.md      # Static workflow description
+├── README.md      # General info
+└── RULES.md       # This file (source of truth)
 ```
 
 ## Workflow
@@ -71,13 +71,13 @@ Relevant background, constraints, or references that inform the plan.
 
 ## Implementation
 ### Phase 1: Definition
-_No implementation needed — this phase tracks the completion of Objective, Context, and the definition of subsequent phases._
+This phase tracks the definition of Objective, Context, and subsequent phases.
 
 ### Phase 2: Define auth strategy
 Technical details, decisions, and approach for this phase.
 
 ## Closing Summary
-_To be written when the last phase is completed._
+To be written when the last phase is completed.
 ```
 
 ### Plan Frontmatter
@@ -128,7 +128,7 @@ These two fixed steps ensure every plan has a clear objective and defined phases
 **Rules for Phase 1: Definition:**
 - It is always the first phase in both Progress and Implementation
 - The two steps are fixed and must not be modified
-- The Implementation entry for Phase 1 is always: `_No implementation needed — this phase tracks the completion of Objective, Context, and the definition of subsequent phases._`
+- The Implementation entry for Phase 1 is always: `_This phase tracks the definition of Objective, Context, and subsequent phases._`
 - A plan must not move to `doing/` until both steps in Phase 1 are checked
 - Subsequent phases (Phase 2, Phase 3, etc.) contain the actual work
 

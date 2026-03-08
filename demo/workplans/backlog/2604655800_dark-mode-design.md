@@ -35,7 +35,7 @@ The app currently uses hardcoded colors. We already use Tailwind CSS, which has 
 
 ## Implementation
 ### Phase 1: Definition
-_No implementation needed — this phase tracks the completion of Objective, Context, and the definition of subsequent phases._
+This phase tracks the definition of Objective, Context, and subsequent phases.
 
 ### Phase 2: Design tokens
 
@@ -46,4 +46,4 @@ Define CSS custom properties for semantic colors (`--color-bg`, `--color-surface
 Replace hardcoded color classes (`bg-white`, `text-gray-900`) with semantic tokens across all components. Store user preference in localStorage and respect `prefers-color-scheme` as default.
 
 ## Closing Summary
-_To be written when the last phase is completed._
+To be written when the last phase is completed.

@@ -37,7 +37,7 @@ The current dashboard uses a top navbar with a single-column layout. The fronten
 
 ## Implementation
 ### Phase 1: Definition
-_No implementation needed — this phase tracks the completion of Objective, Context, and the definition of subsequent phases._
+This phase tracks the definition of Objective, Context, and subsequent phases.
 
 ### Phase 2: Layout & navigation
 
@@ -48,4 +48,4 @@ Replace the top navbar with a collapsible sidebar. Use CSS Grid for the main con
 Each widget is a self-contained React component that fetches its own data. The dashboard layout will be configurable via drag-and-drop in a future phase.
 
 ## Closing Summary
-_To be written when the last phase is completed._
+To be written when the last phase is completed.

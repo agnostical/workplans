@@ -32,11 +32,11 @@ The v1 API uses offset-based pagination which performs poorly on large datasets.
 
 ## Implementation
 ### Phase 1: Definition
-_No implementation needed — this phase tracks the completion of Objective, Context, and the definition of subsequent phases._
+This phase tracks the definition of Objective, Context, and subsequent phases.
 
 ### Phase 2: Core endpoints
 
 All v2 endpoints live under `/api/v2/`. Pagination uses cursor-based navigation instead of offset. Filtering uses query parameters with operators (`?status=eq:active`). Error responses follow RFC 7807 Problem Details format.
 
 ## Closing Summary
-_To be written when the last phase is completed._
+To be written when the last phase is completed.
