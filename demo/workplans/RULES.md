@@ -211,7 +211,7 @@ All three state groups (Backlog, Doing, Done) are always present in the table, e
 ```markdown
 # Plans
 
-This section tracks all your plans organized by state.
+This file tracks all your plans organized by state.
 
 | ID | Plan | Author | Author Model |
 |----|------|--------|--------------|
@@ -231,7 +231,7 @@ When a state has plans, the placeholder row is replaced by plan rows:
 ```markdown
 # Plans
 
-This section tracks all your plans organized by state.
+This file tracks all your plans organized by state.
 
 | ID | Plan | Author | Author Model |
 |----|------|--------|--------------|

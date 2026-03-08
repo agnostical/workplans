@@ -1,6 +1,6 @@
 # Plans
 
-This section tracks all your plans organized by state.
+This file tracks all your plans organized by state.
 
 | ID | Plan | Author | Author Model |
 |----|------|--------|--------------|
