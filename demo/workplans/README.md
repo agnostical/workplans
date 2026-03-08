@@ -2,7 +2,7 @@
 
 ## Overview
 
-This section tracks all plans organized by workflow state: backlog, doing, done, and draft.
+This section tracks all plans organized by workflow state.
 
 | ID | Plan | Author | Author Model |
 |----|------|--------|--------------|
