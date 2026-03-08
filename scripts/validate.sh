@@ -177,7 +177,7 @@ for folder in backlog doing done; do
     fi
 
     # Check required fields exist
-    for field in title state author author_model assignee assignee_model issue backlog_date doing_date done_date; do
+    for field in title state author author_model assignee assignee_model backlog_date doing_date done_date; do
       if ! grep -q "^${field}:" "$file"; then
         fail "$folder/$bn — missing field: $field"
       fi
@@ -222,19 +222,56 @@ for folder in backlog doing done; do
       done
     done <<< "$sections"
 
-    # Check Progress § is first section
-    first_section=$(echo "$sections" | head -1)
-    if [[ "$first_section" == "Progress §" ]]; then
-      pass "$folder/$bn — Progress § is first section"
-    else
-      fail "$folder/$bn — first section is '$first_section' (expected 'Progress §')"
-    fi
+    # Check all 5 required sections present and in order
+    expected_order=("Progress" "Objective" "Context" "Implementation" "Closing Summary")
+    section_array=()
+    while IFS= read -r s; do
+      [[ -n "$s" ]] && section_array+=("$s")
+    done <<< "$sections"
 
-    # Check Closing Summary § exists
-    if echo "$sections" | grep -q "Closing Summary §"; then
-      pass "$folder/$bn — Closing Summary present"
-    else
-      fail "$folder/$bn — missing Closing Summary section"
+    # Check each required section is present
+    all_present=true
+    for expected in "${expected_order[@]}"; do
+      found=false
+      for actual in "${section_array[@]}"; do
+        if [[ "$actual" == "$expected" ]]; then
+          found=true
+          break
+        fi
+      done
+      if $found; then
+        pass "$folder/$bn — section '$expected' present"
+      else
+        fail "$folder/$bn — missing required section: ## $expected"
+        all_present=false
+      fi
+    done
+
+    # Check order (only if all present)
+    if $all_present; then
+      idx=0
+      in_order=true
+      for expected in "${expected_order[@]}"; do
+        # Find position of this expected section in actual array
+        pos=-1
+        for i in "${!section_array[@]}"; do
+          if [[ "${section_array[$i]}" == "$expected" ]]; then
+            pos=$i
+            break
+          fi
+        done
+        if [[ $pos -lt $idx ]]; then
+          in_order=false
+          break
+        fi
+        idx=$pos
+      done
+      if $in_order; then
+        pass "$folder/$bn — sections in correct order"
+      else
+        actual_order=$(printf ", %s" "${section_array[@]}")
+        fail "$folder/$bn — sections out of order: [${actual_order:2}]"
+      fi
     fi
 
     # Check Phase 1: Definition exists
@@ -245,41 +282,6 @@ for folder in backlog doing done; do
     fi
   done
 done
-
-# ─── Index validation ────────────────────────────────────────────
-echo ""
-echo "=== Index validation ==="
-
-# Validate root README (the only auto-generated index)
-root_readme="$WORKPLANS_DIR/README.md"
-if [[ -f "$root_readme" ]]; then
-  echo ""
-  echo "  --- Root README ---"
-
-  for folder in backlog doing done; do
-    dir="$WORKPLANS_DIR/$folder"
-    [[ ! -d "$dir" ]] && continue
-
-    # Check plan rows in root README
-    for file in "$dir"/*.md; do
-      [[ ! -f "$file" ]] && continue
-      bn=$(basename "$file")
-      [[ "$bn" == "README.md" ]] && continue
-      if grep -q "$bn" "$root_readme"; then
-        pass "Root README — lists $folder/$bn"
-      else
-        fail "Root README — missing row for $folder/$bn"
-      fi
-    done
-  done
-
-  # Check for orphan rows in root README
-  grep -oE '[a-z]+/[0-9]{10}_[a-z0-9-]+\.md' "$root_readme" 2>/dev/null | while read -r linked; do
-    if [[ ! -f "$WORKPLANS_DIR/$linked" ]]; then
-      fail "Root README — orphan row: $linked not found"
-    fi
-  done
-fi
 
 # ─── Summary ─────────────────────────────────────────────────────
 echo ""

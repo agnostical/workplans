@@ -6,7 +6,6 @@ author: "sebastianserna"
 author_model: "gpt-4o"
 assignee: ""
 assignee_model: ""
-issue: ""
 backlog_date: "2026-02-15T15:30"
 doing_date: ""
 done_date: ""
@@ -14,8 +13,7 @@ done_date: ""
 
 # Dark mode design system
 
-## Progress §
-
+## Progress
 ### Phase 1: Definition
 - [ ] Define objective and context
 - [ ] Define phases and steps
@@ -29,18 +27,15 @@ done_date: ""
 - [ ] Update core UI components to use semantic tokens
 - [ ] Add user preference persistence (localStorage)
 
-## Objective §
-
+## Objective
 Add dark mode support to the application. Users have requested it and it improves accessibility and reduces eye strain in low-light environments.
 
-## Context §
-
+## Context
 The app currently uses hardcoded colors. We already use Tailwind CSS, which has native dark mode support via the `class` strategy. Need to define semantic color tokens before implementation.
 
-## Implementation §
-
+## Implementation
 ### Phase 1: Definition
-_No implementation needed — this phase tracks the completion of Objective §, Context §, and the definition of subsequent phases._
+_No implementation needed — this phase tracks the completion of Objective, Context, and the definition of subsequent phases._
 
 ### Phase 2: Design tokens
 
@@ -50,6 +45,5 @@ Define CSS custom properties for semantic colors (`--color-bg`, `--color-surface
 
 Replace hardcoded color classes (`bg-white`, `text-gray-900`) with semantic tokens across all components. Store user preference in localStorage and respect `prefers-color-scheme` as default.
 
-## Closing Summary §
-
+## Closing Summary
 _To be written when the last phase is completed._

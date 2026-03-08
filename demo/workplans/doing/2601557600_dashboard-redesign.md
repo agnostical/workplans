@@ -6,7 +6,6 @@ author: "sebastianserna"
 author_model: "claude-opus-4, gemini-pro"
 assignee: "alexgarcia"
 assignee_model: "claude-sonnet-4"
-issue: "https://github.com/user/repo/issues/75"
 backlog_date: "2026-01-20T10:00"
 doing_date: "2026-02-10T09:30"
 done_date: ""
@@ -14,8 +13,7 @@ done_date: ""
 
 # Dashboard redesign
 
-## Progress §
-
+## Progress
 ### Phase 1: Definition
 - [x] Define objective and context
 - [x] Define phases and steps
@@ -31,14 +29,15 @@ done_date: ""
 - [ ] Quick actions panel
 - [ ] Stats overview cards
 
-## Objective §
-
+## Objective
 Redesign the main dashboard to improve usability and information density. The current layout wastes screen space and the navigation is confusing for new users.
 
-## Implementation §
+## Context
+The current dashboard uses a top navbar with a single-column layout. The frontend is React with Tailwind CSS. User feedback consistently mentions difficulty finding features and wasted screen space on wide monitors.
 
+## Implementation
 ### Phase 1: Definition
-_No implementation needed — this phase tracks the completion of Objective §, Context §, and the definition of subsequent phases._
+_No implementation needed — this phase tracks the completion of Objective, Context, and the definition of subsequent phases._
 
 ### Phase 2: Layout & navigation
 
@@ -48,6 +47,5 @@ Replace the top navbar with a collapsible sidebar. Use CSS Grid for the main con
 
 Each widget is a self-contained React component that fetches its own data. The dashboard layout will be configurable via drag-and-drop in a future phase.
 
-## Closing Summary §
-
+## Closing Summary
 _To be written when the last phase is completed._

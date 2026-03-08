@@ -31,7 +31,6 @@ author: ""
 author_model: ""
 assignee: ""
 assignee_model: ""
-issue: ""
 backlog_date: "YYYY-MM-DDThh:mm"
 doing_date: ""
 done_date: ""
@@ -39,7 +38,7 @@ done_date: ""
 
 # User authentication setup
 
-## Progress §
+## Progress
 ### Phase 1: Definition
 - [ ] Define objective and context
 - [ ] Define phases and steps
@@ -48,20 +47,20 @@ done_date: ""
 - [ ] Choose authentication method
 - [ ] Document security requirements
 
-## Objective §
+## Objective
 Brief description of what this plan aims to achieve and why.
 
-## Context §
+## Context
 Relevant background, constraints, or references that inform the plan.
 
-## Implementation §
+## Implementation
 ### Phase 1: Definition
-_No implementation needed — this phase tracks the completion of Objective §, Context §, and the definition of subsequent phases._
+_No implementation needed — this phase tracks the completion of Objective, Context, and the definition of subsequent phases._
 
 ### Phase 2: Define auth strategy
 Technical details, decisions, and approach for this phase.
 
-## Closing Summary §
+## Closing Summary
 _To be written when the last phase is completed._
 ```
 

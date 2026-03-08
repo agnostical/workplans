@@ -6,7 +6,6 @@ author: "sebastianserna"
 author_model: "gemini-2.5-pro"
 assignee: "alexgarcia"
 assignee_model: "gpt-4o"
-issue: "https://github.com/user/repo/issues/88"
 backlog_date: "2026-02-22T09:25"
 doing_date: ""
 done_date: ""
@@ -14,8 +13,7 @@ done_date: ""
 
 # Role-based permissions
 
-## Progress §
-
+## Progress
 ### Phase 1: Definition
 - [x] Define objective and context
 - [x] Define phases and steps
@@ -31,14 +29,15 @@ done_date: ""
 - [ ] Permission checks in frontend components
 - [ ] Invite users with specific roles
 
-## Objective §
-
+## Objective
 Implement role-based access control (RBAC) to restrict actions based on user roles. Currently all authenticated users have the same permissions, which is a security concern.
 
-## Implementation §
+## Context
+Authentication is already implemented with JWT. The database is PostgreSQL. The frontend uses React with a custom hook pattern for feature flags. No authorization layer exists yet.
 
+## Implementation
 ### Phase 1: Definition
-_No implementation needed — this phase tracks the completion of Objective §, Context §, and the definition of subsequent phases._
+_No implementation needed — this phase tracks the completion of Objective, Context, and the definition of subsequent phases._
 
 ### Phase 2: Core RBAC
 
@@ -48,6 +47,5 @@ Create `roles` and `permissions` tables. Each role has many permissions. Permiss
 
 Admin users can manage roles from a settings page. Frontend components conditionally render based on the current user's permissions using a `usePermission('resource:action')` hook.
 
-## Closing Summary §
-
+## Closing Summary
 _To be written when the last phase is completed._

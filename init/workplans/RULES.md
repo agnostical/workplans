@@ -47,7 +47,6 @@ author: ""
 author_model: ""
 assignee: ""
 assignee_model: ""
-issue: ""
 backlog_date: "YYYY-MM-DDThh:mm"
 doing_date: ""
 done_date: ""
@@ -55,7 +54,7 @@ done_date: ""
 
 # User authentication setup
 
-## Progress §
+## Progress
 ### Phase 1: Definition
 - [ ] Define objective and context
 - [ ] Define phases and steps
@@ -64,20 +63,20 @@ done_date: ""
 - [ ] Choose authentication method
 - [ ] Document security requirements
 
-## Objective §
+## Objective
 Brief description of what this plan aims to achieve and why.
 
-## Context §
+## Context
 Relevant background, constraints, or references that inform the plan.
 
-## Implementation §
+## Implementation
 ### Phase 1: Definition
-_No implementation needed — this phase tracks the completion of Objective §, Context §, and the definition of subsequent phases._
+_No implementation needed — this phase tracks the completion of Objective, Context, and the definition of subsequent phases._
 
 ### Phase 2: Define auth strategy
 Technical details, decisions, and approach for this phase.
 
-## Closing Summary §
+## Closing Summary
 _To be written when the last phase is completed._
 ```
 
@@ -94,7 +93,6 @@ Every plan starts with YAML frontmatter on **line 1** (no blank lines before `--
 | `author_model` | AI model ID(s) that created the plan (e.g. `claude-opus-4-6`) |
 | `assignee` | Person implementing |
 | `assignee_model` | AI model ID(s) that executed the plan |
-| `issue` | URL to linked issue (any tracker) |
 | `backlog_date` | Datetime created (`YYYY-MM-DDThh:mm`) |
 | `doing_date` | Datetime work started (`YYYY-MM-DDThh:mm`) |
 | `done_date` | Datetime completed (`YYYY-MM-DDThh:mm`) |
@@ -105,15 +103,15 @@ The first line after frontmatter is an H1 (`#`) that must match the `title` fiel
 
 ### Plan Sections
 
-Five H2 sections follow the title, in this order. Each heading uses Title Case + `§` suffix.
+Five H2 sections follow the title, in this order. Each heading uses Title Case.
 
 | Section | Purpose |
 |---------|---------|
-| `## Progress §` | Checklist mirror of Implementation phases. Always right after H1 |
-| `## Objective §` | What this plan aims to achieve and why |
-| `## Context §` | Background, constraints, or references that inform the plan |
-| `## Implementation §` | Technical detail, decisions, and approach organized by phase |
-| `## Closing Summary §` | Written when the last phase is completed. Bullet points: what was implemented, deviations, blockers, and anything left for future plans. Until then, contains: `_To be written when the last phase is completed._` |
+| `## Progress` | Checklist mirror of Implementation phases. Always right after H1 |
+| `## Objective` | What this plan aims to achieve and why |
+| `## Context` | Background, constraints, or references that inform the plan |
+| `## Implementation` | Technical detail, decisions, and approach organized by phase |
+| `## Closing Summary` | Written when the last phase is completed. Bullet points: what was implemented, deviations, blockers, and anything left for future plans. Until then, contains: `_To be written when the last phase is completed._` |
 
 ### Mandatory Phase 1: Definition
 
@@ -128,15 +126,15 @@ Every plan must start with `### Phase 1: Definition` as its first phase. This ph
 These two fixed steps ensure every plan has a clear objective and defined phases before execution begins, regardless of which agent created it. A plan in backlog with Phase 1 unchecked is still being defined. When both steps are checked, the plan is fully defined and ready for execution (transition to `doing/`).
 
 **Rules for Phase 1: Definition:**
-- It is always the first phase in both Progress § and Implementation §
+- It is always the first phase in both Progress and Implementation
 - The two steps are fixed and must not be modified
-- The Implementation § entry for Phase 1 is always: `_No implementation needed — this phase tracks the completion of Objective §, Context §, and the definition of subsequent phases._`
+- The Implementation entry for Phase 1 is always: `_No implementation needed — this phase tracks the completion of Objective, Context, and the definition of subsequent phases._`
 - A plan must not move to `doing/` until both steps in Phase 1 are checked
 - Subsequent phases (Phase 2, Phase 3, etc.) contain the actual work
 
 ## Rules
 
-All 19 rules are mandatory. Ordered by criticality: **Structure** (framework integrity) → **Template** (plan validity) → **Data** (field correctness).
+All 20 rules are mandatory. Ordered by criticality: **Structure** (framework integrity) → **Template** (plan validity) → **Data** (field correctness).
 
 | # | Category | Rule |
 |---|----------|------|
@@ -147,18 +145,19 @@ All 19 rules are mandatory. Ordered by criticality: **Structure** (framework int
 | 5 | Structure | README files and RULES.md are system files. Do not remove or edit manually |
 | 6 | Structure | Do not add custom frontmatter fields or markdown sections beyond the defined format |
 | 7 | Template | H1 must match the `title` field |
-| 8 | Template | H2 sections must use Title Case + `§` suffix. Only 5 valid sections allowed |
-| 9 | Template | Progress § always right after H1; phases must mirror Implementation § |
+| 8 | Template | H2 sections must use Title Case. Only 5 valid sections allowed |
+| 9 | Template | Progress always right after H1; phases must mirror Implementation |
 | 10 | Template | Phase 1: Definition is mandatory in every plan with two fixed steps. Must not be modified |
 | 11 | Template | Steps grouped by phase (`### Phase N: Name`), each concrete and verifiable. Use "Phase" and "Step" only (never "Stage") |
-| 12 | Template | Technical detail in Implementation §, summary in Progress § |
-| 13 | Template | Closing Summary § is the last section, written when the last phase is completed |
+| 12 | Template | Technical detail in Implementation, summary in Progress |
+| 13 | Template | Closing Summary is the last section, written when the last phase is completed |
 | 14 | Template | Every `.md` plan must follow the template and live in its state folder |
 | 15 | Template | A plan must not move to `doing/` until Phase 1: Definition is complete |
-| 16 | Data | Multi-value fields use comma-separated strings; datetimes use ISO 8601 `YYYY-MM-DDThh:mm`, `""` if not reached |
-| 17 | Data | Datetimes must come from the system clock. Hardcoded, estimated, or placeholder values are forbidden |
-| 18 | Data | `author` is immutable once assigned; multiple authors are comma-separated |
-| 19 | Data | `_` separates timestamp ID from description; uniqueness = timestamp + description |
+| 16 | Template | Issue references go inline as Markdown links in the relevant step or section, not in frontmatter. Use `[#N](url)` format |
+| 17 | Data | Multi-value fields use comma-separated strings; datetimes use ISO 8601 `YYYY-MM-DDThh:mm`, `""` if not reached |
+| 18 | Data | Datetimes must come from the system clock. Hardcoded, estimated, or placeholder values are forbidden |
+| 19 | Data | `author` is immutable once assigned; multiple authors are comma-separated |
+| 20 | Data | `_` separates timestamp ID from description; uniqueness = timestamp + description |
 
 ---
 

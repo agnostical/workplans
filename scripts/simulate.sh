@@ -141,10 +141,10 @@ pause_step() {
 
 # Creates a plan file with proper frontmatter.
 # Body content is read from stdin (heredoc).
-# Usage: write_plan STATE SLUG TITLE AUTHOR MODEL ASSIGNEE AMODEL ISSUE <<'EOF'
+# Usage: write_plan STATE SLUG TITLE AUTHOR MODEL ASSIGNEE AMODEL <<'EOF'
 write_plan() {
   local state="$1" slug="$2" title="$3" author="$4" model="$5"
-  local assignee="${6:-}" amodel="${7:-}" issue="${8:-}"
+  local assignee="${6:-}" amodel="${7:-}"
   local prefix
   prefix=$(echo "$state" | tr '[:lower:]' '[:upper:]')
   local filename="${prefix}-${SIM_DATE}-${author}_${slug}.md"
@@ -161,7 +161,6 @@ author: "$author"
 author_model: "$model"
 assignee: "$assignee"
 assignee_model: "$amodel"
-issue: "$issue"
 backlog: "$([ "$state" = "backlog" ] && echo "$sim_dt" || echo "")"
 doing: ""
 done: ""
@@ -288,7 +287,7 @@ pause_step
 
 SIM_TIME="09:12"
 write_plan "backlog" "database-schema" "Database schema design" \
-  "sebastianserna" "gpt-4o" "" "" "https://github.com/user/repo/issues/42" <<'EOF'
+  "sebastianserna" "gpt-4o" "" "" <<'EOF'
 
 # Database schema design
 
@@ -346,7 +345,7 @@ pause_step
 
 SIM_TIME="14:20"
 write_plan "backlog" "user-auth-setup" "User authentication setup" \
-  "sebastianserna" "claude-opus-4" "" "" "https://github.com/user/repo/issues/60" <<'EOF'
+  "sebastianserna" "claude-opus-4" "" "" <<'EOF'
 
 # User authentication setup
 
@@ -441,7 +440,7 @@ pause_step
 
 SIM_TIME="11:20"
 write_plan "backlog" "dashboard-redesign" "Dashboard redesign" \
-  "sebastianserna" "claude-opus-4, gemini-pro" "" "" "https://github.com/user/repo/issues/75" <<'EOF'
+  "sebastianserna" "claude-opus-4, gemini-pro" "" "" <<'EOF'
 
 # Dashboard redesign
 
@@ -511,7 +510,7 @@ pause_step
 
 SIM_TIME="11:45"
 write_plan "backlog" "logging-monitoring" "Logging and monitoring setup" \
-  "sebastianserna" "claude-opus-4" "" "" "https://github.com/user/repo/issues/65" <<'EOF'
+  "sebastianserna" "claude-opus-4" "" "" <<'EOF'
 
 # Logging and monitoring setup
 
@@ -695,7 +694,7 @@ pause_step
 
 SIM_TIME="09:20"
 write_plan "backlog" "ci-pipeline" "CI/CD pipeline improvements" \
-  "sebastianserna" "mistral-large" "" "" "https://github.com/user/repo/issues/70" <<'EOF'
+  "sebastianserna" "mistral-large" "" "" <<'EOF'
 
 # CI/CD pipeline improvements
 
@@ -772,7 +771,7 @@ pause_step
 
 SIM_TIME="10:30"
 write_plan "backlog" "websocket-realtime" "WebSocket real-time updates" \
-  "sebastianserna" "deepseek-v3" "alexgarcia" "grok-3" "https://github.com/user/repo/issues/82" <<'EOF'
+  "sebastianserna" "deepseek-v3" "alexgarcia" "grok-3" <<'EOF'
 
 # WebSocket real-time updates
 
@@ -813,7 +812,7 @@ pause_step
 
 SIM_TIME="10:45"
 write_plan "backlog" "role-permissions" "Role-based permissions" \
-  "sebastianserna" "gemini-2.5-pro" "alexgarcia" "gpt-4o" "https://github.com/user/repo/issues/88" <<'EOF'
+  "sebastianserna" "gemini-2.5-pro" "alexgarcia" "gpt-4o" <<'EOF'
 
 # Role-based permissions
 
