@@ -2,4 +2,4 @@
 
 Plans in progress, currently being implemented.
 
-[View all plans](../README.md)
+[View all plans](../README.md#doing)

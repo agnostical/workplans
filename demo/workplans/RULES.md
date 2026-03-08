@@ -200,11 +200,11 @@ If the command fails, the agent must report it to the user before continuing.
 
 The root `workplans/README.md` is the only auto-generated index. It is a **system file** — agents must regenerate it after creating, moving, or deleting plans. Never edit manually.
 
-State folder READMEs (`backlog/README.md`, `doing/README.md`, `done/README.md`) are static descriptions with no dynamic content. They never need updating.
+State folder READMEs (`backlog/README.md`, `doing/README.md`, `done/README.md`) are static descriptions with no dynamic content. They never need updating. Each links back to the root index with an anchor matching its state (e.g. `[View all plans](../README.md#doing)`).
 
 ### Root index (`workplans/README.md`)
 
-Shows all plans in a single continuous table. Structure: H1 `# Plans`, a generic description, and a single table with all plans grouped by state. No counters — the table itself is the visual inventory. Links use the subfolder path (e.g. `doing/filename.md`). State order: Backlog, Doing, Done.
+Shows all plans in a single continuous table. Structure: H1 `# Plans`, a generic description, and a single table with all plans grouped by state. No counters — the table itself is the visual inventory. Each state label row includes an HTML anchor (`<a id="state"></a>`) so folder READMEs can deep-link to it. Links use the subfolder path (e.g. `doing/filename.md`). State order: Backlog, Doing, Done.
 
 All three state groups (Backlog, Doing, Done) are always present in the table, even when empty. When a state has no plans, show a placeholder row with `_No plans_` in the Plan column:
 
@@ -216,13 +216,13 @@ This section tracks all your plans organized by state.
 | ID | Plan | Author | Author Model |
 |----|------|--------|--------------|
 | | | | |
-| **Backlog** | | | |
+| <a id="backlog"></a>**Backlog** | | | |
 | | _No plans_ | | |
 | | | | |
-| **Doing** | | | |
+| <a id="doing"></a>**Doing** | | | |
 | | _No plans_ | | |
 | | | | |
-| **Done** | | | |
+| <a id="done"></a>**Done** | | | |
 | | _No plans_ | | |
 ```
 
@@ -236,13 +236,13 @@ This section tracks all your plans organized by state.
 | ID | Plan | Author | Author Model |
 |----|------|--------|--------------|
 | | | | |
-| **Backlog** | | | |
+| <a id="backlog"></a>**Backlog** | | | |
 | 2601551600 | [User authentication setup](backlog/2601551600_user-auth-setup.md) | sebastianserna | claude-opus-4 |
 | | | | |
-| **Doing** | | | |
+| <a id="doing"></a>**Doing** | | | |
 | 2603440500 | [WebSocket real-time updates](doing/2603440500_websocket-realtime.md) | sebastianserna | deepseek-v3 |
 | | | | |
-| **Done** | | | |
+| <a id="done"></a>**Done** | | | |
 | 2600532400 | [Initial project setup](done/2600532400_project-setup.md) | sebastianserna | claude-opus-4 |
 ```
 

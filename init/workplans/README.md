@@ -5,11 +5,11 @@ This section tracks all your plans organized by state.
 | ID | Plan | Author | Author Model |
 |----|------|--------|--------------|
 | | | | |
-| **Backlog** | | | |
+| <a id="backlog"></a>**Backlog** | | | |
 | | _No plans_ | | |
 | | | | |
-| **Doing** | | | |
+| <a id="doing"></a>**Doing** | | | |
 | | _No plans_ | | |
 | | | | |
-| **Done** | | | |
+| <a id="done"></a>**Done** | | | |
 | | _No plans_ | | |
