@@ -195,63 +195,9 @@ Before writing any datetime field, the agent **must** query the system clock. Ha
 
 If the command fails, the agent must report it to the user before continuing.
 
-## README Index Files
+## README Files
 
-The root `workplans/README.md` is the only auto-generated index. It is a **system file** — agents must regenerate it after creating, moving, or deleting plans. Never edit manually.
-
-State folder READMEs (`backlog/README.md`, `doing/README.md`, `done/README.md`) are static descriptions with no dynamic content. They never need updating. Each links back to the root index with an anchor matching its state (e.g. `[View all plans](../README.md#doing)`).
-
-### Root index (`workplans/README.md`)
-
-Shows all plans in a single continuous table. Structure: H1 `# Plans`, a generic description, and a single table with all plans grouped by state. No counters — the table itself is the visual inventory. Each state label row includes an HTML anchor (`<a id="state"></a>`) so folder READMEs can deep-link to it. Links use the subfolder path (e.g. `doing/filename.md`). State order: Backlog, Doing, Done.
-
-All three state groups (Backlog, Doing, Done) are always present in the table, even when empty. When a state has no plans, show a placeholder row with `_No plans_` in the Plan column:
-
-```markdown
-# Plans
-
-This file tracks all your plans organized by state.
-
-| ID | Plan | Author | Author Model |
-|----|------|--------|--------------|
-| | | | |
-| <a id="backlog"></a>**Backlog** | | | |
-| | _No plans_ | | |
-| | | | |
-| <a id="doing"></a>**Doing** | | | |
-| | _No plans_ | | |
-| | | | |
-| <a id="done"></a>**Done** | | | |
-| | _No plans_ | | |
-```
-
-When a state has plans, the placeholder row is replaced by plan rows:
-
-```markdown
-# Plans
-
-This file tracks all your plans organized by state.
-
-| ID | Plan | Author | Author Model |
-|----|------|--------|--------------|
-| | | | |
-| <a id="backlog"></a>**Backlog** | | | |
-| 2601551600 | [User authentication setup](backlog/2601551600_user-auth-setup.md) | sebastianserna | claude-opus-4 |
-| | | | |
-| <a id="doing"></a>**Doing** | | | |
-| 2603440500 | [WebSocket real-time updates](doing/2603440500_websocket-realtime.md) | sebastianserna | deepseek-v3 |
-| | | | |
-| <a id="done"></a>**Done** | | | |
-| 2600532400 | [Initial project setup](done/2600532400_project-setup.md) | sebastianserna | claude-opus-4 |
-```
-
-### Updating the index
-
-When a plan is created, moved, or deleted, the agent must update only the root `workplans/README.md`:
-
-1. Move the plan row from the source state group to the destination state group (or add/remove it)
-2. If a state becomes empty after removing a plan, add the placeholder row `| | _No plans_ | | |`
-3. If a state gains its first plan, remove the placeholder row and add the plan row
+All README files (`workplans/README.md`, `backlog/README.md`, `doing/README.md`, `done/README.md`) are static descriptions. They contain no dynamic content and never need updating by agents. They are system files — do not edit manually.
 
 ## Author detection
 
@@ -304,7 +250,7 @@ After creating, moving, or deleting plans, run the validation script to verify i
 bash scripts/validate.sh <workplans-dir>
 ```
 
-The script checks structure, file naming, frontmatter, template sections, and index synchronization. Fix any errors before continuing.
+The script checks structure, file naming, frontmatter, and template sections. Fix any errors before continuing.
 
 ## Compatibility
 

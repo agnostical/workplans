@@ -744,111 +744,69 @@ Files linked to tasks/projects via a `file_attachments` junction table. Image th
 _To be written when the last phase is completed._
 EOF
 
-# ─── Generate README indexes ────────────────────────────────────
-echo "==> Generating README indexes..."
+# ─── Write static READMEs ────────────────────────────────────────
+# State folder READMEs are static descriptions (not auto-generated).
+# The init scaffold has minimal versions; here we write richer ones
+# matching the demo's purpose as a reference example.
+echo "==> Writing static READMEs..."
 
-# Helper: get frontmatter field
-get_field() {
-  grep "^${2}:" "$1" 2>/dev/null | head -1 | sed 's/^[^:]*: *//' | sed 's/^"//;s/"$//' | sed "s/^'//;s/'$//"
-}
+cat <<'README' > "$DEMO/backlog/README.md"
+# Backlog
 
-# State folder descriptions
-get_description() {
-  case "$1" in
-    backlog) echo "Plans pending, waiting for definition or execution." ;;
-    doing)   echo "Plans in progress, currently being implemented." ;;
-    done)    echo "Plans completed and closed." ;;
-  esac
-}
+Plans pending, waiting for definition or execution.
 
-get_empty_msg() {
-  case "$1" in
-    backlog) echo "_No plans in backlog._" ;;
-    doing)   echo "_No plans in progress._" ;;
-    done)    echo "_No completed plans._" ;;
-  esac
-}
+This is the starting point for all plans. A plan enters the backlog when it has been identified as something worth doing but has not yet started. It may still need further research, scoping, or prioritization before moving forward.
 
-# Collect data for root README
-backlog_count=0; doing_count=0; done_count=0
-backlog_rows=""; doing_rows=""; done_rows=""
+When a plan is ready to be worked on, the AI agent moves it to the `doing/` folder and updates its metadata.
 
-for folder in backlog doing done; do
-  dir="$DEMO/$folder"
-  count=0
-  table_rows=""
-  root_rows=""
+[View all states](../README.md)
+README
 
-  # Collect plan files sorted by ID descending
-  for f in $(ls -r "$dir"/*.md 2>/dev/null); do
-    [[ ! -f "$f" ]] && continue
-    bn=$(basename "$f")
-    [[ "$bn" == "README.md" ]] && continue
-    count=$((count + 1))
+cat <<'README' > "$DEMO/doing/README.md"
+# Doing
 
-    plan_id=$(get_field "$f" "id")
-    plan_name=$(get_field "$f" "title")
-    plan_author=$(get_field "$f" "author")
-    plan_model=$(get_field "$f" "author_model")
+Plans in progress, currently being implemented.
 
-    table_rows+="| ${plan_id} | [${plan_name}](${bn}) | ${plan_author} | ${plan_model} |"$'\n'
-    root_rows+="| ${plan_id} | [${plan_name}](${folder}/${bn}) | ${plan_author} | ${plan_model} |"$'\n'
-  done
+A plan moves here when someone is actively working on it. This folder represents ongoing effort — the plan has been scoped, assigned, and implementation is underway.
 
-  # Store per-state data
-  case "$folder" in
-    backlog) backlog_count=$count; backlog_rows="$root_rows" ;;
-    doing)   doing_count=$count;   doing_rows="$root_rows" ;;
-    done)    done_count=$count;    done_rows="$root_rows" ;;
-  esac
+When the work is complete, the AI agent moves the plan to the `done/` folder. If the plan needs to be paused or deprioritized, it can be moved back to `backlog/`.
 
-  folder_title="$(echo "$folder" | awk '{print toupper(substr($0,1,1)) substr($0,2)}')"
-  description=$(get_description "$folder")
+[View all states](../README.md)
+README
 
-  {
-    echo "# ${folder_title} (${count})"
-    echo ""
-    echo "[View all plans](../README.md)"
-    echo ""
-    echo "$description"
-    if [[ $count -gt 0 ]]; then
-      echo ""
-      echo "| ID | Plan | Author | Author Model |"
-      echo "|----|------|--------|--------------|"
-      printf '%s' "$table_rows"
-    else
-      echo ""
-      echo "$(get_empty_msg "$folder")"
-    fi
-  } > "$dir/README.md"
-done
+cat <<'README' > "$DEMO/done/README.md"
+# Done
 
-# Root README
-{
-  total=$((backlog_count + doing_count + done_count))
-  echo "# Plans ($total)"
-  echo ""
-  echo "This file tracks all your plans organized by state."
-  if [[ $total -eq 0 ]]; then
-    echo ""
-    echo "_No plans yet. See [RULES.md](RULES.md) to get started._"
-  else
-    echo ""
-    echo "| ID | Plan | Author | Author Model |"
-    echo "|----|------|--------|--------------|"
-    for folder in backlog doing done; do
-      case "$folder" in
-        backlog) count=$backlog_count; rows="$backlog_rows" ;;
-        doing)   count=$doing_count;   rows="$doing_rows" ;;
-        done)    count=$done_count;    rows="$done_rows" ;;
-      esac
-      [[ $count -eq 0 ]] && continue
-      folder_title="$(echo "$folder" | awk '{print toupper(substr($0,1,1)) substr($0,2)}')"
-      echo "| | | | |"
-      echo "| **[${folder_title} (${count})](${folder}/README.md)** | | | |"
-      printf '%s' "$rows"
-    done
-  fi
-} > "$DEMO/README.md"
+Plans completed and closed.
+
+A plan moves here when its implementation is finished and verified. This folder serves as a historical record of all completed work, useful for reference and retrospectives.
+
+Done plans should generally not be modified. If a completed plan needs rework, create a new plan in `backlog/` instead of reopening the old one.
+
+[View all states](../README.md)
+README
+
+# ─── Write root README ───────────────────────────────────────────
+echo "==> Writing root README..."
+
+cat <<'README' > "$DEMO/README.md"
+# Plans
+
+This file describes the workflow states used to organize plans. Each state corresponds to a folder where plan files are stored. Browse each folder to see its plans.
+
+| State | Folder | Description |
+|-------|--------|-------------|
+| Backlog | [backlog/](backlog/) | Plans pending, waiting for definition or execution |
+| Doing | [doing/](doing/) | Plans in progress, currently being implemented |
+| Done | [done/](done/) | Plans completed and closed |
+
+Plans move through these states as they progress from idea to completion. State transitions are handled by AI agents following the rules defined in [RULES.md](RULES.md). The agent moves the file to the corresponding folder and updates the plan's metadata accordingly.
+
+To create a new plan, ask your AI agent. For example:
+
+> _Create a plan for implementing user authentication with OAuth2_
+
+The agent will follow the rules to generate the plan file with the correct format and place it in `backlog/`.
+README
 
 echo "==> Done! demo/workplans regenerated with 14 example plans."
