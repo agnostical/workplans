@@ -1,8 +1,8 @@
 # Workplans
 
-This project tracks all plans organized by workflow state: backlog, doing, done, and draft.
-
 ## Overview
+
+This section tracks all plans organized by workflow state: backlog, doing, done, and draft.
 
 | ID | Plan | Author | Author Model |
 |----|------|--------|--------------|
