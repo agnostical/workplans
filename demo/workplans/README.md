@@ -4,12 +4,6 @@ Structured plans organized by workflow state.
 
 ---
 
-| Backlog | Doing | Done | Draft |
-|:-------:|:-----:|:----:|:-----:|
-| 4 | 3 | 4 | 3 |
-
----
-
 | ID | Plan | Author | Author Model |
 |----|------|--------|--------------|
 | | | | |
