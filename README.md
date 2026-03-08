@@ -128,7 +128,7 @@ Plans are created and managed inside `workplans/`. Just prompt your AI agent in 
 
 > *Prompt example*
 ```
-Create a backlog plan for user authentication
+Create a plan for user authentication
 ```
 
 > *Prompt example*
