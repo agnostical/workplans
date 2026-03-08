@@ -7,7 +7,6 @@ author_model: "gemini-2.5-pro"
 assignee: "alexgarcia"
 assignee_model: "gpt-4o"
 issue: "https://github.com/user/repo/issues/88"
-draft_date: "2026-02-18T14:30"
 backlog_date: "2026-02-22T09:25"
 doing_date: ""
 done_date: ""
@@ -17,13 +16,17 @@ done_date: ""
 
 ## Progress §
 
-### Phase 1: Core RBAC
+### Phase 1: Definition
+- [x] Define objective and context
+- [x] Define phases and steps
+
+### Phase 2: Core RBAC
 - [ ] Define roles table and seed default roles (admin, editor, viewer)
 - [ ] Create permissions table with resource-action pairs
 - [ ] Build authorization middleware
 - [ ] Add role assignment API endpoints
 
-### Phase 2: UI integration
+### Phase 3: UI integration
 - [ ] Role management page in admin panel
 - [ ] Permission checks in frontend components
 - [ ] Invite users with specific roles
@@ -34,11 +37,14 @@ Implement role-based access control (RBAC) to restrict actions based on user rol
 
 ## Implementation §
 
-### Phase 1: Core RBAC
+### Phase 1: Definition
+_No implementation needed — this phase tracks the completion of Objective §, Context §, and the definition of subsequent phases._
+
+### Phase 2: Core RBAC
 
 Create `roles` and `permissions` tables. Each role has many permissions. Permissions are defined as `resource:action` pairs (e.g., `project:delete`, `task:create`). The middleware checks `req.user.role.permissions` against the required permission for each endpoint.
 
-### Phase 2: UI integration
+### Phase 3: UI integration
 
 Admin users can manage roles from a settings page. Frontend components conditionally render based on the current user's permissions using a `usePermission('resource:action')` hook.
 

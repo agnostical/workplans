@@ -7,7 +7,6 @@ author_model: "claude-opus-4"
 assignee: ""
 assignee_model: ""
 issue: "https://github.com/user/repo/issues/60"
-draft_date: ""
 backlog_date: "2026-01-15T14:20"
 doing_date: ""
 done_date: ""
@@ -17,13 +16,17 @@ done_date: ""
 
 ## Progress §
 
-### Phase 1: MVP
+### Phase 1: Definition
+- [x] Define objective and context
+- [x] Define phases and steps
+
+### Phase 2: MVP
 - [ ] Create database migration for users table
 - [ ] Implement JWT token generation and validation
 - [ ] Add login and registration API endpoints
 - [ ] Create authentication middleware
 
-### Phase 2: Improvements
+### Phase 3: Improvements
 - [ ] Add password reset flow
 - [ ] Implement rate limiting on auth endpoints
 
@@ -37,11 +40,14 @@ The application currently has no authentication. The database is PostgreSQL and 
 
 ## Implementation §
 
-### Phase 1: MVP
+### Phase 1: Definition
+_No implementation needed — this phase tracks the completion of Objective §, Context §, and the definition of subsequent phases._
+
+### Phase 2: MVP
 
 Create a `users` table with `id`, `email`, `password_hash`, `created_at`. Use bcrypt for password hashing and jsonwebtoken for JWT. The middleware will extract the token from the Authorization header and attach the user to `req.user`.
 
-### Phase 2: Improvements
+### Phase 3: Improvements
 
 Add a `password_reset_tokens` table. Implement a `/forgot-password` endpoint that sends a reset link and a `/reset-password` endpoint that validates the token and updates the password.
 

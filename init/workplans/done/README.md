@@ -1,10 +1,7 @@
-# Done Plans (0 total)
+# Done (0)
 
-Plans that have been completed.
+[View all plans](../README.md)
 
----
-
-| ID | Plan | Author | Author Model |
-|----|------|--------|--------------|
+Plans completed and closed.
 
 _No completed plans._

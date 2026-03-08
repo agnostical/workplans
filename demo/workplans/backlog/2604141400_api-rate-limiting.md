@@ -1,14 +1,13 @@
 ---
 id: 2604141400
 title: "API rate limiting strategy"
-state: "draft"
+state: "backlog"
 author: "sebastianserna"
 author_model: ""
 assignee: ""
 assignee_model: ""
 issue: ""
-draft_date: "2026-02-10T11:30"
-backlog_date: ""
+backlog_date: "2026-02-10T11:30"
 doing_date: ""
 done_date: ""
 ---
@@ -17,7 +16,11 @@ done_date: ""
 
 ## Progress §
 
-### Phase 1: Rate limiting setup
+### Phase 1: Definition
+- [x] Define objective and context
+- [ ] Define phases and steps
+
+### Phase 2: Rate limiting setup
 - [ ] Choose rate limiting library and strategy
 - [ ] Define rate limits per endpoint category
 - [ ] Implement rate limiting middleware
@@ -33,7 +36,10 @@ The API currently has no rate limiting. We already use Redis for sessions, so a 
 
 ## Implementation §
 
-### Phase 1: Rate limiting setup
+### Phase 1: Definition
+_No implementation needed — this phase tracks the completion of Objective §, Context §, and the definition of subsequent phases._
+
+### Phase 2: Rate limiting setup
 
 Use `rate-limiter-flexible` with Redis backend for shared state across instances. Sliding window algorithm for smoother rate distribution. Different tiers: auth endpoints (stricter), read endpoints (relaxed), write endpoints (moderate). Include `X-RateLimit-*` headers in responses.
 

@@ -1,14 +1,13 @@
 ---
 id: 2604655800
 title: "Dark mode design system"
-state: "draft"
+state: "backlog"
 author: "sebastianserna"
 author_model: "gpt-4o"
 assignee: ""
 assignee_model: ""
 issue: ""
-draft_date: "2026-02-15T15:30"
-backlog_date: ""
+backlog_date: "2026-02-15T15:30"
 doing_date: ""
 done_date: ""
 ---
@@ -17,12 +16,16 @@ done_date: ""
 
 ## Progress §
 
-### Phase 1: Design tokens
+### Phase 1: Definition
+- [ ] Define objective and context
+- [ ] Define phases and steps
+
+### Phase 2: Design tokens
 - [ ] Define semantic color tokens (background, surface, text, border)
 - [ ] Create dark palette based on existing brand colors
 - [ ] Implement theme toggle with Tailwind `class` strategy
 
-### Phase 2: Component migration
+### Phase 3: Component migration
 - [ ] Update core UI components to use semantic tokens
 - [ ] Add user preference persistence (localStorage)
 
@@ -36,11 +39,14 @@ The app currently uses hardcoded colors. We already use Tailwind CSS, which has 
 
 ## Implementation §
 
-### Phase 1: Design tokens
+### Phase 1: Definition
+_No implementation needed — this phase tracks the completion of Objective §, Context §, and the definition of subsequent phases._
+
+### Phase 2: Design tokens
 
 Define CSS custom properties for semantic colors (`--color-bg`, `--color-surface`, `--color-text-primary`, etc.) and map them to Tailwind's dark mode classes. Toggle via a `.dark` class on `<html>`.
 
-### Phase 2: Component migration
+### Phase 3: Component migration
 
 Replace hardcoded color classes (`bg-white`, `text-gray-900`) with semantic tokens across all components. Store user preference in localStorage and respect `prefers-color-scheme` as default.
 

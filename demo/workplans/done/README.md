@@ -1,8 +1,8 @@
-# Done Plans (4 total)
+# Done (4)
 
-Plans that have been completed.
+[View all plans](../README.md)
 
----
+Plans completed and closed.
 
 | ID | Plan | Author | Author Model |
 |----|------|--------|--------------|

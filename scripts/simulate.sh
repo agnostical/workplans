@@ -3,7 +3,7 @@
 # simulate.sh — Workplans board simulation (demo timelapse)
 #
 # Creates a temporary workplans environment, starts a local server,
-# and simulates the full lifecycle of 14 plans from draft to done.
+# and simulates the full lifecycle of 14 plans from backlog to done.
 # Uses the same plans as the demo — a 1:1 simulation of what an
 # agent would do: creating files, editing frontmatter, checking
 # tasks, renaming and moving files between folders.
@@ -65,7 +65,7 @@ TMPDIR=$(mktemp -d /tmp/workplans-sim-XXXXX)
 WORKPLANS="$TMPDIR/workplans"
 
 info "Creating temporary workplans at ${DIM}$WORKPLANS${NC}"
-mkdir -p "$WORKPLANS"/{draft,backlog,doing,done}
+mkdir -p "$WORKPLANS"/{backlog,doing,done}
 
 # Copy board extension if available
 if [[ -d "$BOARD_REPO" ]]; then
@@ -77,7 +77,7 @@ else
 fi
 
 # Copy README files
-for state in draft backlog doing done; do
+for state in backlog doing done; do
   if [[ -f "$INIT_WP/$state/README.md" ]]; then
     cp "$INIT_WP/$state/README.md" "$WORKPLANS/$state/README.md"
   fi
@@ -162,7 +162,6 @@ author_model: "$model"
 assignee: "$assignee"
 assignee_model: "$amodel"
 issue: "$issue"
-draft: "$([ "$state" = "draft" ] && echo "$sim_dt" || echo "")"
 backlog: "$([ "$state" = "backlog" ] && echo "$sim_dt" || echo "")"
 doing: ""
 done: ""
@@ -261,7 +260,7 @@ SIM_DATE="2026-01-05"; SIM_TIME="09:00"
 header "Act 1 — Arranque del proyecto"
 # ══════════════════════════════════════════════════════════════
 
-write_plan "draft" "project-setup" "Initial project setup" \
+write_plan "backlog" "project-setup" "Initial project setup" \
   "sebastianserna" "claude-opus-4" "alexgarcia" "claude-sonnet-4" "" <<'EOF'
 
 # Initial project setup
@@ -288,7 +287,7 @@ EOF
 pause_step
 
 SIM_TIME="09:12"
-write_plan "draft" "database-schema" "Database schema design" \
+write_plan "backlog" "database-schema" "Database schema design" \
   "sebastianserna" "gpt-4o" "" "" "https://github.com/user/repo/issues/42" <<'EOF'
 
 # Database schema design
@@ -327,13 +326,7 @@ SIM_DATE="2026-01-10"; SIM_TIME="10:00"
 header "Act 2 — Primer sprint"
 # ══════════════════════════════════════════════════════════════
 
-move_plan "draft" "backlog" "project-setup"
-pause_step
-SIM_TIME="10:10"
 move_plan "backlog" "doing" "project-setup"
-pause_step
-SIM_TIME="10:15"
-move_plan "draft" "backlog" "database-schema"
 pause_step
 check_task "doing" "project-setup" 2
 pause_step
@@ -352,7 +345,7 @@ DONE_COUNT=1; progress
 pause_step
 
 SIM_TIME="14:20"
-write_plan "draft" "user-auth-setup" "User authentication setup" \
+write_plan "backlog" "user-auth-setup" "User authentication setup" \
   "sebastianserna" "claude-opus-4" "" "" "https://github.com/user/repo/issues/60" <<'EOF'
 
 # User authentication setup
@@ -397,7 +390,7 @@ EOF
 pause_step
 
 SIM_TIME="14:35"
-write_plan "draft" "notification-system" "Email notification system" \
+write_plan "backlog" "notification-system" "Email notification system" \
   "sebastianserna" "mistral-large" "" "" "" <<'EOF'
 
 # Email notification system
@@ -430,11 +423,6 @@ header "Act 4 — Base de datos"
 
 move_plan "backlog" "doing" "database-schema"
 pause_step
-SIM_TIME="09:10"
-move_plan "draft" "backlog" "user-auth-setup"
-SIM_TIME="09:15"
-move_plan "draft" "backlog" "notification-system"
-pause_step
 check_task "doing" "database-schema" 3
 pause_step
 
@@ -452,7 +440,7 @@ DONE_COUNT=2; progress
 pause_step
 
 SIM_TIME="11:20"
-write_plan "draft" "dashboard-redesign" "Dashboard redesign" \
+write_plan "backlog" "dashboard-redesign" "Dashboard redesign" \
   "sebastianserna" "claude-opus-4, gemini-pro" "" "" "https://github.com/user/repo/issues/75" <<'EOF'
 
 # Dashboard redesign
@@ -492,7 +480,7 @@ EOF
 pause_step
 
 SIM_TIME="11:30"
-write_plan "draft" "api-rate-limiting" "API rate limiting strategy" \
+write_plan "backlog" "api-rate-limiting" "API rate limiting strategy" \
   "sebastianserna" "" "" "" "" <<'EOF'
 
 # API rate limiting strategy
@@ -522,7 +510,7 @@ EOF
 pause_step
 
 SIM_TIME="11:45"
-write_plan "draft" "logging-monitoring" "Logging and monitoring setup" \
+write_plan "backlog" "logging-monitoring" "Logging and monitoring setup" \
   "sebastianserna" "claude-opus-4" "" "" "https://github.com/user/repo/issues/65" <<'EOF'
 
 # Logging and monitoring setup
@@ -570,11 +558,6 @@ SIM_DATE="2026-02-10"; SIM_TIME="09:00"
 header "Act 6 — Trabajo en paralelo"
 # ══════════════════════════════════════════════════════════════
 
-move_plan "draft" "backlog" "dashboard-redesign"
-SIM_TIME="09:05"
-move_plan "draft" "backlog" "logging-monitoring"
-pause_step
-SIM_TIME="09:15"
 move_plan "backlog" "doing" "logging-monitoring"
 pause_step
 SIM_TIME="09:30"
@@ -593,7 +576,7 @@ check_task "doing" "logging-monitoring" 4
 pause_step
 
 SIM_TIME="10:20"
-write_plan "draft" "api-v2-endpoints" "API v2 endpoints" \
+write_plan "backlog" "api-v2-endpoints" "API v2 endpoints" \
   "sebastianserna" "claude-opus-4" "alexgarcia" "claude-opus-4" "" <<'EOF'
 
 # API v2 endpoints
@@ -639,12 +622,8 @@ move_plan "doing" "done" "logging-monitoring"
 DONE_COUNT=3; progress
 pause_step
 
-SIM_TIME="15:20"
-move_plan "draft" "backlog" "api-v2-endpoints"
-pause_step
-
 SIM_TIME="15:30"
-write_plan "draft" "dark-mode-design" "Dark mode design system" \
+write_plan "backlog" "dark-mode-design" "Dark mode design system" \
   "sebastianserna" "gpt-4o" "" "" "" <<'EOF'
 
 # Dark mode design system
@@ -681,7 +660,7 @@ EOF
 pause_step
 
 SIM_TIME="15:45"
-write_plan "draft" "search-functionality" "Full-text search functionality" \
+write_plan "backlog" "search-functionality" "Full-text search functionality" \
   "sebastianserna" "" "" "" "" <<'EOF'
 
 # Full-text search functionality
@@ -713,12 +692,9 @@ header "Act 9 — Nuevos frentes"
 
 move_plan "backlog" "doing" "api-v2-endpoints"
 pause_step
-SIM_TIME="09:10"
-move_plan "draft" "backlog" "search-functionality"
-pause_step
 
 SIM_TIME="09:20"
-write_plan "draft" "ci-pipeline" "CI/CD pipeline improvements" \
+write_plan "backlog" "ci-pipeline" "CI/CD pipeline improvements" \
   "sebastianserna" "mistral-large" "" "" "https://github.com/user/repo/issues/70" <<'EOF'
 
 # CI/CD pipeline improvements
@@ -757,9 +733,6 @@ Staging deploys automatically on merge to main. Production requires a manual app
 - [ ] Rollback tested and documented
 EOF
 
-SIM_TIME="09:30"
-move_plan "draft" "backlog" "ci-pipeline"
-pause_step
 check_task "doing" "api-v2-endpoints" 2
 pause_step
 
@@ -798,7 +771,7 @@ DONE_COUNT=5; progress
 pause_step
 
 SIM_TIME="10:30"
-write_plan "draft" "websocket-realtime" "WebSocket real-time updates" \
+write_plan "backlog" "websocket-realtime" "WebSocket real-time updates" \
   "sebastianserna" "deepseek-v3" "alexgarcia" "grok-3" "https://github.com/user/repo/issues/82" <<'EOF'
 
 # WebSocket real-time updates
@@ -839,7 +812,7 @@ EOF
 pause_step
 
 SIM_TIME="10:45"
-write_plan "draft" "role-permissions" "Role-based permissions" \
+write_plan "backlog" "role-permissions" "Role-based permissions" \
   "sebastianserna" "gemini-2.5-pro" "alexgarcia" "gpt-4o" "https://github.com/user/repo/issues/88" <<'EOF'
 
 # Role-based permissions
@@ -879,7 +852,7 @@ EOF
 pause_step
 
 SIM_TIME="11:00"
-write_plan "draft" "file-upload-system" "File upload system" \
+write_plan "backlog" "file-upload-system" "File upload system" \
   "sebastianserna" "grok-3" "" "" "" <<'EOF'
 
 # File upload system
@@ -931,15 +904,10 @@ SIM_DATE="2026-02-22"; SIM_TIME="09:00"
 header "Act 12 — WebSocket + Auth"
 # ══════════════════════════════════════════════════════════════
 
-move_plan "draft" "backlog" "websocket-realtime"
-SIM_TIME="09:05"
 move_plan "backlog" "doing" "websocket-realtime"
 pause_step
 SIM_TIME="09:15"
 move_plan "backlog" "doing" "user-auth-setup"
-pause_step
-SIM_TIME="09:25"
-move_plan "draft" "backlog" "role-permissions"
 pause_step
 check_task "doing" "websocket-realtime" 3
 pause_step
@@ -956,11 +924,6 @@ check_task "doing" "websocket-realtime" 2
 check_task "doing" "user-auth-setup" 3
 pause_step
 check_task "doing" "dashboard-redesign" 1
-pause_step
-SIM_TIME="11:15"
-move_plan "draft" "backlog" "dark-mode-design"
-SIM_TIME="11:20"
-move_plan "draft" "backlog" "api-rate-limiting"
 pause_step
 
 
@@ -1024,18 +987,18 @@ header "Simulation Complete"
 echo -e ""
 echo -e "  ${BOLD}Final board state:${NC}"
 echo -e ""
-echo -e "  ${DIM}DRAFT (1)${NC}        ${DIM}BACKLOG (2)${NC}         ${DIM}DOING (1)${NC}              ${BOLD}DONE (10)${NC}"
-echo -e "  ─────────        ───────────         ─────────              ─────────"
-echo -e "  file-upload      api-rate-limiting   role-permissions 43%   project-setup"
-echo -e "                   dark-mode-design                           database-schema"
-echo -e "                                                              logging-monitoring"
-echo -e "                                                              ci-pipeline"
-echo -e "                                                              api-v2-endpoints"
-echo -e "                                                              websocket-realtime"
-echo -e "                                                              user-auth-setup"
-echo -e "                                                              dashboard-redesign"
-echo -e "                                                              notification-system"
-echo -e "                                                              search-functionality"
+echo -e "  ${DIM}BACKLOG (3)${NC}         ${DIM}DOING (1)${NC}              ${BOLD}DONE (10)${NC}"
+echo -e "  ────────────         ─────────              ─────────"
+echo -e "  api-rate-limiting   role-permissions 43%   project-setup"
+echo -e "  dark-mode-design                           database-schema"
+echo -e "  file-upload                                logging-monitoring"
+echo -e "                                             ci-pipeline"
+echo -e "                                             api-v2-endpoints"
+echo -e "                                             websocket-realtime"
+echo -e "                                             user-auth-setup"
+echo -e "                                             dashboard-redesign"
+echo -e "                                             notification-system"
+echo -e "                                             search-functionality"
 echo -e ""
 echo -e "  ${BOLD}10/14 plans completed — 71%${NC}"
 echo -e ""

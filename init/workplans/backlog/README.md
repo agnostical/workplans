@@ -1,10 +1,7 @@
-# Backlog Plans (0 total)
+# Backlog (0)
 
-Approved plans queued and ready to start.
+[View all plans](../README.md)
 
----
-
-| ID | Plan | Author | Author Model |
-|----|------|--------|--------------|
+Plans pending, waiting for definition or execution.
 
 _No plans in backlog._

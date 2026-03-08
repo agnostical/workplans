@@ -1,10 +1,7 @@
-# Doing Plans (0 total)
+# Doing (0)
+
+[View all plans](../README.md)
 
 Plans in progress, currently being implemented.
-
----
-
-| ID | Plan | Author | Author Model |
-|----|------|--------|--------------|
 
 _No plans in progress._

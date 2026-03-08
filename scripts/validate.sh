@@ -69,7 +69,7 @@ else
 fi
 
 # Check state folders
-for folder in backlog doing done draft; do
+for folder in backlog doing done; do
   if [[ -d "$WORKPLANS_DIR/$folder" ]]; then
     pass "$folder/ exists"
   else
@@ -84,7 +84,7 @@ else
   fail "Root README.md not found"
 fi
 
-for folder in backlog doing done draft; do
+for folder in backlog doing done; do
   if [[ -f "$WORKPLANS_DIR/$folder/README.md" ]]; then
     pass "$folder/README.md exists"
   else
@@ -98,7 +98,7 @@ echo "=== File naming validation ==="
 
 id_list=""
 
-for folder in draft backlog doing done; do
+for folder in backlog doing done; do
   dir="$WORKPLANS_DIR/$folder"
   [[ ! -d "$dir" ]] && continue
 
@@ -133,7 +133,7 @@ done
 echo ""
 echo "=== Frontmatter validation ==="
 
-for folder in draft backlog doing done; do
+for folder in backlog doing done; do
   dir="$WORKPLANS_DIR/$folder"
   [[ ! -d "$dir" ]] && continue
 
@@ -177,7 +177,7 @@ for folder in draft backlog doing done; do
     fi
 
     # Check required fields exist
-    for field in title state author author_model assignee assignee_model issue draft_date backlog_date doing_date done_date; do
+    for field in title state author author_model assignee assignee_model issue backlog_date doing_date done_date; do
       if ! grep -q "^${field}:" "$file"; then
         fail "$folder/$bn — missing field: $field"
       fi
@@ -201,7 +201,7 @@ echo "=== Template structure validation ==="
 ALLOWED_SECTIONS="Progress Objective Context Implementation Closing Summary"
 DEPRECATED_SECTIONS="Verification Risks Comments"
 
-for folder in draft backlog doing done; do
+for folder in backlog doing done; do
   dir="$WORKPLANS_DIR/$folder"
   [[ ! -d "$dir" ]] && continue
 
@@ -236,6 +236,13 @@ for folder in draft backlog doing done; do
     else
       fail "$folder/$bn — missing Closing Summary section"
     fi
+
+    # Check Phase 1: Definition exists
+    if grep -q "### Phase 1: Definition" "$file"; then
+      pass "$folder/$bn — Phase 1: Definition present"
+    else
+      fail "$folder/$bn — missing mandatory Phase 1: Definition"
+    fi
   done
 done
 
@@ -244,7 +251,7 @@ echo ""
 echo "=== Index validation ==="
 
 # Validate state folder READMEs
-for folder in draft backlog doing done; do
+for folder in backlog doing done; do
   dir="$WORKPLANS_DIR/$folder"
   readme="$dir/README.md"
   [[ ! -d "$dir" ]] && continue
@@ -263,8 +270,8 @@ for folder in draft backlog doing done; do
     fi
   done
 
-  # Check count in H1
-  readme_count=$(head -1 "$readme" | grep -o '[0-9]\+' | head -1)
+  # Check count in H1: # Workplans — State (N)
+  readme_count=$(head -1 "$readme" | grep -oE '\([0-9]+\)' | grep -oE '[0-9]+')
   readme_count="${readme_count:-0}"
   if [[ "$actual_count" -eq "$readme_count" ]]; then
     pass "$folder/README.md — count matches ($actual_count)"
@@ -298,7 +305,7 @@ if [[ -f "$root_readme" ]]; then
   echo ""
   echo "  --- Root README ---"
 
-  for folder in backlog doing done draft; do
+  for folder in backlog doing done; do
     dir="$WORKPLANS_DIR/$folder"
     [[ ! -d "$dir" ]] && continue
 
@@ -311,17 +318,9 @@ if [[ -f "$root_readme" ]]; then
       actual_count=$((actual_count + 1))
     done
 
-    # Extract count from the summary table (row with numbers)
-    # Table order: Backlog | Doing | Done | Draft
-    case "$folder" in
-      backlog) col=1 ;;
-      doing)   col=2 ;;
-      done)    col=3 ;;
-      draft)   col=4 ;;
-    esac
-    # The summary row is the line after the alignment row |:---..
-    summary_line=$(grep -A1 '|:--' "$root_readme" | tail -1)
-    root_count=$(echo "$summary_line" | awk -F'|' -v c=$((col + 1)) '{gsub(/ /,"",$c); print $c}')
+    # Extract count from the bold state label row: | **State (N)** | | | |
+    folder_title="$(echo "$folder" | awk '{print toupper(substr($0,1,1)) substr($0,2)}')"
+    root_count=$(grep -oE "\\*\\*\\[?${folder_title} \\([0-9]+\\)\\]?(\\([a-z]+/README\\.md\\))?\\*\\*" "$root_readme" | grep -oE '[0-9]+')
     root_count="${root_count:-0}"
 
     if [[ "$actual_count" -eq "$root_count" ]]; then
@@ -342,6 +341,26 @@ if [[ -f "$root_readme" ]]; then
       fi
     done
   done
+
+  # Validate total count in H1: # Plans (N)
+  total_actual=0
+  for folder in backlog doing done; do
+    dir="$WORKPLANS_DIR/$folder"
+    [[ ! -d "$dir" ]] && continue
+    for file in "$dir"/*.md; do
+      [[ ! -f "$file" ]] && continue
+      bn=$(basename "$file")
+      [[ "$bn" == "README.md" ]] && continue
+      total_actual=$((total_actual + 1))
+    done
+  done
+  h1_count=$(head -1 "$root_readme" | grep -oE '\([0-9]+\)' | grep -oE '[0-9]+')
+  h1_count="${h1_count:-0}"
+  if [[ "$total_actual" -eq "$h1_count" ]]; then
+    pass "Root README — total count matches ($total_actual)"
+  else
+    fail "Root README — total count mismatch: H1 says $h1_count, actual $total_actual"
+  fi
 
   # Check for orphan rows in root README
   grep -oE '[a-z]+/[0-9]{10}_[a-z0-9-]+\.md' "$root_readme" | while read -r linked; do

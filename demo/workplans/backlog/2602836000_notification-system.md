@@ -7,7 +7,6 @@ author_model: "mistral-large"
 assignee: ""
 assignee_model: ""
 issue: ""
-draft_date: "2026-01-28T10:00"
 backlog_date: "2026-02-01T09:15"
 doing_date: ""
 done_date: ""
@@ -17,7 +16,11 @@ done_date: ""
 
 ## Progress §
 
-### Phase 1: MVP
+### Phase 1: Definition
+- [x] Define objective and context
+- [x] Define phases and steps
+
+### Phase 2: MVP
 - [ ] Set up email service (SendGrid or AWS SES)
 - [ ] Create email templates for welcome and password reset
 - [ ] Implement notification queue with retry logic
@@ -33,7 +36,10 @@ The application has no email capabilities yet. We already use PostgreSQL for the
 
 ## Implementation §
 
-### Phase 1: MVP
+### Phase 1: Definition
+_No implementation needed — this phase tracks the completion of Objective §, Context §, and the definition of subsequent phases._
+
+### Phase 2: MVP
 
 Use SendGrid API with a simple queue backed by the existing PostgreSQL database. Templates will use Handlebars for variable interpolation. A background worker will process the queue every 30 seconds.
 

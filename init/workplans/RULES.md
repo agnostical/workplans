@@ -7,14 +7,13 @@ version: 0.2.0
 
 > **Source of truth for the Workplans framework.** AI agents must follow these rules when creating, moving, or modifying plans. Do not edit manually. This file is managed by framework releases.
 
-A plan is a structured Markdown file with states `draft` → `backlog` → `doing` → `done`. Each plan lives in the folder matching its current state.
+A plan is a structured Markdown file with states `backlog` → `doing` → `done`. Each plan lives in the folder matching its current state.
 
 ```
 workplans/
 ├── backlog/       # Pending plans
 ├── doing/         # Work in progress
 ├── done/          # Completed plans
-├── draft/         # Early-stage plans
 ├── extend/        # Optional extensions (created on demand)
 ├── RULES.md       # This file (source of truth)
 └── README.md      # Auto-generated plan index
@@ -24,11 +23,12 @@ workplans/
 
 | Action | Move to | Update frontmatter |
 |--------|---------|-------------------|
-| **Draft** | `draft/` | `state: "draft"`, `draft_date` = now |
-| **Promote** | `draft/` → `backlog/` | `state: "backlog"`, `author`, `backlog_date` = now |
+| **Create** | `backlog/` | `state: "backlog"`, `backlog_date` = now |
 | **Start work** | `backlog/` → `doing/` | `state: "doing"`, `doing_date` = now |
 | **Complete** | `doing/` → `done/` | `state: "done"`, `done_date` = now |
 | **Pause** | `backlog/` | `state: "backlog"`, clear `doing_date` |
+
+New plans are created directly in `backlog/`. Every plan starts with a mandatory **Phase 1: Definition** that ensures the plan is fully defined before work begins. Early-stage exploration belongs in notes (see Extensions), not in structured plans.
 
 The filename never changes on state transitions. Only the folder and frontmatter are updated.
 
@@ -42,14 +42,13 @@ Every plan must follow this structure. The example below shows the required sect
 ---
 id: 2606455842
 title: "User authentication setup"
-state: "draft"
+state: "backlog"
 author: ""
 author_model: ""
 assignee: ""
 assignee_model: ""
 issue: ""
-draft_date: "YYYY-MM-DDThh:mm"
-backlog_date: ""
+backlog_date: "YYYY-MM-DDThh:mm"
 doing_date: ""
 done_date: ""
 ---
@@ -57,7 +56,11 @@ done_date: ""
 # User authentication setup
 
 ## Progress §
-### Phase 1: Define auth strategy
+### Phase 1: Definition
+- [ ] Define objective and context
+- [ ] Define phases and steps
+
+### Phase 2: Define auth strategy
 - [ ] Choose authentication method
 - [ ] Document security requirements
 
@@ -68,7 +71,10 @@ Brief description of what this plan aims to achieve and why.
 Relevant background, constraints, or references that inform the plan.
 
 ## Implementation §
-### Phase 1: Define auth strategy
+### Phase 1: Definition
+_No implementation needed — this phase tracks the completion of Objective §, Context §, and the definition of subsequent phases._
+
+### Phase 2: Define auth strategy
 Technical details, decisions, and approach for this phase.
 
 ## Closing Summary §
@@ -83,14 +89,13 @@ Every plan starts with YAML frontmatter on **line 1** (no blank lines before `--
 |-------|-------------|
 | `id` | Timestamp ID matching the filename (`YYDDDsssss`). First field, immutable |
 | `title` | Short descriptive title |
-| `state` | Must match the folder the file lives in: `backlog`, `doing`, `done`, `draft` |
+| `state` | Must match the folder the file lives in: `backlog`, `doing`, `done` |
 | `author` | Human creator. Immutable once assigned. Comma-separated if multiple |
 | `author_model` | AI model ID(s) that created the plan (e.g. `claude-opus-4-6`) |
 | `assignee` | Person implementing |
 | `assignee_model` | AI model ID(s) that executed the plan |
 | `issue` | URL to linked issue (any tracker) |
-| `draft_date` | Datetime drafted (`YYYY-MM-DDThh:mm`) |
-| `backlog_date` | Datetime added to backlog (`YYYY-MM-DDThh:mm`) |
+| `backlog_date` | Datetime created (`YYYY-MM-DDThh:mm`) |
 | `doing_date` | Datetime work started (`YYYY-MM-DDThh:mm`) |
 | `done_date` | Datetime completed (`YYYY-MM-DDThh:mm`) |
 
@@ -110,9 +115,28 @@ Five H2 sections follow the title, in this order. Each heading uses Title Case +
 | `## Implementation §` | Technical detail, decisions, and approach organized by phase |
 | `## Closing Summary §` | Written when the last phase is completed. Bullet points: what was implemented, deviations, blockers, and anything left for future plans. Until then, contains: `_To be written when the last phase is completed._` |
 
+### Mandatory Phase 1: Definition
+
+Every plan must start with `### Phase 1: Definition` as its first phase. This phase has exactly two fixed steps:
+
+```markdown
+### Phase 1: Definition
+- [ ] Define objective and context
+- [ ] Define phases and steps
+```
+
+These two fixed steps ensure every plan has a clear objective and defined phases before execution begins, regardless of which agent created it. A plan in backlog with Phase 1 unchecked is still being defined. When both steps are checked, the plan is fully defined and ready for execution (transition to `doing/`).
+
+**Rules for Phase 1: Definition:**
+- It is always the first phase in both Progress § and Implementation §
+- The two steps are fixed and must not be modified
+- The Implementation § entry for Phase 1 is always: `_No implementation needed — this phase tracks the completion of Objective §, Context §, and the definition of subsequent phases._`
+- A plan must not move to `doing/` until both steps in Phase 1 are checked
+- Subsequent phases (Phase 2, Phase 3, etc.) contain the actual work
+
 ## Rules
 
-All 18 rules are mandatory. Ordered by criticality: **Structure** (framework integrity) → **Template** (plan validity) → **Data** (field correctness).
+All 19 rules are mandatory. Ordered by criticality: **Structure** (framework integrity) → **Template** (plan validity) → **Data** (field correctness).
 
 | # | Category | Rule |
 |---|----------|------|
@@ -125,15 +149,16 @@ All 18 rules are mandatory. Ordered by criticality: **Structure** (framework int
 | 7 | Template | H1 must match the `title` field |
 | 8 | Template | H2 sections must use Title Case + `§` suffix. Only 5 valid sections allowed |
 | 9 | Template | Progress § always right after H1; phases must mirror Implementation § |
-| 10 | Template | Steps grouped by phase (`### Phase N: Name`), each concrete and verifiable. Use "Phase" and "Step" only (never "Stage") |
-| 11 | Template | Technical detail in Implementation §, summary in Progress § |
-| 12 | Template | Closing Summary § is the last section, written when the last phase is completed |
-| 13 | Template | Every `.md` plan must follow the template and live in its state folder |
-| 14 | Data | Multi-value fields use comma-separated strings; datetimes use ISO 8601 `YYYY-MM-DDThh:mm`, `""` if not reached |
-| 15 | Data | Datetimes must come from the system clock. Hardcoded, estimated, or placeholder values are forbidden |
-| 16 | Data | `author` is immutable once assigned; multiple authors are comma-separated |
-| 17 | Data | `_` separates timestamp ID from description; uniqueness = timestamp + description |
-| 18 | Data | Reference plans by description (`user-auth-setup`) or by ID; use `#N` for linked issues |
+| 10 | Template | Phase 1: Definition is mandatory in every plan with two fixed steps. Must not be modified |
+| 11 | Template | Steps grouped by phase (`### Phase N: Name`), each concrete and verifiable. Use "Phase" and "Step" only (never "Stage") |
+| 12 | Template | Technical detail in Implementation §, summary in Progress § |
+| 13 | Template | Closing Summary § is the last section, written when the last phase is completed |
+| 14 | Template | Every `.md` plan must follow the template and live in its state folder |
+| 15 | Template | A plan must not move to `doing/` until Phase 1: Definition is complete |
+| 16 | Data | Multi-value fields use comma-separated strings; datetimes use ISO 8601 `YYYY-MM-DDThh:mm`, `""` if not reached |
+| 17 | Data | Datetimes must come from the system clock. Hardcoded, estimated, or placeholder values are forbidden |
+| 18 | Data | `author` is immutable once assigned; multiple authors are comma-separated |
+| 19 | Data | `_` separates timestamp ID from description; uniqueness = timestamp + description |
 
 ---
 
@@ -177,51 +202,52 @@ Every folder contains an auto-generated `README.md` that serves as an index. The
 
 ### Root index (`workplans/README.md`)
 
-Shows a summary table with plan counts per state, followed by a horizontal rule and one H2 section per state with the full plan table. Links use the subfolder path (e.g. `doing/filename.md`). Section order: Backlog, Doing, Done, Draft.
+Shows all plans in a single continuous table. Structure: H1 `# Plans (N)` with total count, a generic description, and a single table with all plans grouped by state. Links use the subfolder path (e.g. `doing/filename.md`). State order: Backlog, Doing, Done.
 
 ```markdown
-# Workplans
+# Plans (0)
 
-Structured plans organized by workflow state.
-
----
-
-| Backlog | Doing | Done | Draft |
-|:-------:|:-----:|:----:|:-----:|
-| 0 | 0 | 0 | 0 |
+This section tracks all plans organized by workflow state.
 
 _No plans yet. See [RULES.md](RULES.md) to get started._
 ```
 
-The empty-state message and horizontal rule are removed once plans exist. When plans exist, each state with plans gets an H2 section:
+The empty-state message is removed once plans exist. When plans exist, a single table is rendered with one header row. Each state is separated by a blank row and a bold state label row:
 
 ```markdown
-## Doing (3)
+# Plans (11)
+
+This section tracks all plans organized by workflow state.
 
 | ID | Plan | Author | Author Model |
 |----|------|--------|--------------|
+| | | | |
+| **Backlog (4)** | | | |
+| 2601551600 | [User authentication setup](backlog/2601551600_user-auth-setup.md) | sebastianserna | claude-opus-4 |
+| | | | |
+| **Doing (3)** | | | |
 | 2603440500 | [WebSocket real-time updates](doing/2603440500_websocket-realtime.md) | sebastianserna | deepseek-v3 |
+| | | | |
+| **Done (4)** | | | |
+| 2600532400 | [Initial project setup](done/2600532400_project-setup.md) | sebastianserna | claude-opus-4 |
 ```
 
-Empty states are omitted from the root index (no empty tables).
+Empty states are omitted from the table (no empty groups).
 
-### State folder index (`draft/README.md`, `backlog/README.md`, etc.)
+### State folder index (`backlog/README.md`, `doing/README.md`, etc.)
 
-Each state folder README has: H1 with count, a brief description, a horizontal rule, and a table with four columns: `ID`, `Plan`, `Author`, and `Author Model`. The `Plan` column links to the plan file. Plans are sorted by ID descending (most recent first).
+Each state folder README has: H1 with the state name and count, a brief description, and a table with four columns: `ID`, `Plan`, `Author`, and `Author Model`. The `Plan` column links to the plan file. Plans are sorted by ID descending (most recent first).
 
-| State | Description |
-|-------|-------------|
-| Draft | Plans in early stages, pending review and approval. |
-| Backlog | Approved plans queued and ready to start. |
-| Doing | Plans in progress, currently being implemented. |
-| Done | Plans that have been completed. |
+| State | H1 format | Description |
+|-------|-----------|-------------|
+| Backlog | `# Backlog (3)` | Plans pending, waiting for definition or execution. |
+| Doing | `# Doing (3)` | Plans in progress, currently being implemented. |
+| Done | `# Done (3)` | Plans completed and closed. |
 
 ```markdown
-# Draft Plans (3 total)
+# Backlog (3)
 
-Plans in early stages, pending review and approval.
-
----
+Plans pending, waiting for definition or execution.
 
 | ID | Plan | Author | Author Model |
 |----|------|--------|--------------|
@@ -230,22 +256,17 @@ Plans in early stages, pending review and approval.
 | 2604141400 | [API rate limiting strategy](2604141400_api-rate-limiting.md) | sebastianserna | claude-opus-4-6 |
 ```
 
-When the folder is empty, show an empty table and a message:
+When the folder is empty, show a message instead of the table:
 
 ```markdown
-# Backlog Plans (0 total)
+# Backlog (0)
 
-Approved plans queued and ready to start.
-
----
-
-| ID | Plan | Author | Author Model |
-|----|------|--------|--------------|
+Plans pending, waiting for definition or execution.
 
 _No plans in backlog._
 ```
 
-Empty-state messages per folder: Draft → `_No drafts._`, Backlog → `_No plans in backlog._`, Doing → `_No plans in progress._`, Done → `_No completed plans._`
+Empty-state messages per folder: Backlog → `_No plans in backlog._`, Doing → `_No plans in progress._`, Done → `_No completed plans._`
 
 ### Updating indexes on state transitions
 
@@ -253,9 +274,9 @@ When a plan changes state, the agent must update three README files:
 
 1. **Source folder README** — remove the plan row, decrement the count
 2. **Destination folder README** — add the plan row with the correct link to the file in the new folder, increment the count. Insert in descending ID order
-3. **Root README** — update the counts for both affected states
+3. **Root README** — move the plan row from the source state group to the destination state group, update the counts in the bold state label rows. If a state becomes empty, remove its separator row, label row, and all plan rows. If a state gains its first plan, add a separator row, bold state label, and plan row in the correct state order
 
-If a folder becomes empty after removing a plan, restore the empty-state message. If a folder was empty before adding a plan, remove the empty-state message.
+If a state folder becomes empty after removing a plan, restore the empty-state message in the folder README. If a folder was empty before adding a plan, remove the empty-state message. In the root README, restore the `_No plans yet._` message only when all three states are empty (remove the entire table).
 
 ## Author detection
 
@@ -269,9 +290,7 @@ Resolve in order. Stop at the first valid result:
 
 Generic usernames (`admin`, `root`, `guest`, `user`, `default`, `ubuntu`, `ec2-user`) are not valid. Skip to the next step.
 
-**On creation (`draft/`):** detection runs but does not block. If it succeeds, `author` is written to frontmatter. If it fails, the field remains empty.
-
-**On transition out of `draft/`:** if `author` is still empty, detection runs again. Only if all automatic detection fails, the user is prompted. No plan advances beyond `draft/` without a known author.
+**On creation (`backlog/`):** detection runs and must succeed before the plan is created. If all automatic detection fails, the user is prompted. No plan is created without a known author.
 
 ## AI model attribution
 

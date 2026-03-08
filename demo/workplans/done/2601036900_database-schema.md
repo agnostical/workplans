@@ -7,7 +7,6 @@ author_model: "gpt-4o"
 assignee: "alexgarcia"
 assignee_model: "gpt-4o"
 issue: "https://github.com/user/repo/issues/42"
-draft_date: ""
 backlog_date: "2026-01-10T10:15"
 doing_date: "2026-01-20T09:00"
 done_date: "2026-02-08T11:10"
@@ -17,7 +16,11 @@ done_date: "2026-02-08T11:10"
 
 ## Progress §
 
-### Phase 1: Core tables
+### Phase 1: Definition
+- [x] Define objective and context
+- [x] Define phases and steps
+
+### Phase 2: Core tables
 - [x] Design users table with indexes
 - [x] Design projects table with foreign keys
 - [x] Design tasks table with status enum
@@ -30,7 +33,10 @@ Design and implement the core database schema that supports users, projects, and
 
 ## Implementation §
 
-### Phase 1: Core tables
+### Phase 1: Definition
+_No implementation needed — this phase tracks the completion of Objective §, Context §, and the definition of subsequent phases._
+
+### Phase 2: Core tables
 
 PostgreSQL with UUIDs as primary keys. All tables include `created_at` and `updated_at` timestamps with automatic triggers. Foreign keys use `ON DELETE CASCADE` for owned resources. Indexes on all frequently queried columns.
 
