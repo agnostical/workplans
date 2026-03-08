@@ -2,7 +2,7 @@
 
 This project tracks 14 plans organized by workflow state: backlog, doing, done, and draft.
 
-## All Plans
+## Overview
 
 | ID | Plan | Author | Author Model |
 |----|------|--------|--------------|
