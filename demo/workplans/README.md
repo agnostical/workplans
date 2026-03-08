@@ -1,6 +1,6 @@
 # Workplans
 
-Structured plans organized by workflow state.
+This project has 14 plans.
 
 ---
 
