@@ -16,7 +16,7 @@ workplans/
 ├── done/          # Completed plans
 ├── extend/        # Optional extensions (created on demand)
 ├── RULES.md       # This file (source of truth)
-└── README.md      # Auto-generated plan index
+└── README.md      # Static workflow description
 ```
 
 ## Workflow
@@ -240,7 +240,7 @@ Install extensions via giget:
 npx giget gh:agnostical/board workplans/extend/board
 ```
 
-The `extend/` folder and its contents are not plan files. They are excluded from indexing and validation.
+The `extend/` folder and its contents are not plan files. They are excluded from validation.
 
 ## Validation
 

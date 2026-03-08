@@ -88,7 +88,7 @@ workplans/
 ├── doing/         # Work in progress
 ├── done/          # Completed plans
 ├── RULES.md       # Framework rules (source of truth)
-└── README.md      # Auto-generated plan index
+└── README.md      # Static workflow description
 ```
 
 ### 2. Connect Workplans to your AI Agent
