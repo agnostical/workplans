@@ -1,57 +1,12 @@
-# Rules: backlog/
+# Backlog Plans (4 total)
 
-> Pending plans waiting to be worked on.
+Approved plans queued and ready to start.
 
-## Naming
-
-```
-BACKLOG-YYYY-MM-DD-author_description.md
-```
-
-Date = when the plan was created.
-
-## Rules
-
-- Frontmatter: `state: "backlog"` (see `workplans/README.md` for full format)
-- Fill in `author` and other relevant frontmatter fields
-- To start work: move to `doing/`, rename prefix to `DOING`, update date and frontmatter
-- Plans returned from `doing/` come back here
-
-## Example
-
-```markdown
----
-plan: "User authentication setup"
-state: "backlog"
-author: "sebastianserna"
-author_model: "claude-opus-4-6"
-assignee: ""
-assignee_model: ""
-issue: ""
-draft: ""
-backlog: "2026-01-15T10:00"
-doing: ""
-done: ""
-tags: "enhancement"
 ---
 
-# User authentication setup
-
-## Progress
-
-### Phase 1: MVP
-- [ ] Create database migration for users table
-- [ ] Implement JWT token generation and validation
-- [ ] Add login and registration API endpoints
-- [ ] Create authentication middleware
-
-## Objective
-
-Implement user authentication using JWT tokens. Required before any user-facing feature can be deployed.
-
-## Implementation
-
-### Phase 1: MVP
-
-Create a `users` table with `id`, `email`, `password_hash`, `created_at`. Use bcrypt for password hashing and jsonwebtoken for JWT. Middleware extracts token from Authorization header and attaches user to `req.user`.
-```
+| ID | Plan | Author | Author Model |
+|----|------|--------|--------------|
+| 2604952200 | [Role-based permissions](2604952200_role-permissions.md) | sebastianserna | gemini-2.5-pro |
+| 2604739600 | [Full-text search functionality](2604739600_search-functionality.md) | sebastianserna | |
+| 2602836000 | [Email notification system](2602836000_notification-system.md) | sebastianserna | mistral-large |
+| 2601551600 | [User authentication setup](2601551600_user-auth-setup.md) | sebastianserna | claude-opus-4 |

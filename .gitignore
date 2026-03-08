@@ -23,5 +23,8 @@ node_modules/
 dist/
 build/
 
+# Development
+.dev/
+
 # Claude Code
 /.claude

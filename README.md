@@ -2,18 +2,62 @@
 
 ![version](https://img.shields.io/github/v/release/agnostical/workplans)
 
-A framework for managing AI-driven work plans using structured Markdown files, with YAML frontmatter metadata that guides AI agents through task execution. Plans flow through a defined lifecycle:
+An open framework for managing AI-driven work plans using structured Markdown files, with YAML frontmatter metadata that guides AI agents through task execution. Plans flow through a defined lifecycle:
 
 > **`Draft` → `Backlog` → `Doing` → `Done`**
 
 ## Features
 
-- **Zero setup:** Just a folder of Markdown files. No dependencies, no build steps, no accounts. Drop it into any project and start planning
-- **AI-agnostic:** Works with any AI agent or model; no vendor lock-in, no proprietary config files
-- **Plan lifecycle:** Structured workflow with four states: draft, backlog, doing, done. Plans track their own state and progress, helping AI agents resume where work left off
-- **Context-efficient structure:** Compact Markdown + YAML frontmatter keeps plans parseable and self-contained, reducing noise in the AI agent's context window
-- **Built for collaboration:** Plans track authors, assignees, and AI models involved, keeping a clear record of who created and executed each plan
-- **Visual progress board:** A live Kanban dashboard to track your AI agent's work in real time. Just serve it locally and open your browser
+- **Open source:** Fully open source under the MIT license. Free to use, modify, and distribute.
+- **Zero setup:** Just a folder of Markdown files. No dependencies, no build steps, no accounts. Drop it into any project and start planning.
+- **AI-agnostic:** Works with any AI agent or model; no vendor lock-in, no proprietary config files.
+- **Plan lifecycle:** Structured workflow with four states: draft, backlog, doing, done. Plans track their own state and progress, helping AI agents resume where work left off.
+- **Unique IDs:** Each plan gets an immutable ID derived from the system clock (including ordinal day of the year + exact second of the day), preventing duplicates across teams and enabling conflict-free collaboration in shared repositories.
+- **Context-efficient structure:** Compact Markdown + YAML frontmatter keeps plans parseable and self-contained, reducing noise in the AI agent's context window.
+- **Built for collaboration:** Plans track authors, assignees, and AI models involved, keeping a clear record of who created and executed each plan.
+
+## What is a plan?
+
+A plan is a structured Markdown file with YAML frontmatter. It defines a unit of work for AI agents to create, track, and execute. Each plan lives in the folder matching its current state (draft, backlog, doing, done).
+
+The example below shows the required sections and field order. AI agents fill in the content automatically when creating a plan.
+
+```markdown
+---
+id: 2606455842
+title: "User authentication setup"
+state: "draft"
+author: ""
+author_model: ""
+assignee: ""
+assignee_model: ""
+issue: ""
+draft_date: "YYYY-MM-DDThh:mm"
+backlog_date: ""
+doing_date: ""
+done_date: ""
+---
+
+# User authentication setup
+
+## Progress §
+### Phase 1: Define auth strategy
+- [ ] Choose authentication method
+- [ ] Document security requirements
+
+## Objective §
+Brief description of what this plan aims to achieve and why.
+
+## Context §
+Relevant background, constraints, or references that inform the plan.
+
+## Implementation §
+### Phase 1: Define auth strategy
+Technical details, decisions, and approach for this phase.
+
+## Closing Summary §
+_To be written when the last phase is completed._
+```
 
 ## Quick start
 
@@ -31,16 +75,16 @@ If you have Node.js installed, open the terminal in your project folder and run:
 npx giget gh:agnostical/workplans/init . --force
 ```
 
-Both options give you the same ready-to-use folder with four state directories for your plans, a visual progress board, and a README that acts as the source of truth for your AI agent:
+Both options give you the same ready-to-use folder with four state directories for your plans and a RULES.md that acts as the source of truth for your AI agent:
 
 ```
 workplans/
-├── backlog/                  # Pending plans
-├── doing/                    # Work in progress
-├── done/                     # Completed plans
-├── draft/                    # Drafts, ideas, and decisions
-├── progress/                 # Visual board (optional)
-└── README.md                 # Plan management rules (source of truth)
+├── backlog/       # Pending plans
+├── doing/         # Work in progress
+├── done/          # Completed plans
+├── draft/         # Early-stage plans
+├── RULES.md       # Framework rules (source of truth)
+└── README.md      # Auto-generated plan index
 ```
 
 ### 2. Connect Workplans to your AI Agent
@@ -52,7 +96,7 @@ If you don't have an AI instructions file in your project, open your AI agent (t
 
 > *Prompt example*
 ```
-Read workplans/README.md and create a draft plan for a TODO app
+Read workplans/RULES.md and create a draft plan for a TODO app
 ```
 
 The agent will read the rules, then create a new Markdown plan file inside the `workplans/draft/` folder.
@@ -62,7 +106,7 @@ If you already have a `.cursorrules`, `CLAUDE.md`, `AGENTS.md`, or similar AI in
 
 > *Add this instruction*
 ```
-Manage tasks and plans by strictly following the rules defined in: workplans/README.md
+Manage tasks and plans by strictly following the rules defined in: workplans/RULES.md
 ```
 
 Then just prompt your agent:
@@ -76,7 +120,7 @@ The agent will create a new Markdown plan file inside the `workplans/draft/` fol
 
 ### 3. Everyday usage
 
-After setup, plans will be created and managed inside the `workplans/` folder. As shown in the examples above, just prompt your AI agent in natural language:
+Plans are created and managed inside `workplans/`. Just prompt your AI agent in natural language:
 
 > *Prompt example*
 ```
@@ -88,19 +132,7 @@ Create a backlog plan for user authentication
 Move the dashboard-redesign plan to doing
 ```
 
-The agent will create plans, move them between states, and update progress as it works. See the [source of truth](init/workplans/README.md) inside the workplans folder for the complete template and rules.
-
-## Progress board
-
-The `workplans/progress/` folder includes a visual board that displays your plans as a Kanban-style dashboard organized by state. It is not required for the AI agent to work. The agent reads and manages plans directly from the Markdown files. The board is just a convenience for you to see the overall progress at a glance, with live polling that updates in real time as plans change.
-
-To use it, serve the `workplans/` folder with any local HTTP server and open `progress/` in your browser. For example, using Python:
-
-```bash
-cd workplans && python3 -m http.server
-```
-
-Then open `http://localhost:8000/progress/`
+The agent will create plans, move them between states, and update progress as it works. See the [RULES.md](init/workplans/RULES.md) inside the workplans folder for the complete template and rules.
 
 ## License
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 # ─────────────────────────────────────────────────────────────────
-# simulate.sh — Workplans progress board simulation (demo timelapse)
+# simulate.sh — Workplans board simulation (demo timelapse)
 #
 # Creates a temporary workplans environment, starts a local server,
 # and simulates the full lifecycle of 14 plans from draft to done.
@@ -57,18 +57,24 @@ header()  { echo -e "\n${BOLD}═══ $1 ═══${NC}\n"; }
 # ── Paths ──
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-INIT_PROGRESS="$ROOT_DIR/init/workplans/progress"
 INIT_WP="$ROOT_DIR/init/workplans"
+BOARD_REPO="$ROOT_DIR/../board"
 
 # ── Create temp directory ──
 TMPDIR=$(mktemp -d /tmp/workplans-sim-XXXXX)
 WORKPLANS="$TMPDIR/workplans"
 
 info "Creating temporary workplans at ${DIM}$WORKPLANS${NC}"
-mkdir -p "$WORKPLANS"/{draft,backlog,doing,done,progress}
+mkdir -p "$WORKPLANS"/{draft,backlog,doing,done}
 
-# Copy progress board
-cp -r "$INIT_PROGRESS/"* "$WORKPLANS/progress/"
+# Copy board extension if available
+if [[ -d "$BOARD_REPO" ]]; then
+  mkdir -p "$WORKPLANS/extend/board"
+  rsync -a --exclude='.DS_Store' --exclude='.git' "$BOARD_REPO/" "$WORKPLANS/extend/board/"
+  info "Installed extend/board from agnostical/board"
+else
+  info "Skipping board (repo not found at $BOARD_REPO)"
+fi
 
 # Copy README files
 for state in draft backlog doing done; do
@@ -104,7 +110,7 @@ trap cleanup EXIT INT TERM
 sleep 1
 
 # ── Open browser ──
-URL="http://localhost:$PORT/progress/"
+URL="http://localhost:$PORT/extend/board/"
 info "Opening browser: ${BOLD}$URL${NC}"
 if command -v open >/dev/null 2>&1; then
   open "$URL"
@@ -135,10 +141,10 @@ pause_step() {
 
 # Creates a plan file with proper frontmatter.
 # Body content is read from stdin (heredoc).
-# Usage: write_plan STATE SLUG TITLE AUTHOR MODEL ASSIGNEE AMODEL ISSUE TAGS <<'EOF'
+# Usage: write_plan STATE SLUG TITLE AUTHOR MODEL ASSIGNEE AMODEL ISSUE <<'EOF'
 write_plan() {
   local state="$1" slug="$2" title="$3" author="$4" model="$5"
-  local assignee="${6:-}" amodel="${7:-}" issue="${8:-}" tags="${9:-}"
+  local assignee="${6:-}" amodel="${7:-}" issue="${8:-}"
   local prefix
   prefix=$(echo "$state" | tr '[:lower:]' '[:upper:]')
   local filename="${prefix}-${SIM_DATE}-${author}_${slug}.md"
@@ -149,7 +155,7 @@ write_plan() {
   {
     cat <<FRONTMATTER
 ---
-plan: "$title"
+title: "$title"
 state: "$state"
 author: "$author"
 author_model: "$model"
@@ -160,7 +166,6 @@ draft: "$([ "$state" = "draft" ] && echo "$sim_dt" || echo "")"
 backlog: "$([ "$state" = "backlog" ] && echo "$sim_dt" || echo "")"
 doing: ""
 done: ""
-tags: "$tags"
 ---
 FRONTMATTER
     cat
@@ -257,7 +262,7 @@ header "Act 1 — Arranque del proyecto"
 # ══════════════════════════════════════════════════════════════
 
 write_plan "draft" "project-setup" "Initial project setup" \
-  "sebastianserna" "claude-opus-4" "alexgarcia" "claude-sonnet-4" "" "setup" <<'EOF'
+  "sebastianserna" "claude-opus-4" "alexgarcia" "claude-sonnet-4" "" <<'EOF'
 
 # Initial project setup
 
@@ -284,7 +289,7 @@ pause_step
 
 SIM_TIME="09:12"
 write_plan "draft" "database-schema" "Database schema design" \
-  "sebastianserna" "gpt-4o" "" "" "https://github.com/user/repo/issues/42" "database, architecture" <<'EOF'
+  "sebastianserna" "gpt-4o" "" "" "https://github.com/user/repo/issues/42" <<'EOF'
 
 # Database schema design
 
@@ -348,7 +353,7 @@ pause_step
 
 SIM_TIME="14:20"
 write_plan "draft" "user-auth-setup" "User authentication setup" \
-  "sebastianserna" "claude-opus-4" "" "" "https://github.com/user/repo/issues/60" "enhancement, auth" <<'EOF'
+  "sebastianserna" "claude-opus-4" "" "" "https://github.com/user/repo/issues/60" <<'EOF'
 
 # User authentication setup
 
@@ -393,7 +398,7 @@ pause_step
 
 SIM_TIME="14:35"
 write_plan "draft" "notification-system" "Email notification system" \
-  "sebastianserna" "mistral-large" "" "" "" "feature, notifications" <<'EOF'
+  "sebastianserna" "mistral-large" "" "" "" <<'EOF'
 
 # Email notification system
 
@@ -448,7 +453,7 @@ pause_step
 
 SIM_TIME="11:20"
 write_plan "draft" "dashboard-redesign" "Dashboard redesign" \
-  "sebastianserna" "claude-opus-4, gemini-pro" "" "" "https://github.com/user/repo/issues/75" "ui, enhancement" <<'EOF'
+  "sebastianserna" "claude-opus-4, gemini-pro" "" "" "https://github.com/user/repo/issues/75" <<'EOF'
 
 # Dashboard redesign
 
@@ -488,7 +493,7 @@ pause_step
 
 SIM_TIME="11:30"
 write_plan "draft" "api-rate-limiting" "API rate limiting strategy" \
-  "sebastianserna" "" "" "" "" "architecture, api" <<'EOF'
+  "sebastianserna" "" "" "" "" <<'EOF'
 
 # API rate limiting strategy
 
@@ -518,7 +523,7 @@ pause_step
 
 SIM_TIME="11:45"
 write_plan "draft" "logging-monitoring" "Logging and monitoring setup" \
-  "sebastianserna" "claude-opus-4" "" "" "https://github.com/user/repo/issues/65" "infra, observability" <<'EOF'
+  "sebastianserna" "claude-opus-4" "" "" "https://github.com/user/repo/issues/65" <<'EOF'
 
 # Logging and monitoring setup
 
@@ -589,7 +594,7 @@ pause_step
 
 SIM_TIME="10:20"
 write_plan "draft" "api-v2-endpoints" "API v2 endpoints" \
-  "sebastianserna" "claude-opus-4" "alexgarcia" "claude-opus-4" "" "api, enhancement" <<'EOF'
+  "sebastianserna" "claude-opus-4" "alexgarcia" "claude-opus-4" "" <<'EOF'
 
 # API v2 endpoints
 
@@ -640,7 +645,7 @@ pause_step
 
 SIM_TIME="15:30"
 write_plan "draft" "dark-mode-design" "Dark mode design system" \
-  "sebastianserna" "gpt-4o" "" "" "" "design, ui" <<'EOF'
+  "sebastianserna" "gpt-4o" "" "" "" <<'EOF'
 
 # Dark mode design system
 
@@ -677,7 +682,7 @@ pause_step
 
 SIM_TIME="15:45"
 write_plan "draft" "search-functionality" "Full-text search functionality" \
-  "sebastianserna" "" "" "" "" "feature" <<'EOF'
+  "sebastianserna" "" "" "" "" <<'EOF'
 
 # Full-text search functionality
 
@@ -714,7 +719,7 @@ pause_step
 
 SIM_TIME="09:20"
 write_plan "draft" "ci-pipeline" "CI/CD pipeline improvements" \
-  "sebastianserna" "mistral-large" "" "" "https://github.com/user/repo/issues/70" "infra, ci/cd" <<'EOF'
+  "sebastianserna" "mistral-large" "" "" "https://github.com/user/repo/issues/70" <<'EOF'
 
 # CI/CD pipeline improvements
 
@@ -794,7 +799,7 @@ pause_step
 
 SIM_TIME="10:30"
 write_plan "draft" "websocket-realtime" "WebSocket real-time updates" \
-  "sebastianserna" "deepseek-v3" "alexgarcia" "grok-3" "https://github.com/user/repo/issues/82" "feature, real-time" <<'EOF'
+  "sebastianserna" "deepseek-v3" "alexgarcia" "grok-3" "https://github.com/user/repo/issues/82" <<'EOF'
 
 # WebSocket real-time updates
 
@@ -835,7 +840,7 @@ pause_step
 
 SIM_TIME="10:45"
 write_plan "draft" "role-permissions" "Role-based permissions" \
-  "sebastianserna" "gemini-2.5-pro" "alexgarcia" "gpt-4o" "https://github.com/user/repo/issues/88" "auth, security" <<'EOF'
+  "sebastianserna" "gemini-2.5-pro" "alexgarcia" "gpt-4o" "https://github.com/user/repo/issues/88" <<'EOF'
 
 # Role-based permissions
 
@@ -875,7 +880,7 @@ pause_step
 
 SIM_TIME="11:00"
 write_plan "draft" "file-upload-system" "File upload system" \
-  "sebastianserna" "grok-3" "" "" "" "feature, storage" <<'EOF'
+  "sebastianserna" "grok-3" "" "" "" <<'EOF'
 
 # File upload system
 

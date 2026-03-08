@@ -2,7 +2,7 @@
 # ─────────────────────────────────────────────────────────────────
 # build-demo.sh
 # Regenerates demo/workplans from init/workplans and creates
-# example plan files for all four states.
+# example plan files for all four states (v0.2.0 format).
 #
 # Usage: ./scripts/build-demo.sh
 # ─────────────────────────────────────────────────────────────────
@@ -13,7 +13,6 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 INIT="$ROOT_DIR/init/workplans"
 DEMO="$ROOT_DIR/demo/workplans"
-
 # ─── Clean & copy template ──────────────────────────────────────
 echo "==> Removing demo/workplans..."
 rm -rf "$DEMO"
@@ -24,25 +23,25 @@ cp -r "$INIT" "$DEMO"
 # ─── Backlog plans ──────────────────────────────────────────────
 echo "==> Creating backlog plans..."
 
-cat <<'EOF' > "$DEMO/backlog/BACKLOG-2026-01-15-sebastianserna_user-auth-setup.md"
+cat <<'EOF' > "$DEMO/backlog/2601551600_user-auth-setup.md"
 ---
-plan: "User authentication setup"
+id: 2601551600
+title: "User authentication setup"
 state: "backlog"
 author: "sebastianserna"
 author_model: "claude-opus-4"
 assignee: ""
 assignee_model: ""
 issue: "https://github.com/user/repo/issues/60"
-draft: ""
-backlog: "2026-01-15T14:20"
-doing: ""
-done: ""
-tags: "enhancement, auth"
+draft_date: ""
+backlog_date: "2026-01-15T14:20"
+doing_date: ""
+done_date: ""
 ---
 
 # User authentication setup
 
-## Progress
+## Progress §
 
 ### Phase 1: MVP
 - [ ] Create database migration for users table
@@ -54,15 +53,15 @@ tags: "enhancement, auth"
 - [ ] Add password reset flow
 - [ ] Implement rate limiting on auth endpoints
 
-## Objective
+## Objective §
 
 Implement user authentication for the application using JWT tokens. This is required before any user-facing feature can be deployed, as all API endpoints need to verify user identity.
 
-## Context
+## Context §
 
 The application currently has no authentication. The database is PostgreSQL and the API is built with Express. The frontend expects a Bearer token in the Authorization header.
 
-## Implementation
+## Implementation §
 
 ### Phase 1: MVP
 
@@ -72,33 +71,30 @@ Create a `users` table with `id`, `email`, `password_hash`, `created_at`. Use bc
 
 Add a `password_reset_tokens` table. Implement a `/forgot-password` endpoint that sends a reset link and a `/reset-password` endpoint that validates the token and updates the password.
 
-## Verification
+## Closing Summary §
 
-- [ ] Registration creates a user and returns a valid JWT
-- [ ] Login with correct credentials returns a JWT
-- [ ] Login with wrong credentials returns 401
-- [ ] Protected endpoints reject requests without a valid token
+_To be written when the last phase is completed._
 EOF
 
-cat <<'EOF' > "$DEMO/backlog/BACKLOG-2026-02-01-sebastianserna_notification-system.md"
+cat <<'EOF' > "$DEMO/backlog/2602836000_notification-system.md"
 ---
-plan: "Email notification system"
+id: 2602836000
+title: "Email notification system"
 state: "backlog"
 author: "sebastianserna"
 author_model: "mistral-large"
 assignee: ""
 assignee_model: ""
 issue: ""
-draft: ""
-backlog: "2026-02-01T09:15"
-doing: ""
-done: ""
-tags: "feature, notifications"
+draft_date: "2026-01-28T10:00"
+backlog_date: "2026-02-01T09:15"
+doing_date: ""
+done_date: ""
 ---
 
 # Email notification system
 
-## Progress
+## Progress §
 
 ### Phase 1: MVP
 - [ ] Set up email service (SendGrid or AWS SES)
@@ -106,72 +102,84 @@ tags: "feature, notifications"
 - [ ] Implement notification queue with retry logic
 - [ ] Add user notification preferences
 
-## Objective
+## Objective §
 
 Build an email notification system so users receive transactional emails (welcome, password reset, activity alerts). This unblocks the authentication flow which needs password reset emails.
 
-## Implementation
+## Context §
+
+The application has no email capabilities yet. We already use PostgreSQL for the database and can leverage it for a simple job queue. SendGrid is the preferred provider, with AWS SES as fallback.
+
+## Implementation §
 
 ### Phase 1: MVP
 
 Use SendGrid API with a simple queue backed by the existing PostgreSQL database. Templates will use Handlebars for variable interpolation. A background worker will process the queue every 30 seconds.
+
+## Closing Summary §
+
+_To be written when the last phase is completed._
 EOF
 
-cat <<'EOF' > "$DEMO/backlog/BACKLOG-2026-02-20-sebastianserna_search-functionality.md"
+cat <<'EOF' > "$DEMO/backlog/2604739600_search-functionality.md"
 ---
-plan: "Full-text search functionality"
+id: 2604739600
+title: "Full-text search functionality"
 state: "backlog"
 author: "sebastianserna"
 author_model: ""
 assignee: ""
 assignee_model: ""
 issue: ""
-draft: ""
-backlog: "2026-02-20T15:45"
-doing: ""
-done: ""
-tags: "feature"
+draft_date: "2026-02-16T11:00"
+backlog_date: "2026-02-20T15:45"
+doing_date: ""
+done_date: ""
 ---
 
 # Full-text search functionality
 
-## Progress
+## Progress §
 
 ### Phase 1: MVP
 - [ ] Add PostgreSQL full-text search indexes
 - [ ] Create search API endpoint
 - [ ] Build search results UI component
 
-## Objective
+## Objective §
 
 Allow users to search across all content in the application using full-text search powered by PostgreSQL's built-in tsvector capabilities.
 
-## Implementation
+## Implementation §
 
 ### Phase 1: MVP
 
 Add GIN indexes on the relevant text columns. Create a `/api/search?q=term` endpoint that uses `ts_query` and ranks results by relevance. The frontend will have a search bar with debounced input and a results dropdown.
+
+## Closing Summary §
+
+_To be written when the last phase is completed._
 EOF
 
-cat <<'EOF' > "$DEMO/backlog/BACKLOG-2026-02-22-sebastianserna_role-permissions.md"
+cat <<'EOF' > "$DEMO/backlog/2604952200_role-permissions.md"
 ---
-plan: "Role-based permissions"
+id: 2604952200
+title: "Role-based permissions"
 state: "backlog"
 author: "sebastianserna"
 author_model: "gemini-2.5-pro"
 assignee: "alexgarcia"
 assignee_model: "gpt-4o"
 issue: "https://github.com/user/repo/issues/88"
-draft: ""
-backlog: "2026-02-22T09:25"
-doing: ""
-done: ""
-tags: "auth, security"
+draft_date: "2026-02-18T14:30"
+backlog_date: "2026-02-22T09:25"
+doing_date: ""
+done_date: ""
 ---
 
 # Role-based permissions
 
-## Progress
+## Progress §
 
 ### Phase 1: Core RBAC
 - [ ] Define roles table and seed default roles (admin, editor, viewer)
@@ -184,11 +192,11 @@ tags: "auth, security"
 - [ ] Permission checks in frontend components
 - [ ] Invite users with specific roles
 
-## Objective
+## Objective §
 
 Implement role-based access control (RBAC) to restrict actions based on user roles. Currently all authenticated users have the same permissions, which is a security concern.
 
-## Implementation
+## Implementation §
 
 ### Phase 1: Core RBAC
 
@@ -198,34 +206,33 @@ Create `roles` and `permissions` tables. Each role has many permissions. Permiss
 
 Admin users can manage roles from a settings page. Frontend components conditionally render based on the current user's permissions using a `usePermission('resource:action')` hook.
 
-## Comments
+## Closing Summary §
 
-### 2026-02-22 — sebastianserna
-Moved to backlog. Auth setup needs to be done first (dependency on user-auth-setup plan).
+_To be written when the last phase is completed._
 EOF
 
 # ─── Doing plans ───────────────────────────────────────────────
 echo "==> Creating doing plans..."
 
-cat <<'EOF' > "$DEMO/doing/DOING-2026-02-10-sebastianserna_dashboard-redesign.md"
+cat <<'EOF' > "$DEMO/doing/2601557600_dashboard-redesign.md"
 ---
-plan: "Dashboard redesign"
+id: 2601557600
+title: "Dashboard redesign"
 state: "doing"
 author: "sebastianserna"
 author_model: "claude-opus-4, gemini-pro"
 assignee: "alexgarcia"
 assignee_model: "claude-sonnet-4"
 issue: "https://github.com/user/repo/issues/75"
-draft: ""
-backlog: "2026-01-20T10:00"
-doing: "2026-02-10T09:30"
-done: ""
-tags: "ui, enhancement"
+draft_date: "2026-01-15T16:00"
+backlog_date: "2026-01-20T10:00"
+doing_date: "2026-02-10T09:30"
+done_date: ""
 ---
 
 # Dashboard redesign
 
-## Progress
+## Progress §
 
 ### Phase 1: Layout & navigation
 - [x] Create new sidebar navigation component
@@ -238,11 +245,11 @@ tags: "ui, enhancement"
 - [ ] Quick actions panel
 - [ ] Stats overview cards
 
-## Objective
+## Objective §
 
 Redesign the main dashboard to improve usability and information density. The current layout wastes screen space and the navigation is confusing for new users.
 
-## Implementation
+## Implementation §
 
 ### Phase 1: Layout & navigation
 
@@ -252,37 +259,30 @@ Replace the top navbar with a collapsible sidebar. Use CSS Grid for the main con
 
 Each widget is a self-contained React component that fetches its own data. The dashboard layout will be configurable via drag-and-drop in a future phase.
 
-## Comments
+## Closing Summary §
 
-### 2026-02-10 — sebastianserna
-Started work. Sidebar and grid layout are done. Breadcrumbs next.
-
-### 2026-02-22 — claude-sonnet-4
-Breadcrumbs and activity feed widget completed. Still need to migrate old widgets and build quick actions panel + stats cards.
-
-### 2026-02-27 — sebastianserna
-Activity feed looks great. Let's prioritize stats cards over quick actions for the MVP.
+_To be written when the last phase is completed._
 EOF
 
-cat <<'EOF' > "$DEMO/doing/DOING-2026-02-18-sebastianserna_api-v2-endpoints.md"
+cat <<'EOF' > "$DEMO/doing/2603334200_api-v2-endpoints.md"
 ---
-plan: "API v2 endpoints"
+id: 2603334200
+title: "API v2 endpoints"
 state: "doing"
 author: "sebastianserna"
 author_model: "claude-opus-4"
 assignee: "alexgarcia"
 assignee_model: "claude-opus-4"
 issue: ""
-draft: ""
-backlog: "2026-02-05T11:00"
-doing: "2026-02-18T09:00"
-done: ""
-tags: "api, enhancement"
+draft_date: "2026-02-02T09:30"
+backlog_date: "2026-02-05T11:00"
+doing_date: "2026-02-18T09:00"
+done_date: ""
 ---
 
 # API v2 endpoints
 
-## Progress
+## Progress §
 
 ### Phase 1: Core endpoints
 - [x] Design new REST resource structure
@@ -290,44 +290,40 @@ tags: "api, enhancement"
 - [x] Add filtering and sorting parameters
 - [ ] Write OpenAPI spec documentation
 
-## Objective
+## Objective §
 
 Create v2 of the API with improved pagination, filtering, and consistent error responses. The v1 endpoints will be maintained in parallel during the migration period.
 
-## Implementation
+## Implementation §
 
 ### Phase 1: Core endpoints
 
 All v2 endpoints live under `/api/v2/`. Pagination uses cursor-based navigation instead of offset. Filtering uses query parameters with operators (`?status=eq:active`). Error responses follow RFC 7807 Problem Details format.
 
-## Comments
+## Closing Summary §
 
-### 2026-02-18 — sebastianserna
-Resource structure and cursor pagination implemented. Working on filter parser next.
-
-### 2026-02-25 — claude-opus-4
-Filter parser done with support for `eq`, `gt`, `lt`, `in` operators. Sorting also implemented with multi-field support. Only OpenAPI docs remaining.
+_To be written when the last phase is completed._
 EOF
 
-cat <<'EOF' > "$DEMO/doing/DOING-2026-02-20-sebastianserna_websocket-realtime.md"
+cat <<'EOF' > "$DEMO/doing/2603440500_websocket-realtime.md"
 ---
-plan: "WebSocket real-time updates"
+id: 2603440500
+title: "WebSocket real-time updates"
 state: "doing"
 author: "sebastianserna"
 author_model: "deepseek-v3"
 assignee: "alexgarcia"
 assignee_model: "grok-3"
 issue: "https://github.com/user/repo/issues/82"
-draft: ""
-backlog: "2026-02-05T14:00"
-doing: "2026-02-20T10:30"
-done: ""
-tags: "feature, real-time"
+draft_date: "2026-02-03T11:15"
+backlog_date: "2026-02-05T14:00"
+doing_date: "2026-02-20T10:30"
+done_date: ""
 ---
 
 # WebSocket real-time updates
 
-## Progress
+## Progress §
 
 ### Phase 1: Infrastructure
 - [x] Set up Socket.IO server alongside Express
@@ -341,11 +337,11 @@ tags: "feature, real-time"
 - [ ] Notification push via WebSocket
 - [ ] Activity feed live updates
 
-## Objective
+## Objective §
 
 Add real-time capabilities to the application so that multiple users working on the same project can see changes instantly without refreshing the page.
 
-## Implementation
+## Implementation §
 
 ### Phase 1: Infrastructure
 
@@ -355,40 +351,33 @@ Using Socket.IO for WebSocket support with automatic fallback to long-polling. E
 
 When a task is updated via the REST API, the server emits an event to all clients in the project room. The frontend listens for these events and updates the local state accordingly.
 
-## Comments
+## Closing Summary §
 
-### 2026-02-20 — sebastianserna
-Started implementation. Socket.IO is up and running with auth.
-
-### 2026-02-24 — claude-sonnet-4
-Room management and task status updates are working. Moving to presence and notifications next.
-
-### 2026-02-27 — sebastianserna
-Reconnection logic is trickier than expected. Need to handle token refresh during reconnection.
+_To be written when the last phase is completed._
 EOF
 
 # ─── Done plans ─────────────────────────────────────────────────
 echo "==> Creating done plans..."
 
-cat <<'EOF' > "$DEMO/done/DONE-2026-01-30-sebastianserna_project-setup.md"
+cat <<'EOF' > "$DEMO/done/2600532400_project-setup.md"
 ---
-plan: "Initial project setup"
+id: 2600532400
+title: "Initial project setup"
 state: "done"
 author: "sebastianserna"
 author_model: "claude-opus-4"
 assignee: "alexgarcia"
 assignee_model: "claude-sonnet-4"
 issue: ""
-draft: ""
-backlog: "2026-01-05T09:00"
-doing: "2026-01-10T10:00"
-done: "2026-01-30T14:10"
-tags: "setup"
+draft_date: ""
+backlog_date: "2026-01-05T09:00"
+doing_date: "2026-01-10T10:00"
+done_date: "2026-01-30T14:10"
 ---
 
 # Initial project setup
 
-## Progress
+## Progress §
 
 ### Phase 1: MVP
 - [x] Initialize Node.js project with TypeScript
@@ -397,41 +386,42 @@ tags: "setup"
 - [x] Set up CI/CD pipeline with GitHub Actions
 - [x] Create Docker Compose for local development
 
-## Objective
+## Objective §
 
 Set up the foundational project structure, tooling, and CI/CD so the team can start building features on a solid base.
 
-## Implementation
+## Implementation §
 
 ### Phase 1: MVP
 
 Node.js 20 with TypeScript strict mode. ESLint with Airbnb config. PostgreSQL 16 with node-pg-migrate. GitHub Actions runs lint, type-check, and tests on every PR. Docker Compose includes PostgreSQL and Redis containers.
 
-## Comments
+## Closing Summary §
 
-### 2026-01-30 — sebastianserna
-All done. CI pipeline is green. Team can start building features.
+- All tooling and CI pipeline set up and verified
+- CI pipeline is green, team can start building features
+- Docker Compose environment works for all team members
 EOF
 
-cat <<'EOF' > "$DEMO/done/DONE-2026-02-08-sebastianserna_database-schema.md"
+cat <<'EOF' > "$DEMO/done/2601036900_database-schema.md"
 ---
-plan: "Database schema design"
+id: 2601036900
+title: "Database schema design"
 state: "done"
 author: "sebastianserna"
 author_model: "gpt-4o"
 assignee: "alexgarcia"
 assignee_model: "gpt-4o"
 issue: "https://github.com/user/repo/issues/42"
-draft: ""
-backlog: "2026-01-10T10:15"
-doing: "2026-01-20T09:00"
-done: "2026-02-08T11:10"
-tags: "database, architecture"
+draft_date: ""
+backlog_date: "2026-01-10T10:15"
+doing_date: "2026-01-20T09:00"
+done_date: "2026-02-08T11:10"
 ---
 
 # Database schema design
 
-## Progress
+## Progress §
 
 ### Phase 1: Core tables
 - [x] Design users table with indexes
@@ -440,48 +430,43 @@ tags: "database, architecture"
 - [x] Create migration files
 - [x] Add seed data for development
 
-## Objective
+## Objective §
 
 Design and implement the core database schema that supports users, projects, and tasks. This schema is the foundation for all application features.
 
-## Implementation
+## Implementation §
 
 ### Phase 1: Core tables
 
 PostgreSQL with UUIDs as primary keys. All tables include `created_at` and `updated_at` timestamps with automatic triggers. Foreign keys use `ON DELETE CASCADE` for owned resources. Indexes on all frequently queried columns.
 
-## Verification
+## Closing Summary §
 
-- [x] All migrations run cleanly on a fresh database
-- [x] Seed data populates correctly
-- [x] Foreign key constraints work as expected
-- [x] Query performance is acceptable with seed data volume
-
-## Comments
-
-### 2026-02-08 — sebastianserna
-Schema finalized and deployed to staging. All migrations green.
+- Schema finalized and deployed to staging
+- All migrations run cleanly on fresh databases
+- Seed data populates correctly for development
+- Foreign key constraints and query performance verified
 EOF
 
-cat <<'EOF' > "$DEMO/done/DONE-2026-02-15-sebastianserna_logging-monitoring.md"
+cat <<'EOF' > "$DEMO/done/2601632400_logging-monitoring.md"
 ---
-plan: "Logging and monitoring setup"
+id: 2601632400
+title: "Logging and monitoring setup"
 state: "done"
 author: "sebastianserna"
 author_model: "claude-opus-4"
 assignee: "alexgarcia"
 assignee_model: "claude-sonnet-4"
 issue: "https://github.com/user/repo/issues/65"
-draft: ""
-backlog: "2026-01-20T11:00"
-doing: "2026-02-01T10:00"
-done: "2026-02-15T15:10"
-tags: "infra, observability"
+draft_date: "2026-01-16T09:00"
+backlog_date: "2026-01-20T11:00"
+doing_date: "2026-02-01T10:00"
+done_date: "2026-02-15T15:10"
 ---
 
 # Logging and monitoring setup
 
-## Progress
+## Progress §
 
 ### Phase 1: Structured logging
 - [x] Install and configure Winston logger
@@ -495,11 +480,11 @@ tags: "infra, observability"
 - [x] Grafana dashboard for API performance
 - [x] Alert rules for error rate and latency
 
-## Objective
+## Objective §
 
 Implement structured logging and monitoring to gain visibility into application health and debug production issues effectively.
 
-## Implementation
+## Implementation §
 
 ### Phase 1: Structured logging
 
@@ -509,44 +494,33 @@ Using Winston with JSON format for production and pretty-print for development. 
 
 Health check at `/health` reports database, Redis, and external service status. Prometheus metrics at `/metrics` expose request duration histograms, active connections, and error counters. Grafana dashboards visualize the data with alert thresholds.
 
-## Verification
+## Closing Summary §
 
-- [x] Logs include requestId across all service layers
-- [x] Health check correctly reports degraded state when DB is slow
-- [x] Grafana dashboard shows request latency p50, p95, p99
-- [x] Alerts fire when error rate exceeds 5% over 5 minutes
-
-## Comments
-
-### 2026-02-01 — sebastianserna
-Started work. Winston setup is straightforward.
-
-### 2026-02-10 — claude-sonnet-4
-All logging and health checks are in place. Working on Grafana dashboards.
-
-### 2026-02-15 — sebastianserna
-Everything deployed and verified in staging. Moving to done.
+- Winston logging with request ID correlation deployed across all services
+- Health check correctly reports degraded state when dependencies are slow
+- Grafana dashboards show p50, p95, p99 latency with alert thresholds
+- Alerts fire when error rate exceeds 5% over 5 minutes
 EOF
 
-cat <<'EOF' > "$DEMO/done/DONE-2026-02-20-sebastianserna_ci-pipeline.md"
+cat <<'EOF' > "$DEMO/done/2602250400_ci-pipeline.md"
 ---
-plan: "CI/CD pipeline improvements"
+id: 2602250400
+title: "CI/CD pipeline improvements"
 state: "done"
 author: "sebastianserna"
 author_model: "mistral-large"
 assignee: "alexgarcia"
 assignee_model: "claude-sonnet-4"
 issue: "https://github.com/user/repo/issues/70"
-draft: ""
-backlog: "2026-01-25T09:30"
-doing: "2026-02-10T08:30"
-done: "2026-02-20T10:10"
-tags: "infra, ci/cd"
+draft_date: "2026-01-22T14:00"
+backlog_date: "2026-01-25T09:30"
+doing_date: "2026-02-10T08:30"
+done_date: "2026-02-20T10:10"
 ---
 
 # CI/CD pipeline improvements
 
-## Progress
+## Progress §
 
 ### Phase 1: Build optimization
 - [x] Cache node_modules across CI runs
@@ -558,61 +532,50 @@ tags: "infra, ci/cd"
 - [x] Production deploy with manual approval gate
 - [x] Rollback mechanism with previous image tag
 
-## Objective
+## Objective §
 
 Improve the CI/CD pipeline to reduce build times from ~12 minutes to under 5 minutes and add automated staging deployments.
 
-## Implementation
+## Implementation §
 
 ### Phase 1: Build optimization
 
-Reduced build time from 12 min to 3.5 min by caching \`node_modules\` across CI runs and running lint, type-check, and tests as parallel jobs. Added build artifact caching to avoid redundant rebuilds.
+Reduced build time from 12 min to 3.5 min by caching `node_modules` across CI runs and running lint, type-check, and tests as parallel jobs. Added build artifact caching to avoid redundant rebuilds.
 
 ### Phase 2: Deployment
 
 Staging auto-deploys on merge to main via GitHub Actions. Production deploys require a manual approval gate. Rollback uses the previous Docker image tag for instant recovery.
 
-## Verification
+## Closing Summary §
 
-- [x] CI pipeline completes in under 5 minutes
-- [x] Staging auto-deploys successfully after merge
-- [x] Production deploy with approval gate works correctly
-- [x] Rollback tested and documented
-
-## Comments
-
-### 2026-02-10 — sebastianserna
-Started optimizing. Cache alone brought it down to 7 min.
-
-### 2026-02-15 — claude-sonnet-4
-Parallel jobs implemented. Down to 3.5 min now.
-
-### 2026-02-20 — sebastianserna
-Production deploy pipeline verified. All done.
+- CI pipeline reduced from 12 min to 3.5 min with caching and parallel jobs
+- Staging auto-deploy verified and working on merge to main
+- Production deploy with approval gate tested successfully
+- Rollback mechanism documented and tested
 EOF
 
 # ─── Draft plans ────────────────────────────────────────────────
 echo "==> Creating draft plans..."
 
-cat <<'EOF' > "$DEMO/draft/DRAFT-2026-02-10-sebastianserna_api-rate-limiting.md"
+cat <<'EOF' > "$DEMO/draft/2604141400_api-rate-limiting.md"
 ---
-plan: "API rate limiting strategy"
+id: 2604141400
+title: "API rate limiting strategy"
 state: "draft"
 author: "sebastianserna"
 author_model: ""
 assignee: ""
 assignee_model: ""
 issue: ""
-draft: "2026-02-10T11:30"
-backlog: ""
-doing: ""
-done: ""
-tags: "architecture, api"
+draft_date: "2026-02-10T11:30"
+backlog_date: ""
+doing_date: ""
+done_date: ""
 ---
 
 # API rate limiting strategy
 
-## Progress
+## Progress §
 
 ### Phase 1: Rate limiting setup
 - [ ] Choose rate limiting library and strategy
@@ -620,40 +583,44 @@ tags: "architecture, api"
 - [ ] Implement rate limiting middleware
 - [ ] Add rate limit headers to API responses
 
-## Objective
+## Objective §
 
 Add rate limiting to the API to prevent abuse and prepare for external consumers. After deploying authentication, we observed automated login attempts from multiple IPs.
 
-## Context
+## Context §
 
 The API currently has no rate limiting. We already use Redis for sessions, so a Redis-based solution (`rate-limiter-flexible`) fits the existing infrastructure. Need to define limits per endpoint before promoting to backlog.
 
-## Implementation
+## Implementation §
 
 ### Phase 1: Rate limiting setup
 
 Use `rate-limiter-flexible` with Redis backend for shared state across instances. Sliding window algorithm for smoother rate distribution. Different tiers: auth endpoints (stricter), read endpoints (relaxed), write endpoints (moderate). Include `X-RateLimit-*` headers in responses.
+
+## Closing Summary §
+
+_To be written when the last phase is completed._
 EOF
 
-cat <<'EOF' > "$DEMO/draft/DRAFT-2026-02-15-sebastianserna_dark-mode-design.md"
+cat <<'EOF' > "$DEMO/draft/2604655800_dark-mode-design.md"
 ---
-plan: "Dark mode design system"
+id: 2604655800
+title: "Dark mode design system"
 state: "draft"
 author: "sebastianserna"
 author_model: "gpt-4o"
 assignee: ""
 assignee_model: ""
 issue: ""
-draft: "2026-02-15T15:30"
-backlog: ""
-doing: ""
-done: ""
-tags: "design, ui"
+draft_date: "2026-02-15T15:30"
+backlog_date: ""
+doing_date: ""
+done_date: ""
 ---
 
 # Dark mode design system
 
-## Progress
+## Progress §
 
 ### Phase 1: Design tokens
 - [ ] Define semantic color tokens (background, surface, text, border)
@@ -664,15 +631,15 @@ tags: "design, ui"
 - [ ] Update core UI components to use semantic tokens
 - [ ] Add user preference persistence (localStorage)
 
-## Objective
+## Objective §
 
 Add dark mode support to the application. Users have requested it and it improves accessibility and reduces eye strain in low-light environments.
 
-## Context
+## Context §
 
 The app currently uses hardcoded colors. We already use Tailwind CSS, which has native dark mode support via the `class` strategy. Need to define semantic color tokens before implementation.
 
-## Implementation
+## Implementation §
 
 ### Phase 1: Design tokens
 
@@ -681,27 +648,31 @@ Define CSS custom properties for semantic colors (`--color-bg`, `--color-surface
 ### Phase 2: Component migration
 
 Replace hardcoded color classes (`bg-white`, `text-gray-900`) with semantic tokens across all components. Store user preference in localStorage and respect `prefers-color-scheme` as default.
+
+## Closing Summary §
+
+_To be written when the last phase is completed._
 EOF
 
-cat <<'EOF' > "$DEMO/draft/DRAFT-2026-02-25-sebastianserna_file-upload-system.md"
+cat <<'EOF' > "$DEMO/draft/2605639600_file-upload-system.md"
 ---
-plan: "File upload system"
+id: 2605639600
+title: "File upload system"
 state: "draft"
 author: "sebastianserna"
 author_model: "grok-3"
 assignee: ""
 assignee_model: ""
 issue: ""
-draft: "2026-02-25T11:00"
-backlog: ""
-doing: ""
-done: ""
-tags: "feature, storage"
+draft_date: "2026-02-25T11:00"
+backlog_date: ""
+doing_date: ""
+done_date: ""
 ---
 
 # File upload system
 
-## Progress
+## Progress §
 
 ### Phase 1: Storage setup
 - [ ] Set up S3-compatible storage (MinIO for dev, S3 for prod)
@@ -714,15 +685,15 @@ tags: "feature, storage"
 - [ ] Generate image thumbnails on upload
 - [ ] Build file browser UI component
 
-## Objective
+## Objective §
 
 Allow users to upload files (images, documents) associated with projects and tasks. Users have requested the ability to attach screenshots to tasks and upload project assets.
 
-## Context
+## Context §
 
 Currently the app has no file handling. The backend is Express with PostgreSQL. S3-compatible storage (MinIO for dev, AWS S3 for prod) is the preferred approach for scalability with the same API in both environments.
 
-## Implementation
+## Implementation §
 
 ### Phase 1: Storage setup
 
@@ -732,13 +703,71 @@ Use the AWS SDK with S3-compatible configuration pointing to MinIO locally and S
 
 Files linked to tasks/projects via a `file_attachments` junction table. Image thumbnails generated with Sharp on upload. A reusable file browser component handles upload, preview, and deletion.
 
-## Comments
+## Closing Summary §
 
-### 2026-02-25 — sebastianserna
-Initial draft. Leaning towards S3 for scalability but need to evaluate cost.
-
-### 2026-02-26 — claude-opus-4
-Recommend MinIO for development and S3 for production. Same API locally without cloud costs during dev.
+_To be written when the last phase is completed._
 EOF
 
-echo "==> Done! demo/workplans regenerated with 14 example plans."
+# ─── Generate README indexes ────────────────────────────────────
+echo "==> Generating README indexes..."
+
+# Helper: get frontmatter field
+get_field() {
+  grep "^${2}:" "$1" 2>/dev/null | head -1 | sed 's/^[^:]*: *//' | sed 's/^"//;s/"$//' | sed "s/^'//;s/'$//"
+}
+
+BANNER='<!-- DO NOT EDIT THIS FILE MANUALLY -->
+> **Warning:** This file is auto-generated by the workplans framework.
+> Manual changes may break rules and functionality.
+> Framework rules and instructions are in [RULES.md](../RULES.md).'
+
+ROOT_BANNER='<!-- DO NOT EDIT THIS FILE MANUALLY -->
+> **Warning:** This file is auto-generated by the workplans framework.
+> Manual changes may break rules and functionality.
+> Framework rules and instructions are in [RULES.md](RULES.md).'
+
+total_table="| State | Count |\n|-------|-------|\n"
+
+for folder in draft backlog doing done; do
+  dir="$DEMO/$folder"
+  count=0
+  table_rows=""
+
+  for f in "$dir"/*.md; do
+    [[ ! -f "$f" ]] && continue
+    bn=$(basename "$f")
+    [[ "$bn" == "README.md" ]] && continue
+    count=$((count + 1))
+
+    plan_id=$(get_field "$f" "id")
+    plan_name=$(get_field "$f" "title")
+
+    table_rows+="| ${plan_id} | ${plan_name} |\n"
+  done
+
+  folder_title="$(echo "$folder" | awk '{print toupper(substr($0,1,1)) substr($0,2)}')"
+  total_table+="| ${folder_title} | ${count} |\n"
+
+  {
+    echo "$BANNER"
+    echo ""
+    echo "# ${folder_title} Plans (${count} total)"
+    echo ""
+    echo "| ID | Plan |"
+    echo "|----|------|"
+    if [[ -n "$table_rows" ]]; then
+      echo -e "$table_rows" | sed '/^$/d'
+    fi
+  } > "$dir/README.md"
+done
+
+# Root README
+{
+  echo "$ROOT_BANNER"
+  echo ""
+  echo "# Workplans"
+  echo ""
+  echo -e "$total_table"
+} > "$DEMO/README.md"
+
+echo "==> Done! demo/workplans regenerated with 14 example plans (v0.2.0 format)."
