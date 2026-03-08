@@ -250,56 +250,7 @@ done
 echo ""
 echo "=== Index validation ==="
 
-# Validate state folder READMEs
-for folder in backlog doing done; do
-  dir="$WORKPLANS_DIR/$folder"
-  readme="$dir/README.md"
-  [[ ! -d "$dir" ]] && continue
-  [[ ! -f "$readme" ]] && continue
-
-  # Count actual plan files
-  actual_count=0
-  actual_ids=""
-  for file in "$dir"/*.md; do
-    [[ ! -f "$file" ]] && continue
-    bn=$(basename "$file")
-    [[ "$bn" == "README.md" ]] && continue
-    actual_count=$((actual_count + 1))
-    if [[ "$bn" =~ ^([0-9]{10})_ ]]; then
-      actual_ids="${actual_ids}${BASH_REMATCH[1]}"$'\n'
-    fi
-  done
-
-  # Check count in H1: # Workplans — State (N)
-  readme_count=$(head -1 "$readme" | grep -oE '\([0-9]+\)' | grep -oE '[0-9]+')
-  readme_count="${readme_count:-0}"
-  if [[ "$actual_count" -eq "$readme_count" ]]; then
-    pass "$folder/README.md — count matches ($actual_count)"
-  else
-    fail "$folder/README.md — count mismatch: README says $readme_count, actual $actual_count"
-  fi
-
-  # Check every plan file has a row in the README
-  for file in "$dir"/*.md; do
-    [[ ! -f "$file" ]] && continue
-    bn=$(basename "$file")
-    [[ "$bn" == "README.md" ]] && continue
-    if grep -q "$bn" "$readme"; then
-      pass "$folder/README.md — lists $bn"
-    else
-      fail "$folder/README.md — missing row for $bn"
-    fi
-  done
-
-  # Check for orphan rows (README references files that don't exist)
-  grep -oE '[0-9]{10}_[a-z0-9-]+\.md' "$readme" | while read -r linked; do
-    if [[ ! -f "$dir/$linked" ]]; then
-      fail "$folder/README.md — orphan row: $linked not found"
-    fi
-  done
-done
-
-# Validate root README
+# Validate root README (the only auto-generated index)
 root_readme="$WORKPLANS_DIR/README.md"
 if [[ -f "$root_readme" ]]; then
   echo ""
@@ -309,27 +260,7 @@ if [[ -f "$root_readme" ]]; then
     dir="$WORKPLANS_DIR/$folder"
     [[ ! -d "$dir" ]] && continue
 
-    # Count actual plans
-    actual_count=0
-    for file in "$dir"/*.md; do
-      [[ ! -f "$file" ]] && continue
-      bn=$(basename "$file")
-      [[ "$bn" == "README.md" ]] && continue
-      actual_count=$((actual_count + 1))
-    done
-
-    # Extract count from the bold state label row: | **State (N)** | | | |
-    folder_title="$(echo "$folder" | awk '{print toupper(substr($0,1,1)) substr($0,2)}')"
-    root_count=$(grep -oE "\\*\\*\\[?${folder_title} \\([0-9]+\\)\\]?(\\([a-z]+/README\\.md\\))?\\*\\*" "$root_readme" | grep -oE '[0-9]+')
-    root_count="${root_count:-0}"
-
-    if [[ "$actual_count" -eq "$root_count" ]]; then
-      pass "Root README — $folder count matches ($actual_count)"
-    else
-      fail "Root README — $folder count mismatch: README says $root_count, actual $actual_count"
-    fi
-
-    # Check plan rows in root README (plans listed under H2 sections)
+    # Check plan rows in root README
     for file in "$dir"/*.md; do
       [[ ! -f "$file" ]] && continue
       bn=$(basename "$file")
@@ -342,28 +273,8 @@ if [[ -f "$root_readme" ]]; then
     done
   done
 
-  # Validate total count in H1: # Plans (N)
-  total_actual=0
-  for folder in backlog doing done; do
-    dir="$WORKPLANS_DIR/$folder"
-    [[ ! -d "$dir" ]] && continue
-    for file in "$dir"/*.md; do
-      [[ ! -f "$file" ]] && continue
-      bn=$(basename "$file")
-      [[ "$bn" == "README.md" ]] && continue
-      total_actual=$((total_actual + 1))
-    done
-  done
-  h1_count=$(head -1 "$root_readme" | grep -oE '\([0-9]+\)' | grep -oE '[0-9]+')
-  h1_count="${h1_count:-0}"
-  if [[ "$total_actual" -eq "$h1_count" ]]; then
-    pass "Root README — total count matches ($total_actual)"
-  else
-    fail "Root README — total count mismatch: H1 says $h1_count, actual $total_actual"
-  fi
-
   # Check for orphan rows in root README
-  grep -oE '[a-z]+/[0-9]{10}_[a-z0-9-]+\.md' "$root_readme" | while read -r linked; do
+  grep -oE '[a-z]+/[0-9]{10}_[a-z0-9-]+\.md' "$root_readme" 2>/dev/null | while read -r linked; do
     if [[ ! -f "$WORKPLANS_DIR/$linked" ]]; then
       fail "Root README — orphan row: $linked not found"
     fi

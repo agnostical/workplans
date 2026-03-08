@@ -1,7 +1,5 @@
-# Doing (0)
-
-[View all plans](../README.md)
+# Doing
 
 Plans in progress, currently being implemented.
 
-_No plans in progress._
+[View all plans](../README.md)

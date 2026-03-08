@@ -1,7 +1,5 @@
-# Backlog (0)
-
-[View all plans](../README.md)
+# Backlog
 
 Plans pending, waiting for definition or execution.
 
-_No plans in backlog._
+[View all plans](../README.md)

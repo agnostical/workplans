@@ -876,7 +876,7 @@ done
   total=$((backlog_count + doing_count + done_count))
   echo "# Plans ($total)"
   echo ""
-  echo "This section tracks all plans organized by workflow state."
+  echo "This section tracks all your plans organized by state."
   if [[ $total -eq 0 ]]; then
     echo ""
     echo "_No plans yet. See [RULES.md](RULES.md) to get started._"

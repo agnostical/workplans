@@ -1,7 +1,5 @@
-# Done (0)
-
-[View all plans](../README.md)
+# Done
 
 Plans completed and closed.
 
-_No completed plans._
+[View all plans](../README.md)

@@ -1,5 +1,15 @@
-# Plans (0)
+# Plans
 
-This section tracks all plans organized by workflow state.
+This section tracks all your plans organized by state.
 
-_No plans yet. See [RULES.md](RULES.md) to get started._
+| ID | Plan | Author | Author Model |
+|----|------|--------|--------------|
+| | | | |
+| **Backlog** | | | |
+| | _No plans_ | | |
+| | | | |
+| **Doing** | | | |
+| | _No plans_ | | |
+| | | | |
+| **Done** | | | |
+| | _No plans_ | | |

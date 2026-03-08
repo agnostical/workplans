@@ -198,85 +198,61 @@ If the command fails, the agent must report it to the user before continuing.
 
 ## README Index Files
 
-Every folder contains an auto-generated `README.md` that serves as an index. These files are **system files** — agents must regenerate them after creating, moving, or deleting plans. Never edit manually.
+The root `workplans/README.md` is the only auto-generated index. It is a **system file** — agents must regenerate it after creating, moving, or deleting plans. Never edit manually.
+
+State folder READMEs (`backlog/README.md`, `doing/README.md`, `done/README.md`) are static descriptions with no dynamic content. They never need updating.
 
 ### Root index (`workplans/README.md`)
 
-Shows all plans in a single continuous table. Structure: H1 `# Plans (N)` with total count, a generic description, and a single table with all plans grouped by state. Links use the subfolder path (e.g. `doing/filename.md`). State order: Backlog, Doing, Done.
+Shows all plans in a single continuous table. Structure: H1 `# Plans`, a generic description, and a single table with all plans grouped by state. No counters — the table itself is the visual inventory. Links use the subfolder path (e.g. `doing/filename.md`). State order: Backlog, Doing, Done.
+
+All three state groups (Backlog, Doing, Done) are always present in the table, even when empty. When a state has no plans, show a placeholder row with `_No plans_` in the Plan column:
 
 ```markdown
-# Plans (0)
+# Plans
 
-This section tracks all plans organized by workflow state.
-
-_No plans yet. See [RULES.md](RULES.md) to get started._
-```
-
-The empty-state message is removed once plans exist. When plans exist, a single table is rendered with one header row. Each state is separated by a blank row and a bold state label row:
-
-```markdown
-# Plans (11)
-
-This section tracks all plans organized by workflow state.
+This section tracks all your plans organized by state.
 
 | ID | Plan | Author | Author Model |
 |----|------|--------|--------------|
 | | | | |
-| **Backlog (4)** | | | |
+| **Backlog** | | | |
+| | _No plans_ | | |
+| | | | |
+| **Doing** | | | |
+| | _No plans_ | | |
+| | | | |
+| **Done** | | | |
+| | _No plans_ | | |
+```
+
+When a state has plans, the placeholder row is replaced by plan rows:
+
+```markdown
+# Plans
+
+This section tracks all your plans organized by state.
+
+| ID | Plan | Author | Author Model |
+|----|------|--------|--------------|
+| | | | |
+| **Backlog** | | | |
 | 2601551600 | [User authentication setup](backlog/2601551600_user-auth-setup.md) | sebastianserna | claude-opus-4 |
 | | | | |
-| **Doing (3)** | | | |
+| **Doing** | | | |
 | 2603440500 | [WebSocket real-time updates](doing/2603440500_websocket-realtime.md) | sebastianserna | deepseek-v3 |
 | | | | |
-| **Done (4)** | | | |
+| **Done** | | | |
 | 2600532400 | [Initial project setup](done/2600532400_project-setup.md) | sebastianserna | claude-opus-4 |
 ```
 
-Empty states are omitted from the table (no empty groups).
+### Updating the index
 
-### State folder index (`backlog/README.md`, `doing/README.md`, etc.)
+When a plan is created, moved, or deleted, the agent must update only the root `workplans/README.md`:
 
-Each state folder README has: H1 with the state name and count, a brief description, and a table with four columns: `ID`, `Plan`, `Author`, and `Author Model`. The `Plan` column links to the plan file. Plans are sorted by ID descending (most recent first).
-
-| State | H1 format | Description |
-|-------|-----------|-------------|
-| Backlog | `# Backlog (3)` | Plans pending, waiting for definition or execution. |
-| Doing | `# Doing (3)` | Plans in progress, currently being implemented. |
-| Done | `# Done (3)` | Plans completed and closed. |
-
-```markdown
-# Backlog (3)
-
-Plans pending, waiting for definition or execution.
-
-| ID | Plan | Author | Author Model |
-|----|------|--------|--------------|
-| 2605639600 | [File upload system](2605639600_file-upload-system.md) | sebastianserna | claude-opus-4-6 |
-| 2604655800 | [Dark mode design system](2604655800_dark-mode-design.md) | sebastianserna | claude-opus-4-6 |
-| 2604141400 | [API rate limiting strategy](2604141400_api-rate-limiting.md) | sebastianserna | claude-opus-4-6 |
-```
-
-When the folder is empty, show a message instead of the table:
-
-```markdown
-# Backlog (0)
-
-Plans pending, waiting for definition or execution.
-
-_No plans in backlog._
-```
-
-Empty-state messages per folder: Backlog → `_No plans in backlog._`, Doing → `_No plans in progress._`, Done → `_No completed plans._`
-
-### Updating indexes on state transitions
-
-When a plan changes state, the agent must update three README files:
-
-1. **Source folder README** — remove the plan row, decrement the count
-2. **Destination folder README** — add the plan row with the correct link to the file in the new folder, increment the count. Insert in descending ID order
-3. **Root README** — move the plan row from the source state group to the destination state group, update the counts in the bold state label rows. If a state becomes empty, remove its separator row, label row, and all plan rows. If a state gains its first plan, add a separator row, bold state label, and plan row in the correct state order
-
-If a state folder becomes empty after removing a plan, restore the empty-state message in the folder README. If a folder was empty before adding a plan, remove the empty-state message. In the root README, restore the `_No plans yet._` message only when all three states are empty (remove the entire table).
+1. Move the plan row from the source state group to the destination state group (or add/remove it)
+2. If a state becomes empty after removing a plan, add the placeholder row `| | _No plans_ | | |`
+3. If a state gains its first plan, remove the placeholder row and add the plan row
 
 ## Author detection
 
