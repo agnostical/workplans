@@ -195,10 +195,6 @@ Before writing any datetime field, the agent **must** query the system clock. Ha
 
 If the command fails, the agent must report it to the user before continuing.
 
-## README Files
-
-All README files (`workplans/README.md`, `backlog/README.md`, `doing/README.md`, `done/README.md`) are static descriptions. They contain no dynamic content and never need updating by agents. They are system files — do not edit manually.
-
 ## Author detection
 
 The `author` field identifies the **human** who requests or directs the creation of the plan, not the agent. The agent must **never** copy the author from existing plans. It must strictly follow the detection flow and confirm with the user before first use.
@@ -257,3 +253,7 @@ The script checks structure, file naming, frontmatter, and template sections. Fi
 The `version` field in RULES.md frontmatter declares the active format version. Agents and tools use this to detect which conventions apply.
 
 - **Non-standard files** (no frontmatter, old naming format) are not silently ignored. They are flagged as unrecognized
+
+## README Files
+
+All README files (`workplans/README.md`, `backlog/README.md`, `doing/README.md`, `done/README.md`) are static descriptions. They contain no dynamic content and never need updating by agents. They are system files — do not edit manually.
