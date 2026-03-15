@@ -192,7 +192,7 @@ for folder in backlog doing done; do
     fi
 
     # Check required fields exist
-    for field in title state author author_model assignee assignee_model backlog_date doing_date done_date; do
+    for field in title state author author_model assignee assignee_model backlog_date doing_date done_date format_version; do
       if ! grep -q "^${field}:" "$file"; then
         fail "$folder/$bn — missing field: $field"
       fi
@@ -294,6 +294,35 @@ for folder in backlog doing done; do
       pass "$folder/$bn — Phase 1: Definition present"
     else
       fail "$folder/$bn — missing mandatory Phase 1: Definition"
+    fi
+
+    # Check Closing phase exists
+    if grep -q "### Phase [0-9]*: Closing" "$file"; then
+      pass "$folder/$bn — Closing phase present"
+    else
+      fail "$folder/$bn — missing mandatory Closing phase"
+    fi
+  done
+done
+
+# ─── Emoji validation ────────────────────────────────────────────
+echo ""
+echo "=== Emoji validation ==="
+
+for folder in backlog doing done; do
+  dir="$WORKPLANS_DIR/$folder"
+  [[ ! -d "$dir" ]] && continue
+
+  for file in "$dir"/*.md; do
+    [[ ! -f "$file" ]] && continue
+    bn=$(basename "$file")
+    [[ "$bn" == "README.md" ]] && continue
+
+    # Detect emojis using a broad Unicode emoji range (perl for cross-platform PCRE support)
+    if perl -CSD -ne 'BEGIN{$f=0} $f=1 if /[\x{1F300}-\x{1F9FF}\x{2600}-\x{26FF}\x{2700}-\x{27BF}\x{FE00}-\x{FE0F}\x{1FA00}-\x{1FA6F}\x{1FA70}-\x{1FAFF}\x{200D}\x{20E3}\x{E0020}-\x{E007F}]/; END{exit($f?0:1)}' "$file" 2>/dev/null; then
+      fail "$folder/$bn — contains emojis (rule 24: use plain descriptive text instead)"
+    else
+      pass "$folder/$bn — no emojis"
     fi
   done
 done
