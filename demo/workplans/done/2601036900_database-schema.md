@@ -9,6 +9,7 @@ assignee_model: "gpt-4o"
 backlog_date: "2026-01-10T10:15"
 doing_date: "2026-01-20T09:00"
 done_date: "2026-02-08T11:10"
+format_version: "0.2.1"
 ---
 
 # Database schema design
@@ -17,6 +18,7 @@ done_date: "2026-02-08T11:10"
 ### Phase 1: Definition
 - [x] Define objective and context
 - [x] Define phases and steps
+- [x] Refine with the user
 
 ### Phase 2: Core tables
 - [x] Design users table with indexes
@@ -24,6 +26,10 @@ done_date: "2026-02-08T11:10"
 - [x] Design tasks table with status enum
 - [x] Create migration files
 - [x] Add seed data for development
+
+### Phase 3: Closing
+- [x] Write Closing Summary
+- [x] Validate implementation with the user
 
 ## Objective
 Design and implement the core database schema that supports users, projects, and tasks. This schema is the foundation for all application features.
@@ -33,11 +39,14 @@ The project uses PostgreSQL 16 with node-pg-migrate for migrations. No tables ex
 
 ## Implementation
 ### Phase 1: Definition
-This phase tracks the definition of Objective, Context, and subsequent phases.
+Define the Objective, Context, and subsequent phases. Once complete, the plan is ready for execution.
 
 ### Phase 2: Core tables
 
 PostgreSQL with UUIDs as primary keys. All tables include `created_at` and `updated_at` timestamps with automatic triggers. Foreign keys use `ON DELETE CASCADE` for owned resources. Indexes on all frequently queried columns.
+
+### Phase 3: Closing
+Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.
 
 ## Closing Summary
 - Schema finalized and deployed to staging

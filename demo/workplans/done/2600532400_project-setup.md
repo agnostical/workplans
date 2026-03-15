@@ -9,6 +9,7 @@ assignee_model: "claude-sonnet-4"
 backlog_date: "2026-01-05T09:00"
 doing_date: "2026-01-10T10:00"
 done_date: "2026-01-30T14:10"
+format_version: "0.2.1"
 ---
 
 # Initial project setup
@@ -17,6 +18,7 @@ done_date: "2026-01-30T14:10"
 ### Phase 1: Definition
 - [x] Define objective and context
 - [x] Define phases and steps
+- [x] Refine with the user
 
 ### Phase 2: MVP
 - [x] Initialize Node.js project with TypeScript
@@ -24,6 +26,10 @@ done_date: "2026-01-30T14:10"
 - [x] Configure PostgreSQL with migrations
 - [x] Set up CI/CD pipeline with GitHub Actions
 - [x] Create Docker Compose for local development
+
+### Phase 3: Closing
+- [x] Write Closing Summary
+- [x] Validate implementation with the user
 
 ## Objective
 Set up the foundational project structure, tooling, and CI/CD so the team can start building features on a solid base.
@@ -33,11 +39,14 @@ Starting a new project from scratch. The team agreed on Node.js with TypeScript,
 
 ## Implementation
 ### Phase 1: Definition
-This phase tracks the definition of Objective, Context, and subsequent phases.
+Define the Objective, Context, and subsequent phases. Once complete, the plan is ready for execution.
 
 ### Phase 2: MVP
 
 Node.js 20 with TypeScript strict mode. ESLint with Airbnb config. PostgreSQL 16 with node-pg-migrate. GitHub Actions runs lint, type-check, and tests on every PR. Docker Compose includes PostgreSQL and Redis containers.
+
+### Phase 3: Closing
+Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.
 
 ## Closing Summary
 - All tooling and CI pipeline set up and verified

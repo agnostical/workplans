@@ -9,6 +9,7 @@ assignee_model: ""
 backlog_date: "2026-01-15T14:20"
 doing_date: ""
 done_date: ""
+format_version: "0.2.1"
 ---
 
 # User authentication setup
@@ -17,6 +18,7 @@ done_date: ""
 ### Phase 1: Definition
 - [x] Define objective and context
 - [x] Define phases and steps
+- [x] Refine with the user
 
 ### Phase 2: MVP
 - [ ] Create database migration for users table
@@ -28,6 +30,10 @@ done_date: ""
 - [ ] Add password reset flow
 - [ ] Implement rate limiting on auth endpoints
 
+### Phase 4: Closing
+- [ ] Write Closing Summary
+- [ ] Validate implementation with the user
+
 ## Objective
 Implement user authentication for the application using JWT tokens. This is required before any user-facing feature can be deployed, as all API endpoints need to verify user identity.
 
@@ -36,7 +42,7 @@ The application currently has no authentication. The database is PostgreSQL and 
 
 ## Implementation
 ### Phase 1: Definition
-This phase tracks the definition of Objective, Context, and subsequent phases.
+Define the Objective, Context, and subsequent phases. Once complete, the plan is ready for execution.
 
 ### Phase 2: MVP
 
@@ -46,5 +52,8 @@ Create a `users` table with `id`, `email`, `password_hash`, `created_at`. Use bc
 
 Add a `password_reset_tokens` table. Implement a `/forgot-password` endpoint that sends a reset link and a `/reset-password` endpoint that validates the token and updates the password.
 
+### Phase 4: Closing
+Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.
+
 ## Closing Summary
-To be written when the last phase is completed.
+_To be written when the last phase is completed._
