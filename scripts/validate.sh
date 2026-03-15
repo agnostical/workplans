@@ -1,7 +1,7 @@
 #!/bin/bash
 # ─────────────────────────────────────────────────────────────────
 # validate.sh
-# Validates a workplans directory against the v0.2.0 format.
+# Validates a workplans directory against the v0.2.1 format.
 #
 # Usage: ./scripts/validate.sh <workplans-dir>
 #
@@ -9,7 +9,7 @@
 #   1. Frontmatter: id first field, required fields, state matches folder
 #   2. Template: allowed sections only, no deprecated sections
 #   3. File naming: YYDDDsssss_description.md pattern
-#   4. Structure: RULES.md exists, READMEs exist, no unexpected files
+#   4. Structure: RULES.md exists with version/work_on fields, READMEs exist, no unexpected files
 # ─────────────────────────────────────────────────────────────────
 
 set -e
@@ -64,6 +64,21 @@ echo "=== Structure validation ==="
 # Check RULES.md
 if [[ -f "$WORKPLANS_DIR/RULES.md" ]]; then
   pass "RULES.md exists"
+
+  # Check RULES.md frontmatter fields
+  rules_version=$(get_field "$WORKPLANS_DIR/RULES.md" "version")
+  if [[ -n "$rules_version" ]]; then
+    pass "RULES.md — version field present ($rules_version)"
+  else
+    fail "RULES.md — missing version field"
+  fi
+
+  rules_work_on=$(get_field "$WORKPLANS_DIR/RULES.md" "work_on")
+  if [[ -n "$rules_work_on" ]]; then
+    pass "RULES.md — work_on field present ($rules_work_on)"
+  else
+    warn "RULES.md — missing work_on field (defaults to \".\")"
+  fi
 else
   fail "RULES.md not found"
 fi
