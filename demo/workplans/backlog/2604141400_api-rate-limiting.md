@@ -9,6 +9,7 @@ assignee_model: ""
 backlog_date: "2026-02-10T11:30"
 doing_date: ""
 done_date: ""
+format_version: "0.2.1"
 ---
 
 # API rate limiting strategy
@@ -16,13 +17,18 @@ done_date: ""
 ## Progress
 ### Phase 1: Definition
 - [x] Define objective and context
-- [ ] Define phases and steps
+- [x] Define phases and steps
+- [ ] Refine with the user
 
 ### Phase 2: Rate limiting setup
 - [ ] Choose rate limiting library and strategy
 - [ ] Define rate limits per endpoint category
 - [ ] Implement rate limiting middleware
 - [ ] Add rate limit headers to API responses
+
+### Phase 3: Closing
+- [ ] Write Closing Summary
+- [ ] Validate implementation with the user
 
 ## Objective
 Add rate limiting to the API to prevent abuse and prepare for external consumers. After deploying authentication, we observed automated login attempts from multiple IPs.
@@ -32,11 +38,14 @@ The API currently has no rate limiting. We already use Redis for sessions, so a 
 
 ## Implementation
 ### Phase 1: Definition
-This phase tracks the definition of Objective, Context, and subsequent phases.
+Define the Objective, Context, and subsequent phases. Once complete, the plan is ready for execution.
 
 ### Phase 2: Rate limiting setup
 
 Use `rate-limiter-flexible` with Redis backend for shared state across instances. Sliding window algorithm for smoother rate distribution. Different tiers: auth endpoints (stricter), read endpoints (relaxed), write endpoints (moderate). Include `X-RateLimit-*` headers in responses.
 
+### Phase 3: Closing
+Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.
+
 ## Closing Summary
-To be written when the last phase is completed.
+_To be written when the last phase is completed._

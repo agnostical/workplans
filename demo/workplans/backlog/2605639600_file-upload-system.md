@@ -9,14 +9,16 @@ assignee_model: ""
 backlog_date: "2026-02-25T11:00"
 doing_date: ""
 done_date: ""
+format_version: "0.2.1"
 ---
 
 # File upload system
 
 ## Progress
 ### Phase 1: Definition
-- [ ] Define objective and context
-- [ ] Define phases and steps
+- [x] Define objective and context
+- [x] Define phases and steps
+- [ ] Refine with the user
 
 ### Phase 2: Storage setup
 - [ ] Set up S3-compatible storage (MinIO for dev, S3 for prod)
@@ -29,6 +31,10 @@ done_date: ""
 - [ ] Generate image thumbnails on upload
 - [ ] Build file browser UI component
 
+### Phase 4: Closing
+- [ ] Write Closing Summary
+- [ ] Validate implementation with the user
+
 ## Objective
 Allow users to upload files (images, documents) associated with projects and tasks. Users have requested the ability to attach screenshots to tasks and upload project assets.
 
@@ -37,7 +43,7 @@ Currently the app has no file handling. The backend is Express with PostgreSQL. 
 
 ## Implementation
 ### Phase 1: Definition
-This phase tracks the definition of Objective, Context, and subsequent phases.
+Define the Objective, Context, and subsequent phases. Once complete, the plan is ready for execution.
 
 ### Phase 2: Storage setup
 
@@ -47,5 +53,8 @@ Use the AWS SDK with S3-compatible configuration pointing to MinIO locally and S
 
 Files linked to tasks/projects via a `file_attachments` junction table. Image thumbnails generated with Sharp on upload. A reusable file browser component handles upload, preview, and deletion.
 
+### Phase 4: Closing
+Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.
+
 ## Closing Summary
-To be written when the last phase is completed.
+_To be written when the last phase is completed._

@@ -1,6 +1,7 @@
 ---
 name: workplans
-version: 0.2.0
+version: 0.2.1
+work_on: "."
 ---
 
 # Workplans: Rules
@@ -28,7 +29,7 @@ workplans/
 | **Complete** | `doing/` → `done/` | `state: "done"`, `done_date` = now |
 | **Pause** | `backlog/` | `state: "backlog"`, clear `doing_date` |
 
-New plans are created directly in `backlog/`. Every plan starts with a mandatory **Phase 1: Definition** that ensures the plan is fully defined before work begins. Early-stage exploration belongs in notes (see Extensions), not in structured plans.
+New plans are created directly in `backlog/`. Every plan starts with a mandatory **Phase 1: Definition** (entry gate) and ends with a mandatory **Closing phase** (exit gate). Early-stage exploration belongs in notes (see Extensions), not in structured plans.
 
 The filename never changes on state transitions. Only the folder and frontmatter are updated.
 
@@ -50,6 +51,7 @@ assignee_model: ""
 backlog_date: "YYYY-MM-DDThh:mm"
 doing_date: ""
 done_date: ""
+format_version: "0.2.1"
 ---
 
 # User authentication setup
@@ -58,10 +60,15 @@ done_date: ""
 ### Phase 1: Definition
 - [ ] Define objective and context
 - [ ] Define phases and steps
+- [ ] Refine with the user
 
 ### Phase 2: Define auth strategy
 - [ ] Choose authentication method
 - [ ] Document security requirements
+
+### Phase 3: Closing
+- [ ] Write Closing Summary
+- [ ] Validate implementation with the user
 
 ## Objective
 Brief description of what this plan aims to achieve and why.
@@ -71,14 +78,19 @@ Relevant background, constraints, or references that inform the plan.
 
 ## Implementation
 ### Phase 1: Definition
-This phase tracks the definition of Objective, Context, and subsequent phases.
+Define the Objective, Context, and subsequent phases. Once complete, the plan is ready for execution.
 
 ### Phase 2: Define auth strategy
 Technical details, decisions, and approach for this phase.
 
+### Phase 3: Closing
+Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.
+
 ## Closing Summary
-To be written when the last phase is completed.
+_To be written when the last phase is completed._
 ```
+
+> **Note:** The template above is in English as reference. Agents must adapt user-authored content (titles, step descriptions, Implementation text) to the user's language. Only the `Phase N:` prefix and structural headings remain in English.
 
 ### Plan Frontmatter
 
@@ -90,12 +102,13 @@ Every plan starts with YAML frontmatter on **line 1** (no blank lines before `--
 | `title` | Short descriptive title |
 | `state` | Must match the folder the file lives in: `backlog`, `doing`, `done` |
 | `author` | Human creator. Immutable once assigned. Comma-separated if multiple |
-| `author_model` | AI model ID(s) that created the plan (e.g. `claude-opus-4-6`) |
+| `author_model` | AI model ID(s) that created the plan. See AI model attribution |
 | `assignee` | Person implementing |
 | `assignee_model` | AI model ID(s) that executed the plan |
 | `backlog_date` | Datetime created (`YYYY-MM-DDThh:mm`) |
 | `doing_date` | Datetime work started (`YYYY-MM-DDThh:mm`) |
 | `done_date` | Datetime completed (`YYYY-MM-DDThh:mm`) |
+| `format_version` | Framework version at creation time (from RULES.md `version`). Immutable |
 
 ### Plan Title
 
@@ -110,31 +123,61 @@ Five H2 sections follow the title, in this order. Each heading uses Title Case.
 | `## Progress` | Checklist mirror of Implementation phases. Always right after H1 |
 | `## Objective` | What this plan aims to achieve and why |
 | `## Context` | Background, constraints, or references that inform the plan |
-| `## Implementation` | Technical detail, decisions, and approach organized by phase |
+| `## Implementation` | Technical detail, decisions, and approach organized by phase. The level of detail scales with plan complexity — the examples in state folder READMEs are a starting point, not a ceiling |
 | `## Closing Summary` | Written when the last phase is completed. Bullet points: what was implemented, deviations, blockers, and anything left for future plans. Until then, contains: `_To be written when the last phase is completed._` |
 
 ### Mandatory Phase 1: Definition
 
-Every plan must start with `### Phase 1: Definition` as its first phase. This phase has exactly two fixed steps:
+Every plan must start with `### Phase 1: Definition` as its first phase. This phase has exactly three fixed steps:
 
 ```markdown
 ### Phase 1: Definition
 - [ ] Define objective and context
 - [ ] Define phases and steps
+- [ ] Refine with the user
 ```
 
-These two fixed steps ensure every plan has a clear objective and defined phases before execution begins, regardless of which agent created it. A plan in backlog with Phase 1 unchecked is still being defined. When both steps are checked, the plan is fully defined and ready for execution (transition to `doing/`).
+These three fixed steps ensure every plan has a clear objective, defined phases, and explicit user validation before execution begins, regardless of which agent created it. A plan in backlog with Phase 1 unchecked is still being defined. When all three steps are checked, the plan is fully defined and ready for execution (transition to `doing/`).
+
+Completing Phase 1 does not authorize automatic state transitions. The agent must always ask the user before moving a plan to `doing/` or `done/`.
 
 **Rules for Phase 1: Definition:**
 - It is always the first phase in both Progress and Implementation
-- The two steps are fixed and must not be modified
-- The Implementation entry for Phase 1 is always: `_This phase tracks the definition of Objective, Context, and subsequent phases._`
-- A plan must not move to `doing/` until both steps in Phase 1 are checked
+- The three steps are fixed and must not be modified
+- The `Phase N:` prefix is always in English. The title after the colon and the step descriptions follow the user's language
+- The Implementation entry for Phase 1 uses plain text (not italic): `Define the Objective, Context, and subsequent phases. Once complete, the plan is ready for execution.` — adapted to the user's language. Italic is reserved exclusively for temporary placeholders that will be replaced
+- A plan must not move to `doing/` until all three steps in Phase 1 are checked
 - Subsequent phases (Phase 2, Phase 3, etc.) contain the actual work
+
+### Mandatory final phase: Closing
+
+Every plan must end with a Closing phase as its last phase. This is the exit gate — symmetric to Phase 1 (Definition). The phase has exactly two fixed steps:
+
+```markdown
+### Phase N: Closing
+- [ ] Write Closing Summary
+- [ ] Validate implementation with the user
+```
+
+The plan structure is always:
+
+```
+Phase 1: Definition       ← entry gate (mandatory)
+Phase 2..N-1: [phases]    ← implementation
+Phase N: Closing           ← exit gate (mandatory)
+```
+
+**Rules for the Closing phase:**
+- It is always the last phase in both Progress and Implementation
+- The two steps are fixed and must not be modified
+- The `Phase N:` prefix is always in English. The title after the colon and the step descriptions follow the user's language
+- The Implementation entry for the Closing phase uses plain text (not italic): `Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.` — adapted to the user's language
+- A plan must not move to `done/` until both steps in the Closing phase are checked
+- The agent must request explicit approval from the user before moving the plan to `done/`
 
 ## Rules
 
-All 20 rules are mandatory. Ordered by criticality: **Structure** (framework integrity) → **Template** (plan validity) → **Data** (field correctness).
+All 24 rules are mandatory. Ordered by criticality: **Structure** (framework integrity) → **Template** (plan validity) → **Data** (field correctness).
 
 | # | Category | Rule |
 |---|----------|------|
@@ -147,17 +190,21 @@ All 20 rules are mandatory. Ordered by criticality: **Structure** (framework int
 | 7 | Template | H1 must match the `title` field |
 | 8 | Template | H2 sections must use Title Case. Only 5 valid sections allowed |
 | 9 | Template | Progress always right after H1; phases must mirror Implementation |
-| 10 | Template | Phase 1: Definition is mandatory in every plan with two fixed steps. Must not be modified |
-| 11 | Template | Steps grouped by phase (`### Phase N: Name`), each concrete and verifiable. Use "Phase" and "Step" only (never "Stage") |
-| 12 | Template | Technical detail in Implementation, summary in Progress |
-| 13 | Template | Closing Summary is the last section, written when the last phase is completed |
-| 14 | Template | Every `.md` plan must follow the template and live in its state folder |
-| 15 | Template | A plan must not move to `doing/` until Phase 1: Definition is complete |
-| 16 | Template | Issue references go inline as Markdown links in the relevant step or section, not in frontmatter. Use `[#N](url)` format |
-| 17 | Data | Multi-value fields use comma-separated strings; datetimes use ISO 8601 `YYYY-MM-DDThh:mm`, `""` if not reached |
-| 18 | Data | Datetimes must come from the system clock. Hardcoded, estimated, or placeholder values are forbidden |
-| 19 | Data | `author` is immutable once assigned; multiple authors are comma-separated |
-| 20 | Data | `_` separates timestamp ID from description; uniqueness = timestamp + description |
+| 10 | Template | Phase 1: Definition is mandatory in every plan with three fixed steps. Must not be modified |
+| 11 | Template | Closing phase is mandatory as the last phase in every plan with two fixed steps. Must not be modified |
+| 12 | Template | Steps grouped by phase (`### Phase N: Name`), each concrete and verifiable. Use "Phase" and "Step" only (never "Stage") |
+| 13 | Template | Technical detail in Implementation, summary in Progress |
+| 14 | Template | Closing Summary is the last section, written when the last phase is completed |
+| 15 | Template | Every `.md` plan must follow the template and live in its state folder |
+| 16 | Template | A plan must not move to `doing/` until Phase 1: Definition is complete |
+| 17 | Template | A plan must not move to `done/` until the Closing phase is complete and the user has approved |
+| 18 | Template | Issue references go inline as Markdown links in the relevant step or section, not in frontmatter. Use `[#N](url)` format |
+| 19 | Data | Multi-value fields use comma-separated strings; datetimes use ISO 8601 `YYYY-MM-DDThh:mm`, `""` if not reached |
+| 20 | Data | Datetimes must come from the system clock. Hardcoded, estimated, or placeholder values are forbidden |
+| 21 | Data | `author` is immutable once assigned; multiple authors are comma-separated |
+| 22 | Data | `_` separates timestamp ID from description; uniqueness = timestamp + description |
+| 23 | Data | `format_version` is immutable and must match the `version` field in RULES.md at creation time |
+| 24 | Template | Plan files must not contain emojis. Use plain descriptive text instead |
 
 ---
 
@@ -211,7 +258,15 @@ Generic usernames (`admin`, `root`, `guest`, `user`, `default`, `ubuntu`, `ec2-u
 
 ## AI model attribution
 
-The `author_model` and `assignee_model` fields must never be empty if an AI agent participated. Use the exact model ID when known (e.g. `claude-opus-4-6`, `gpt-4o`). If the AI tool does not expose the specific model (e.g. Cursor auto mode, Copilot), register as `tool-name/auto` (e.g. `cursor/auto`). If the user knows the model, use the exact ID.
+The `author_model` and `assignee_model` fields must never be empty if an AI agent participated. The model ID is the root attribution. An optional client suffix records the tool used to run the model.
+
+| Case | Format | Example |
+|------|--------|---------|
+| Model known, direct client | `{model}` | `claude-opus-4-6` |
+| Model known, via client | `{model}/{client}` | `claude-opus-4-6/cursor` |
+| Model unknown | `{client}/auto` | `cursor/auto` |
+
+The client suffix is omitted when the agent runs directly (API, Claude Code, web chat). If the user knows the exact model, always use the model ID.
 
 ## Language
 
@@ -248,11 +303,62 @@ bash scripts/validate.sh <workplans-dir>
 
 The script checks structure, file naming, frontmatter, and template sections. Fix any errors before continuing.
 
+## Work destination (Experimental)
+
+The `work_on` field in RULES.md frontmatter indicates where plans in this folder apply their execution changes. It defaults to the parent directory of `workplans/`.
+
+| Value | Meaning |
+|-------|---------|
+| `"."` (default) | Parent directory of `workplans/`. Plans target the same project |
+| Remote URL | Plans target a different location (e.g. `https://github.com/org/project`) |
+
+There are two types of changes, and each has a different destination:
+
+| Type of change | Where it happens |
+|----------------|-----------------|
+| **Plan files** (Markdown, frontmatter, move between folders) | Always inside the `workplans/` folder where the plans live |
+| **Plan execution** (code, configs, assets) | At the location indicated by `work_on` (resolved from the parent directory of `workplans/`) |
+
+**Valid values in RULES.md:** Only `"."` or a remote URL. Never local paths — local paths differ across machines and cause conflicts in collaborative repositories.
+
+### LOCAL.yml
+
+When `work_on` is a remote URL, the agent needs to resolve where that project is on the local machine. The resolved path is stored in `LOCAL.yml` inside `workplans/`.
+
+```yaml
+# Auto-generated by agent. Do not commit.
+work_on: "/Users/me/repos/org/project"
+```
+
+Rules for LOCAL.yml:
+- Always in `.gitignore` — never committed
+- Auto-generated by the agent — the user does not create it manually
+- Only created when `work_on` is a remote URL (not created if `work_on` is `"."`)
+- Contains only the resolved local path for `work_on`
+
+**Resolution flow** (when `work_on` is a remote URL):
+1. Check `LOCAL.yml` in `workplans/` → if it exists and the path is valid, use it
+2. Check if the parent directory already matches that URL (check `git remote -v`) → if it matches, work here
+3. Search the machine for a cloned directory with that remote
+4. If found → create `LOCAL.yml` with the path, confirm with the user
+5. If not found → ask the user for the local path, create `LOCAL.yml`
+
+### Two-way configuration
+
+When `work_on` points to a remote URL, both the planning repo and the target project need explicit instructions for agents:
+
+**Planning repo** (where plans live): Set `work_on` in RULES.md to the target project URL. This tells agents where to apply code changes when executing plans.
+
+**Target project** (where code lives): Add an instruction in its agent file (AGENTS.md, CLAUDE.md, etc.) indicating where plans are managed. This tells agents where to find, create, and update plans when working from the target project. Without this, an agent working in the target project will not know that plans exist elsewhere and may try to create them locally.
+
+Both sides must be configured. The planning repo knows where to execute; the target project knows where plans live.
+
 ## Compatibility
 
 The `version` field in RULES.md frontmatter declares the active format version. Agents and tools use this to detect which conventions apply.
 
 - **Non-standard files** (no frontmatter, old naming format) are not silently ignored. They are flagged as unrecognized
+- Plans without `format_version` are implicitly pre-0.2.1
 
 ## README Files
 

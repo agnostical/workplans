@@ -9,6 +9,7 @@ assignee_model: ""
 backlog_date: "2026-02-01T09:15"
 doing_date: ""
 done_date: ""
+format_version: "0.2.1"
 ---
 
 # Email notification system
@@ -17,12 +18,17 @@ done_date: ""
 ### Phase 1: Definition
 - [x] Define objective and context
 - [x] Define phases and steps
+- [x] Refine with the user
 
 ### Phase 2: MVP
 - [ ] Set up email service (SendGrid or AWS SES)
 - [ ] Create email templates for welcome and password reset
 - [ ] Implement notification queue with retry logic
 - [ ] Add user notification preferences
+
+### Phase 3: Closing
+- [ ] Write Closing Summary
+- [ ] Validate implementation with the user
 
 ## Objective
 Build an email notification system so users receive transactional emails (welcome, password reset, activity alerts). This unblocks the authentication flow which needs password reset emails.
@@ -32,11 +38,14 @@ The application has no email capabilities yet. We already use PostgreSQL for the
 
 ## Implementation
 ### Phase 1: Definition
-This phase tracks the definition of Objective, Context, and subsequent phases.
+Define the Objective, Context, and subsequent phases. Once complete, the plan is ready for execution.
 
 ### Phase 2: MVP
 
 Use SendGrid API with a simple queue backed by the existing PostgreSQL database. Templates will use Handlebars for variable interpolation. A background worker will process the queue every 30 seconds.
 
+### Phase 3: Closing
+Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.
+
 ## Closing Summary
-To be written when the last phase is completed.
+_To be written when the last phase is completed._

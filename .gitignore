@@ -26,5 +26,8 @@ build/
 # Development
 .dev/
 
+# Workplans local config
+**/workplans/LOCAL.yml
+
 # Claude Code
 /.claude

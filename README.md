@@ -34,6 +34,7 @@ assignee_model: ""
 backlog_date: "YYYY-MM-DDThh:mm"
 doing_date: ""
 done_date: ""
+format_version: "0.2.1"
 ---
 
 # User authentication setup
@@ -42,10 +43,15 @@ done_date: ""
 ### Phase 1: Definition
 - [ ] Define objective and context
 - [ ] Define phases and steps
+- [ ] Refine with the user
 
 ### Phase 2: Define auth strategy
 - [ ] Choose authentication method
 - [ ] Document security requirements
+
+### Phase 3: Closing
+- [ ] Write Closing Summary
+- [ ] Validate implementation with the user
 
 ## Objective
 Brief description of what this plan aims to achieve and why.
@@ -55,13 +61,16 @@ Relevant background, constraints, or references that inform the plan.
 
 ## Implementation
 ### Phase 1: Definition
-This phase tracks the definition of Objective, Context, and subsequent phases.
+Define the Objective, Context, and subsequent phases. Once complete, the plan is ready for execution.
 
 ### Phase 2: Define auth strategy
 Technical details, decisions, and approach for this phase.
 
+### Phase 3: Closing
+Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.
+
 ## Closing Summary
-To be written when the last phase is completed.
+_To be written when the last phase is completed._
 ```
 
 ## Quick start

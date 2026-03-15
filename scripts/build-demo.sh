@@ -2,7 +2,7 @@
 # ─────────────────────────────────────────────────────────────────
 # build-demo.sh
 # Regenerates demo/workplans from init/workplans and creates
-# example plan files for all three states (v0.2.0 format).
+# example plan files for all three states (v0.2.1 format).
 #
 # Usage: ./scripts/build-demo.sh
 # ─────────────────────────────────────────────────────────────────
@@ -35,6 +35,7 @@ assignee_model: ""
 backlog_date: "2026-01-15T14:20"
 doing_date: ""
 done_date: ""
+format_version: "0.2.1"
 ---
 
 # User authentication setup
@@ -43,6 +44,7 @@ done_date: ""
 ### Phase 1: Definition
 - [x] Define objective and context
 - [x] Define phases and steps
+- [x] Refine with the user
 
 ### Phase 2: MVP
 - [ ] Create database migration for users table
@@ -54,6 +56,10 @@ done_date: ""
 - [ ] Add password reset flow
 - [ ] Implement rate limiting on auth endpoints
 
+### Phase 4: Closing
+- [ ] Write Closing Summary
+- [ ] Validate implementation with the user
+
 ## Objective
 Implement user authentication for the application using JWT tokens. This is required before any user-facing feature can be deployed, as all API endpoints need to verify user identity.
 
@@ -62,7 +68,7 @@ The application currently has no authentication. The database is PostgreSQL and 
 
 ## Implementation
 ### Phase 1: Definition
-This phase tracks the definition of Objective, Context, and subsequent phases.
+Define the Objective, Context, and subsequent phases. Once complete, the plan is ready for execution.
 
 ### Phase 2: MVP
 
@@ -72,8 +78,11 @@ Create a `users` table with `id`, `email`, `password_hash`, `created_at`. Use bc
 
 Add a `password_reset_tokens` table. Implement a `/forgot-password` endpoint that sends a reset link and a `/reset-password` endpoint that validates the token and updates the password.
 
+### Phase 4: Closing
+Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.
+
 ## Closing Summary
-To be written when the last phase is completed.
+_To be written when the last phase is completed._
 EOF
 
 cat <<'EOF' > "$DEMO/backlog/2602836000_notification-system.md"
@@ -88,6 +97,7 @@ assignee_model: ""
 backlog_date: "2026-02-01T09:15"
 doing_date: ""
 done_date: ""
+format_version: "0.2.1"
 ---
 
 # Email notification system
@@ -96,12 +106,17 @@ done_date: ""
 ### Phase 1: Definition
 - [x] Define objective and context
 - [x] Define phases and steps
+- [x] Refine with the user
 
 ### Phase 2: MVP
 - [ ] Set up email service (SendGrid or AWS SES)
 - [ ] Create email templates for welcome and password reset
 - [ ] Implement notification queue with retry logic
 - [ ] Add user notification preferences
+
+### Phase 3: Closing
+- [ ] Write Closing Summary
+- [ ] Validate implementation with the user
 
 ## Objective
 Build an email notification system so users receive transactional emails (welcome, password reset, activity alerts). This unblocks the authentication flow which needs password reset emails.
@@ -111,14 +126,17 @@ The application has no email capabilities yet. We already use PostgreSQL for the
 
 ## Implementation
 ### Phase 1: Definition
-This phase tracks the definition of Objective, Context, and subsequent phases.
+Define the Objective, Context, and subsequent phases. Once complete, the plan is ready for execution.
 
 ### Phase 2: MVP
 
 Use SendGrid API with a simple queue backed by the existing PostgreSQL database. Templates will use Handlebars for variable interpolation. A background worker will process the queue every 30 seconds.
 
+### Phase 3: Closing
+Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.
+
 ## Closing Summary
-To be written when the last phase is completed.
+_To be written when the last phase is completed._
 EOF
 
 cat <<'EOF' > "$DEMO/backlog/2604739600_search-functionality.md"
@@ -133,6 +151,7 @@ assignee_model: ""
 backlog_date: "2026-02-20T15:45"
 doing_date: ""
 done_date: ""
+format_version: "0.2.1"
 ---
 
 # Full-text search functionality
@@ -141,11 +160,16 @@ done_date: ""
 ### Phase 1: Definition
 - [x] Define objective and context
 - [x] Define phases and steps
+- [x] Refine with the user
 
 ### Phase 2: MVP
 - [ ] Add PostgreSQL full-text search indexes
 - [ ] Create search API endpoint
 - [ ] Build search results UI component
+
+### Phase 3: Closing
+- [ ] Write Closing Summary
+- [ ] Validate implementation with the user
 
 ## Objective
 Allow users to search across all content in the application using full-text search powered by PostgreSQL's built-in tsvector capabilities.
@@ -155,14 +179,17 @@ The application stores content in PostgreSQL. PostgreSQL has built-in full-text 
 
 ## Implementation
 ### Phase 1: Definition
-This phase tracks the definition of Objective, Context, and subsequent phases.
+Define the Objective, Context, and subsequent phases. Once complete, the plan is ready for execution.
 
 ### Phase 2: MVP
 
 Add GIN indexes on the relevant text columns. Create a `/api/search?q=term` endpoint that uses `ts_query` and ranks results by relevance. The frontend will have a search bar with debounced input and a results dropdown.
 
+### Phase 3: Closing
+Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.
+
 ## Closing Summary
-To be written when the last phase is completed.
+_To be written when the last phase is completed._
 EOF
 
 cat <<'EOF' > "$DEMO/backlog/2604952200_role-permissions.md"
@@ -177,6 +204,7 @@ assignee_model: "gpt-4o"
 backlog_date: "2026-02-22T09:25"
 doing_date: ""
 done_date: ""
+format_version: "0.2.1"
 ---
 
 # Role-based permissions
@@ -185,6 +213,7 @@ done_date: ""
 ### Phase 1: Definition
 - [x] Define objective and context
 - [x] Define phases and steps
+- [x] Refine with the user
 
 ### Phase 2: Core RBAC
 - [ ] Define roles table and seed default roles (admin, editor, viewer)
@@ -197,6 +226,10 @@ done_date: ""
 - [ ] Permission checks in frontend components
 - [ ] Invite users with specific roles
 
+### Phase 4: Closing
+- [ ] Write Closing Summary
+- [ ] Validate implementation with the user
+
 ## Objective
 Implement role-based access control (RBAC) to restrict actions based on user roles. Currently all authenticated users have the same permissions, which is a security concern.
 
@@ -205,7 +238,7 @@ Authentication is already implemented with JWT. The database is PostgreSQL. The 
 
 ## Implementation
 ### Phase 1: Definition
-This phase tracks the definition of Objective, Context, and subsequent phases.
+Define the Objective, Context, and subsequent phases. Once complete, the plan is ready for execution.
 
 ### Phase 2: Core RBAC
 
@@ -215,8 +248,11 @@ Create `roles` and `permissions` tables. Each role has many permissions. Permiss
 
 Admin users can manage roles from a settings page. Frontend components conditionally render based on the current user's permissions using a `usePermission('resource:action')` hook.
 
+### Phase 4: Closing
+Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.
+
 ## Closing Summary
-To be written when the last phase is completed.
+_To be written when the last phase is completed._
 EOF
 
 # ─── Doing plans ───────────────────────────────────────────────
@@ -234,6 +270,7 @@ assignee_model: "claude-sonnet-4"
 backlog_date: "2026-01-20T10:00"
 doing_date: "2026-02-10T09:30"
 done_date: ""
+format_version: "0.2.1"
 ---
 
 # Dashboard redesign
@@ -242,6 +279,7 @@ done_date: ""
 ### Phase 1: Definition
 - [x] Define objective and context
 - [x] Define phases and steps
+- [x] Refine with the user
 
 ### Phase 2: Layout & navigation
 - [x] Create new sidebar navigation component
@@ -254,6 +292,10 @@ done_date: ""
 - [ ] Quick actions panel
 - [ ] Stats overview cards
 
+### Phase 4: Closing
+- [ ] Write Closing Summary
+- [ ] Validate implementation with the user
+
 ## Objective
 Redesign the main dashboard to improve usability and information density. The current layout wastes screen space and the navigation is confusing for new users.
 
@@ -262,7 +304,7 @@ The current dashboard uses a top navbar with a single-column layout. The fronten
 
 ## Implementation
 ### Phase 1: Definition
-This phase tracks the definition of Objective, Context, and subsequent phases.
+Define the Objective, Context, and subsequent phases. Once complete, the plan is ready for execution.
 
 ### Phase 2: Layout & navigation
 
@@ -272,8 +314,11 @@ Replace the top navbar with a collapsible sidebar. Use CSS Grid for the main con
 
 Each widget is a self-contained React component that fetches its own data. The dashboard layout will be configurable via drag-and-drop in a future phase.
 
+### Phase 4: Closing
+Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.
+
 ## Closing Summary
-To be written when the last phase is completed.
+_To be written when the last phase is completed._
 EOF
 
 cat <<'EOF' > "$DEMO/doing/2603334200_api-v2-endpoints.md"
@@ -288,6 +333,7 @@ assignee_model: "claude-opus-4"
 backlog_date: "2026-02-05T11:00"
 doing_date: "2026-02-18T09:00"
 done_date: ""
+format_version: "0.2.1"
 ---
 
 # API v2 endpoints
@@ -296,12 +342,17 @@ done_date: ""
 ### Phase 1: Definition
 - [x] Define objective and context
 - [x] Define phases and steps
+- [x] Refine with the user
 
 ### Phase 2: Core endpoints
 - [x] Design new REST resource structure
 - [x] Implement pagination with cursor-based navigation
 - [x] Add filtering and sorting parameters
 - [ ] Write OpenAPI spec documentation
+
+### Phase 3: Closing
+- [ ] Write Closing Summary
+- [ ] Validate implementation with the user
 
 ## Objective
 Create v2 of the API with improved pagination, filtering, and consistent error responses. The v1 endpoints will be maintained in parallel during the migration period.
@@ -311,14 +362,17 @@ The v1 API uses offset-based pagination which performs poorly on large datasets.
 
 ## Implementation
 ### Phase 1: Definition
-This phase tracks the definition of Objective, Context, and subsequent phases.
+Define the Objective, Context, and subsequent phases. Once complete, the plan is ready for execution.
 
 ### Phase 2: Core endpoints
 
 All v2 endpoints live under `/api/v2/`. Pagination uses cursor-based navigation instead of offset. Filtering uses query parameters with operators (`?status=eq:active`). Error responses follow RFC 7807 Problem Details format.
 
+### Phase 3: Closing
+Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.
+
 ## Closing Summary
-To be written when the last phase is completed.
+_To be written when the last phase is completed._
 EOF
 
 cat <<'EOF' > "$DEMO/doing/2603440500_websocket-realtime.md"
@@ -333,6 +387,7 @@ assignee_model: "grok-3"
 backlog_date: "2026-02-05T14:00"
 doing_date: "2026-02-20T10:30"
 done_date: ""
+format_version: "0.2.1"
 ---
 
 # WebSocket real-time updates
@@ -341,6 +396,7 @@ done_date: ""
 ### Phase 1: Definition
 - [x] Define objective and context
 - [x] Define phases and steps
+- [x] Refine with the user
 
 ### Phase 2: Infrastructure
 - [x] Set up Socket.IO server alongside Express
@@ -354,6 +410,10 @@ done_date: ""
 - [ ] Notification push via WebSocket
 - [ ] Activity feed live updates
 
+### Phase 4: Closing
+- [ ] Write Closing Summary
+- [ ] Validate implementation with the user
+
 ## Objective
 Add real-time capabilities to the application so that multiple users working on the same project can see changes instantly without refreshing the page.
 
@@ -362,7 +422,7 @@ The application currently relies on polling for updates. The backend is Express 
 
 ## Implementation
 ### Phase 1: Definition
-This phase tracks the definition of Objective, Context, and subsequent phases.
+Define the Objective, Context, and subsequent phases. Once complete, the plan is ready for execution.
 
 ### Phase 2: Infrastructure
 
@@ -372,8 +432,11 @@ Using Socket.IO for WebSocket support with automatic fallback to long-polling. E
 
 When a task is updated via the REST API, the server emits an event to all clients in the project room. The frontend listens for these events and updates the local state accordingly.
 
+### Phase 4: Closing
+Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.
+
 ## Closing Summary
-To be written when the last phase is completed.
+_To be written when the last phase is completed._
 EOF
 
 # ─── Done plans ─────────────────────────────────────────────────
@@ -391,6 +454,7 @@ assignee_model: "claude-sonnet-4"
 backlog_date: "2026-01-05T09:00"
 doing_date: "2026-01-10T10:00"
 done_date: "2026-01-30T14:10"
+format_version: "0.2.1"
 ---
 
 # Initial project setup
@@ -399,6 +463,7 @@ done_date: "2026-01-30T14:10"
 ### Phase 1: Definition
 - [x] Define objective and context
 - [x] Define phases and steps
+- [x] Refine with the user
 
 ### Phase 2: MVP
 - [x] Initialize Node.js project with TypeScript
@@ -406,6 +471,10 @@ done_date: "2026-01-30T14:10"
 - [x] Configure PostgreSQL with migrations
 - [x] Set up CI/CD pipeline with GitHub Actions
 - [x] Create Docker Compose for local development
+
+### Phase 3: Closing
+- [x] Write Closing Summary
+- [x] Validate implementation with the user
 
 ## Objective
 Set up the foundational project structure, tooling, and CI/CD so the team can start building features on a solid base.
@@ -415,11 +484,14 @@ Starting a new project from scratch. The team agreed on Node.js with TypeScript,
 
 ## Implementation
 ### Phase 1: Definition
-This phase tracks the definition of Objective, Context, and subsequent phases.
+Define the Objective, Context, and subsequent phases. Once complete, the plan is ready for execution.
 
 ### Phase 2: MVP
 
 Node.js 20 with TypeScript strict mode. ESLint with Airbnb config. PostgreSQL 16 with node-pg-migrate. GitHub Actions runs lint, type-check, and tests on every PR. Docker Compose includes PostgreSQL and Redis containers.
+
+### Phase 3: Closing
+Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.
 
 ## Closing Summary
 - All tooling and CI pipeline set up and verified
@@ -439,6 +511,7 @@ assignee_model: "gpt-4o"
 backlog_date: "2026-01-10T10:15"
 doing_date: "2026-01-20T09:00"
 done_date: "2026-02-08T11:10"
+format_version: "0.2.1"
 ---
 
 # Database schema design
@@ -447,6 +520,7 @@ done_date: "2026-02-08T11:10"
 ### Phase 1: Definition
 - [x] Define objective and context
 - [x] Define phases and steps
+- [x] Refine with the user
 
 ### Phase 2: Core tables
 - [x] Design users table with indexes
@@ -454,6 +528,10 @@ done_date: "2026-02-08T11:10"
 - [x] Design tasks table with status enum
 - [x] Create migration files
 - [x] Add seed data for development
+
+### Phase 3: Closing
+- [x] Write Closing Summary
+- [x] Validate implementation with the user
 
 ## Objective
 Design and implement the core database schema that supports users, projects, and tasks. This schema is the foundation for all application features.
@@ -463,11 +541,14 @@ The project uses PostgreSQL 16 with node-pg-migrate for migrations. No tables ex
 
 ## Implementation
 ### Phase 1: Definition
-This phase tracks the definition of Objective, Context, and subsequent phases.
+Define the Objective, Context, and subsequent phases. Once complete, the plan is ready for execution.
 
 ### Phase 2: Core tables
 
 PostgreSQL with UUIDs as primary keys. All tables include `created_at` and `updated_at` timestamps with automatic triggers. Foreign keys use `ON DELETE CASCADE` for owned resources. Indexes on all frequently queried columns.
+
+### Phase 3: Closing
+Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.
 
 ## Closing Summary
 - Schema finalized and deployed to staging
@@ -488,6 +569,7 @@ assignee_model: "claude-sonnet-4"
 backlog_date: "2026-01-20T11:00"
 doing_date: "2026-02-01T10:00"
 done_date: "2026-02-15T15:10"
+format_version: "0.2.1"
 ---
 
 # Logging and monitoring setup
@@ -496,6 +578,7 @@ done_date: "2026-02-15T15:10"
 ### Phase 1: Definition
 - [x] Define objective and context
 - [x] Define phases and steps
+- [x] Refine with the user
 
 ### Phase 2: Structured logging
 - [x] Install and configure Winston logger
@@ -509,6 +592,10 @@ done_date: "2026-02-15T15:10"
 - [x] Grafana dashboard for API performance
 - [x] Alert rules for error rate and latency
 
+### Phase 4: Closing
+- [x] Write Closing Summary
+- [x] Validate implementation with the user
+
 ## Objective
 Implement structured logging and monitoring to gain visibility into application health and debug production issues effectively.
 
@@ -517,7 +604,7 @@ The application currently uses `console.log` with no structure or correlation. P
 
 ## Implementation
 ### Phase 1: Definition
-This phase tracks the definition of Objective, Context, and subsequent phases.
+Define the Objective, Context, and subsequent phases. Once complete, the plan is ready for execution.
 
 ### Phase 2: Structured logging
 
@@ -526,6 +613,9 @@ Using Winston with JSON format for production and pretty-print for development. 
 ### Phase 3: Monitoring
 
 Health check at `/health` reports database, Redis, and external service status. Prometheus metrics at `/metrics` expose request duration histograms, active connections, and error counters. Grafana dashboards visualize the data with alert thresholds.
+
+### Phase 4: Closing
+Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.
 
 ## Closing Summary
 - Winston logging with request ID correlation deployed across all services
@@ -546,6 +636,7 @@ assignee_model: "claude-sonnet-4"
 backlog_date: "2026-01-25T09:30"
 doing_date: "2026-02-10T08:30"
 done_date: "2026-02-20T10:10"
+format_version: "0.2.1"
 ---
 
 # CI/CD pipeline improvements
@@ -554,6 +645,7 @@ done_date: "2026-02-20T10:10"
 ### Phase 1: Definition
 - [x] Define objective and context
 - [x] Define phases and steps
+- [x] Refine with the user
 
 ### Phase 2: Build optimization
 - [x] Cache node_modules across CI runs
@@ -565,6 +657,10 @@ done_date: "2026-02-20T10:10"
 - [x] Production deploy with manual approval gate
 - [x] Rollback mechanism with previous image tag
 
+### Phase 4: Closing
+- [x] Write Closing Summary
+- [x] Validate implementation with the user
+
 ## Objective
 Improve the CI/CD pipeline to reduce build times from ~12 minutes to under 5 minutes and add automated staging deployments.
 
@@ -573,7 +669,7 @@ The current CI pipeline runs on GitHub Actions but takes ~12 minutes because it 
 
 ## Implementation
 ### Phase 1: Definition
-This phase tracks the definition of Objective, Context, and subsequent phases.
+Define the Objective, Context, and subsequent phases. Once complete, the plan is ready for execution.
 
 ### Phase 2: Build optimization
 
@@ -583,6 +679,9 @@ Reduced build time from 12 min to 3.5 min by caching `node_modules` across CI ru
 
 Staging auto-deploys on merge to main via GitHub Actions. Production deploys require a manual approval gate. Rollback uses the previous Docker image tag for instant recovery.
 
+### Phase 4: Closing
+Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.
+
 ## Closing Summary
 - CI pipeline reduced from 12 min to 3.5 min with caching and parallel jobs
 - Staging auto-deploy verified and working on merge to main
@@ -590,8 +689,8 @@ Staging auto-deploys on merge to main via GitHub Actions. Production deploys req
 - Rollback mechanism documented and tested
 EOF
 
-# ─── Backlog plans (still being defined — Phase 1 unchecked) ───
-echo "==> Creating backlog plans (still defining)..."
+# ─── Backlog plans (defined, pending user validation) ───
+echo "==> Creating backlog plans (pending user validation)..."
 
 cat <<'EOF' > "$DEMO/backlog/2604141400_api-rate-limiting.md"
 ---
@@ -605,6 +704,7 @@ assignee_model: ""
 backlog_date: "2026-02-10T11:30"
 doing_date: ""
 done_date: ""
+format_version: "0.2.1"
 ---
 
 # API rate limiting strategy
@@ -612,13 +712,18 @@ done_date: ""
 ## Progress
 ### Phase 1: Definition
 - [x] Define objective and context
-- [ ] Define phases and steps
+- [x] Define phases and steps
+- [ ] Refine with the user
 
 ### Phase 2: Rate limiting setup
 - [ ] Choose rate limiting library and strategy
 - [ ] Define rate limits per endpoint category
 - [ ] Implement rate limiting middleware
 - [ ] Add rate limit headers to API responses
+
+### Phase 3: Closing
+- [ ] Write Closing Summary
+- [ ] Validate implementation with the user
 
 ## Objective
 Add rate limiting to the API to prevent abuse and prepare for external consumers. After deploying authentication, we observed automated login attempts from multiple IPs.
@@ -628,14 +733,17 @@ The API currently has no rate limiting. We already use Redis for sessions, so a 
 
 ## Implementation
 ### Phase 1: Definition
-This phase tracks the definition of Objective, Context, and subsequent phases.
+Define the Objective, Context, and subsequent phases. Once complete, the plan is ready for execution.
 
 ### Phase 2: Rate limiting setup
 
 Use `rate-limiter-flexible` with Redis backend for shared state across instances. Sliding window algorithm for smoother rate distribution. Different tiers: auth endpoints (stricter), read endpoints (relaxed), write endpoints (moderate). Include `X-RateLimit-*` headers in responses.
 
+### Phase 3: Closing
+Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.
+
 ## Closing Summary
-To be written when the last phase is completed.
+_To be written when the last phase is completed._
 EOF
 
 cat <<'EOF' > "$DEMO/backlog/2604655800_dark-mode-design.md"
@@ -650,14 +758,16 @@ assignee_model: ""
 backlog_date: "2026-02-15T15:30"
 doing_date: ""
 done_date: ""
+format_version: "0.2.1"
 ---
 
 # Dark mode design system
 
 ## Progress
 ### Phase 1: Definition
-- [ ] Define objective and context
-- [ ] Define phases and steps
+- [x] Define objective and context
+- [x] Define phases and steps
+- [ ] Refine with the user
 
 ### Phase 2: Design tokens
 - [ ] Define semantic color tokens (background, surface, text, border)
@@ -668,6 +778,10 @@ done_date: ""
 - [ ] Update core UI components to use semantic tokens
 - [ ] Add user preference persistence (localStorage)
 
+### Phase 4: Closing
+- [ ] Write Closing Summary
+- [ ] Validate implementation with the user
+
 ## Objective
 Add dark mode support to the application. Users have requested it and it improves accessibility and reduces eye strain in low-light environments.
 
@@ -676,7 +790,7 @@ The app currently uses hardcoded colors. We already use Tailwind CSS, which has 
 
 ## Implementation
 ### Phase 1: Definition
-This phase tracks the definition of Objective, Context, and subsequent phases.
+Define the Objective, Context, and subsequent phases. Once complete, the plan is ready for execution.
 
 ### Phase 2: Design tokens
 
@@ -686,8 +800,11 @@ Define CSS custom properties for semantic colors (`--color-bg`, `--color-surface
 
 Replace hardcoded color classes (`bg-white`, `text-gray-900`) with semantic tokens across all components. Store user preference in localStorage and respect `prefers-color-scheme` as default.
 
+### Phase 4: Closing
+Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.
+
 ## Closing Summary
-To be written when the last phase is completed.
+_To be written when the last phase is completed._
 EOF
 
 cat <<'EOF' > "$DEMO/backlog/2605639600_file-upload-system.md"
@@ -702,14 +819,16 @@ assignee_model: ""
 backlog_date: "2026-02-25T11:00"
 doing_date: ""
 done_date: ""
+format_version: "0.2.1"
 ---
 
 # File upload system
 
 ## Progress
 ### Phase 1: Definition
-- [ ] Define objective and context
-- [ ] Define phases and steps
+- [x] Define objective and context
+- [x] Define phases and steps
+- [ ] Refine with the user
 
 ### Phase 2: Storage setup
 - [ ] Set up S3-compatible storage (MinIO for dev, S3 for prod)
@@ -722,6 +841,10 @@ done_date: ""
 - [ ] Generate image thumbnails on upload
 - [ ] Build file browser UI component
 
+### Phase 4: Closing
+- [ ] Write Closing Summary
+- [ ] Validate implementation with the user
+
 ## Objective
 Allow users to upload files (images, documents) associated with projects and tasks. Users have requested the ability to attach screenshots to tasks and upload project assets.
 
@@ -730,7 +853,7 @@ Currently the app has no file handling. The backend is Express with PostgreSQL. 
 
 ## Implementation
 ### Phase 1: Definition
-This phase tracks the definition of Objective, Context, and subsequent phases.
+Define the Objective, Context, and subsequent phases. Once complete, the plan is ready for execution.
 
 ### Phase 2: Storage setup
 
@@ -740,51 +863,12 @@ Use the AWS SDK with S3-compatible configuration pointing to MinIO locally and S
 
 Files linked to tasks/projects via a `file_attachments` junction table. Image thumbnails generated with Sharp on upload. A reusable file browser component handles upload, preview, and deletion.
 
+### Phase 4: Closing
+Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.
+
 ## Closing Summary
-To be written when the last phase is completed.
+_To be written when the last phase is completed._
 EOF
-
-# ─── Write static READMEs ────────────────────────────────────────
-# State folder READMEs are static descriptions (not auto-generated).
-# The init scaffold has minimal versions; here we write richer ones
-# matching the demo's purpose as a reference example.
-echo "==> Writing static READMEs..."
-
-cat <<'README' > "$DEMO/backlog/README.md"
-# Backlog
-
-Plans pending, waiting for definition or execution.
-
-This is the starting point for all plans. A plan enters the backlog when it has been identified as something worth doing but has not yet started. It may still need further research, scoping, or prioritization before moving forward.
-
-When a plan is ready to be worked on, the AI agent moves it to the `doing/` folder and updates its metadata.
-
-[View all states](../README.md)
-README
-
-cat <<'README' > "$DEMO/doing/README.md"
-# Doing
-
-Plans in progress, currently being implemented.
-
-A plan moves here when someone is actively working on it. This folder represents ongoing effort — the plan has been scoped, assigned, and implementation is underway.
-
-When the work is complete, the AI agent moves the plan to the `done/` folder. If the plan needs to be paused or deprioritized, it can be moved back to `backlog/`.
-
-[View all states](../README.md)
-README
-
-cat <<'README' > "$DEMO/done/README.md"
-# Done
-
-Plans completed and closed.
-
-A plan moves here when its implementation is finished and verified. This folder serves as a historical record of all completed work, useful for reference and retrospectives.
-
-Done plans should generally not be modified. If a completed plan needs rework, create a new plan in `backlog/` instead of reopening the old one.
-
-[View all states](../README.md)
-README
 
 # ─── Write root README ───────────────────────────────────────────
 echo "==> Writing root README..."

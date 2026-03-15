@@ -9,14 +9,16 @@ assignee_model: ""
 backlog_date: "2026-02-15T15:30"
 doing_date: ""
 done_date: ""
+format_version: "0.2.1"
 ---
 
 # Dark mode design system
 
 ## Progress
 ### Phase 1: Definition
-- [ ] Define objective and context
-- [ ] Define phases and steps
+- [x] Define objective and context
+- [x] Define phases and steps
+- [ ] Refine with the user
 
 ### Phase 2: Design tokens
 - [ ] Define semantic color tokens (background, surface, text, border)
@@ -27,6 +29,10 @@ done_date: ""
 - [ ] Update core UI components to use semantic tokens
 - [ ] Add user preference persistence (localStorage)
 
+### Phase 4: Closing
+- [ ] Write Closing Summary
+- [ ] Validate implementation with the user
+
 ## Objective
 Add dark mode support to the application. Users have requested it and it improves accessibility and reduces eye strain in low-light environments.
 
@@ -35,7 +41,7 @@ The app currently uses hardcoded colors. We already use Tailwind CSS, which has 
 
 ## Implementation
 ### Phase 1: Definition
-This phase tracks the definition of Objective, Context, and subsequent phases.
+Define the Objective, Context, and subsequent phases. Once complete, the plan is ready for execution.
 
 ### Phase 2: Design tokens
 
@@ -45,5 +51,8 @@ Define CSS custom properties for semantic colors (`--color-bg`, `--color-surface
 
 Replace hardcoded color classes (`bg-white`, `text-gray-900`) with semantic tokens across all components. Store user preference in localStorage and respect `prefers-color-scheme` as default.
 
+### Phase 4: Closing
+Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.
+
 ## Closing Summary
-To be written when the last phase is completed.
+_To be written when the last phase is completed._

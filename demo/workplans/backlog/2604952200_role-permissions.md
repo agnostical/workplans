@@ -9,6 +9,7 @@ assignee_model: "gpt-4o"
 backlog_date: "2026-02-22T09:25"
 doing_date: ""
 done_date: ""
+format_version: "0.2.1"
 ---
 
 # Role-based permissions
@@ -17,6 +18,7 @@ done_date: ""
 ### Phase 1: Definition
 - [x] Define objective and context
 - [x] Define phases and steps
+- [x] Refine with the user
 
 ### Phase 2: Core RBAC
 - [ ] Define roles table and seed default roles (admin, editor, viewer)
@@ -29,6 +31,10 @@ done_date: ""
 - [ ] Permission checks in frontend components
 - [ ] Invite users with specific roles
 
+### Phase 4: Closing
+- [ ] Write Closing Summary
+- [ ] Validate implementation with the user
+
 ## Objective
 Implement role-based access control (RBAC) to restrict actions based on user roles. Currently all authenticated users have the same permissions, which is a security concern.
 
@@ -37,7 +43,7 @@ Authentication is already implemented with JWT. The database is PostgreSQL. The 
 
 ## Implementation
 ### Phase 1: Definition
-This phase tracks the definition of Objective, Context, and subsequent phases.
+Define the Objective, Context, and subsequent phases. Once complete, the plan is ready for execution.
 
 ### Phase 2: Core RBAC
 
@@ -47,5 +53,8 @@ Create `roles` and `permissions` tables. Each role has many permissions. Permiss
 
 Admin users can manage roles from a settings page. Frontend components conditionally render based on the current user's permissions using a `usePermission('resource:action')` hook.
 
+### Phase 4: Closing
+Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.
+
 ## Closing Summary
-To be written when the last phase is completed.
+_To be written when the last phase is completed._
