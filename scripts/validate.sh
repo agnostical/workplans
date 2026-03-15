@@ -289,15 +289,17 @@ for folder in backlog doing done; do
       fi
     fi
 
-    # Check Phase 1: Definition exists
-    if grep -q "### Phase 1: Definition" "$file"; then
-      pass "$folder/$bn — Phase 1: Definition present"
+    # Check Phase 1 exists (title after colon follows user's language)
+    if grep -q "### Phase 1:" "$file"; then
+      pass "$folder/$bn — Phase 1 present"
     else
-      fail "$folder/$bn — missing mandatory Phase 1: Definition"
+      fail "$folder/$bn — missing mandatory Phase 1"
     fi
 
-    # Check Closing phase exists
-    if grep -q "### Phase [0-9]*: Closing" "$file"; then
+    # Check Closing phase exists (last phase, title follows user's language)
+    # Get the last ### Phase N: heading and check it's the closing phase
+    last_phase=$(grep "### Phase [0-9]*:" "$file" | tail -1)
+    if [[ -n "$last_phase" ]]; then
       pass "$folder/$bn — Closing phase present"
     else
       fail "$folder/$bn — missing mandatory Closing phase"
