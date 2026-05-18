@@ -92,6 +92,8 @@ _To be written when the last phase is completed._
 
 > **Note:** The template above is in English as reference only. The `Phase N:` prefix and structural headings (`## Progress`, `## Objective`, `## Context`, `## Implementation`, `## Closing Summary`) are always in English. Everything else — phase titles, step descriptions, and Implementation text — must be written in the language the user is using in the conversation. Always translate the template examples to the user's active language.
 
+> **Step style:** each Progress step is one concrete action — a single line, no multi-sentence descriptions, no embedded technical detail. Recommended pattern: infinitive verb + direct object (e.g. `Create RateLimiter middleware`, not `Create RateLimiter middleware in src/... with sliding window, Redis backing store, 429 response, and whitelist via env var`). All expanded information belongs in the matching phase under `## Implementation`.
+
 ### Plan Frontmatter
 
 Every plan starts with YAML frontmatter on **line 1** (no blank lines before `---`). All fields present in every state; empty (`""`) if not applicable.
@@ -193,7 +195,7 @@ All 24 rules are mandatory. Ordered by criticality: **Structure** (framework int
 | 10 | Template | Phase 1: Definition is mandatory in every plan with three fixed steps. Must not be modified |
 | 11 | Template | Closing phase is mandatory as the last phase in every plan with two fixed steps. Must not be modified |
 | 12 | Template | Steps grouped by phase (`### Phase N: Name`), each concrete and verifiable. Use "Phase" and "Step" only (never "Stage") |
-| 13 | Template | Technical detail in Implementation, summary in Progress |
+| 13 | Template | Progress steps: one concrete action per line. No multi-sentence descriptions, no embedded technical detail. All expanded information lives in Implementation |
 | 14 | Template | Closing Summary is the last section, written when the last phase is completed |
 | 15 | Template | Every `.md` plan must follow the template and live in its state folder |
 | 16 | Template | A plan must not move to `doing/` until Phase 1: Definition is complete |
