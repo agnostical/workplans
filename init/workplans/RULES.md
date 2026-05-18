@@ -293,16 +293,6 @@ npx giget gh:agnostical/board workplans/extend/board
 
 The `extend/` folder and its contents are not plan files. They are excluded from validation.
 
-## Validation
-
-After creating, moving, or deleting plans, run the validation script to verify integrity:
-
-```bash
-bash scripts/validate.sh <workplans-dir>
-```
-
-The script checks structure, file naming, frontmatter, and template sections. Fix any errors before continuing.
-
 ## Work destination (Experimental)
 
 The `work_on` field in RULES.md frontmatter indicates where plans in this folder apply their execution changes. It defaults to the parent directory of `workplans/`.
