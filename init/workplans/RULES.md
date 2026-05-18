@@ -94,6 +94,8 @@ _To be written when the last phase is completed._
 
 > **Step style:** each Progress step is one concrete action — a single line, no multi-sentence descriptions, no embedded technical detail. Recommended pattern: infinitive verb + direct object (e.g. `Create RateLimiter middleware`, not `Create RateLimiter middleware in src/... with sliding window, Redis backing store, 429 response, and whitelist via env var`). All expanded information belongs in the matching phase under `## Implementation`.
 
+> **Manual steps:** any step that cannot be executed by an AI agent — browser verification, external platform configuration, credential rotation, human-interactive testing, manual UI inspection — must be prefixed with `[manual]`. This tells the agent to skip the step during execution and report it to the user for completion. Examples: `[manual] Verify component renders in browser`, `[manual] Configure redirect URI in OAuth provider dashboard`, `[manual] Test keyboard shortcut`. The prefix appears in Progress (where the step is checked off); the Implementation text describes what the user needs to do.
+
 ### Plan Frontmatter
 
 Every plan starts with YAML frontmatter on **line 1** (no blank lines before `---`). All fields present in every state; empty (`""`) if not applicable.
@@ -179,7 +181,7 @@ Phase N: Closing           ← exit gate (mandatory)
 
 ## Rules
 
-All 24 rules are mandatory. Ordered by criticality: **Structure** (framework integrity) → **Template** (plan validity) → **Data** (field correctness).
+All 25 rules are mandatory. Ordered by criticality: **Structure** (framework integrity) → **Template** (plan validity) → **Data** (field correctness).
 
 | # | Category | Rule |
 |---|----------|------|
@@ -207,6 +209,7 @@ All 24 rules are mandatory. Ordered by criticality: **Structure** (framework int
 | 22 | Data | `_` separates timestamp ID from description; uniqueness = timestamp + description |
 | 23 | Data | `format_version` is immutable and must match the `version` field in RULES.md at creation time |
 | 24 | Template | Plan files must not contain emojis. Use plain descriptive text instead |
+| 25 | Template | Steps that cannot be executed by an AI agent must be prefixed with `[manual]`. The agent skips these during execution and reports them to the user |
 
 ---
 
