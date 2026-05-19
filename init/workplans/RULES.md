@@ -120,15 +120,28 @@ The first line after frontmatter is an H1 (`#`) that must match the `title` fiel
 
 ### Plan Sections
 
-Five H2 sections follow the title, in this order. Each heading uses Title Case.
+Five H2 sections follow the title. Each heading uses Title Case.
 
 | Section | Purpose |
 |---------|---------|
-| `## Progress` | Checklist mirror of Implementation phases. Always right after H1 |
-| `## Objective` | What this plan aims to achieve and why |
+| `## Objective` | What this plan aims to achieve and why. Single short paragraph; extended background goes in `Context` |
+| `## Progress` | Checklist mirror of Implementation phases |
 | `## Context` | Background, constraints, or references that inform the plan |
 | `## Implementation` | Technical detail, decisions, and approach organized by phase. The level of detail scales with plan complexity — the examples in state folder READMEs are a starting point, not a ceiling |
 | `## Closing Summary` | Written when the last phase is completed. Bullet points: what was implemented, deviations, blockers, and anything left for future plans. Until then, contains: `_To be written when the last phase is completed._` |
+
+#### Section order
+
+Section order depends on `format_version`:
+
+| `format_version` | Order |
+|------------------|-------|
+| `0.3.0` or higher (new layout) | `Objective` → `Progress` → `Context` → `Implementation` → `Closing Summary` |
+| `0.2.x` or lower (legacy layout) | `Progress` → `Objective` → `Context` → `Implementation` → `Closing Summary` |
+
+The new layout follows the natural gradient *purpose → progress → context → detail*: a reader sees what the plan is about before scanning what is done. Plans created before v0.3.0 keep the legacy order so historical artifacts in `done/` validate without forced migration.
+
+The canonical template above still shows the legacy layout because the framework `version` is still `0.2.2`. When `version` bumps to `0.3.0` later in this release, the canonical template switches to the new layout.
 
 ### Mandatory Phase 1: Definition
 
@@ -192,8 +205,8 @@ All 25 rules are mandatory. Ordered by criticality: **Structure** (framework int
 | 5 | Structure | README files and RULES.md are system files. Do not remove or edit manually |
 | 6 | Structure | Do not add custom frontmatter fields or markdown sections beyond the defined format |
 | 7 | Template | H1 must match the `title` field |
-| 8 | Template | H2 sections must use Title Case. Only 5 valid sections allowed |
-| 9 | Template | Progress always right after H1; phases must mirror Implementation |
+| 8 | Template | H2 sections must use Title Case. Only 5 valid sections allowed. Section order depends on `format_version` (see Plan Sections) |
+| 9 | Template | Progress phases mirror Implementation phases. In legacy layout (`format_version < 0.3.0`) Progress sits right after H1; in new layout (`format_version >= 0.3.0`) Objective sits right after H1 and Progress follows |
 | 10 | Template | Phase 1: Definition is mandatory in every plan with three fixed steps. Must not be modified |
 | 11 | Template | Closing phase is mandatory as the last phase in every plan with two fixed steps. Must not be modified |
 | 12 | Template | Steps grouped by phase (`### Phase N: Name`), each concrete and verifiable. Use "Phase" and "Step" only (never "Stage") |
