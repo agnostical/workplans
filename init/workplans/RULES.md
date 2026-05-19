@@ -112,7 +112,7 @@ Every plan starts with YAML frontmatter on **line 1** (no blank lines before `--
 | `backlog_date` | Datetime created (`YYYY-MM-DDThh:mm`) |
 | `doing_date` | Datetime work started (`YYYY-MM-DDThh:mm`) |
 | `done_date` | Datetime completed (`YYYY-MM-DDThh:mm`) |
-| `format_version` | Framework version at creation time (from RULES.md `version`). Immutable |
+| `format_version` | Format the plan currently follows. At creation, equals the `version` field in RULES.md. Mutable: updated only when the plan is explicitly migrated to a new format |
 
 ### Plan Title
 
@@ -207,7 +207,7 @@ All 25 rules are mandatory. Ordered by criticality: **Structure** (framework int
 | 20 | Data | Datetimes must come from the system clock. Hardcoded, estimated, or placeholder values are forbidden |
 | 21 | Data | `author` is immutable once assigned; multiple authors are comma-separated |
 | 22 | Data | `_` separates timestamp ID from description; uniqueness = timestamp + description |
-| 23 | Data | `format_version` is immutable and must match the `version` field in RULES.md at creation time |
+| 23 | Data | `format_version` reflects the format the plan currently follows. At creation, equals the `version` field in RULES.md. Mutable only on explicit migration to a new format; the value at any time signals which rule set validators apply |
 | 24 | Template | Plan files must not contain emojis. Use plain descriptive text instead |
 | 25 | Template | Steps that cannot be executed by an AI agent must be prefixed with `[manual]`. The agent skips these during execution and reports them to the user |
 
