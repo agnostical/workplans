@@ -9,10 +9,13 @@ assignee_model: "claude-sonnet-4"
 backlog_date: "2026-01-20T11:00"
 doing_date: "2026-02-01T10:00"
 done_date: "2026-02-15T15:10"
-format_version: "0.2.1"
+format_version: "0.3.0"
 ---
 
 # Logging and monitoring setup
+
+## Objective
+Implement structured logging and monitoring to gain visibility into application health and debug production issues effectively.
 
 ## Progress
 ### Phase 1: Definition
@@ -35,9 +38,6 @@ format_version: "0.2.1"
 ### Phase 4: Closing
 - [x] Write Closing Summary
 - [x] Validate implementation with the user
-
-## Objective
-Implement structured logging and monitoring to gain visibility into application health and debug production issues effectively.
 
 ## Context
 The application currently uses `console.log` with no structure or correlation. Production debugging requires SSH access to read raw logs. The infrastructure already includes Redis and PostgreSQL, and the team has access to a Grafana instance.

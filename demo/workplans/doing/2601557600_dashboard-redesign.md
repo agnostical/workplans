@@ -9,10 +9,13 @@ assignee_model: "claude-sonnet-4"
 backlog_date: "2026-01-20T10:00"
 doing_date: "2026-02-10T09:30"
 done_date: ""
-format_version: "0.2.1"
+format_version: "0.3.0"
 ---
 
 # Dashboard redesign
+
+## Objective
+Redesign the main dashboard to improve usability and information density. The current layout wastes screen space and the navigation is confusing for new users.
 
 ## Progress
 ### Phase 1: Definition
@@ -34,9 +37,6 @@ format_version: "0.2.1"
 ### Phase 4: Closing
 - [ ] Write Closing Summary
 - [ ] Validate implementation with the user
-
-## Objective
-Redesign the main dashboard to improve usability and information density. The current layout wastes screen space and the navigation is confusing for new users.
 
 ## Context
 The current dashboard uses a top navbar with a single-column layout. The frontend is React with Tailwind CSS. User feedback consistently mentions difficulty finding features and wasted screen space on wide monitors.

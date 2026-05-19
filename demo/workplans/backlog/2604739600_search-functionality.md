@@ -9,10 +9,13 @@ assignee_model: ""
 backlog_date: "2026-02-20T15:45"
 doing_date: ""
 done_date: ""
-format_version: "0.2.1"
+format_version: "0.3.0"
 ---
 
 # Full-text search functionality
+
+## Objective
+Allow users to search across all content in the application using full-text search powered by PostgreSQL's built-in tsvector capabilities.
 
 ## Progress
 ### Phase 1: Definition
@@ -28,9 +31,6 @@ format_version: "0.2.1"
 ### Phase 3: Closing
 - [ ] Write Closing Summary
 - [ ] Validate implementation with the user
-
-## Objective
-Allow users to search across all content in the application using full-text search powered by PostgreSQL's built-in tsvector capabilities.
 
 ## Context
 The application stores content in PostgreSQL. PostgreSQL has built-in full-text search with tsvector and GIN indexes, which avoids introducing an external search engine like Elasticsearch at this stage.

@@ -9,10 +9,13 @@ assignee_model: "claude-opus-4"
 backlog_date: "2026-02-05T11:00"
 doing_date: "2026-02-18T09:00"
 done_date: ""
-format_version: "0.2.1"
+format_version: "0.3.0"
 ---
 
 # API v2 endpoints
+
+## Objective
+Create v2 of the API with improved pagination, filtering, and consistent error responses. The v1 endpoints will be maintained in parallel during the migration period.
 
 ## Progress
 ### Phase 1: Definition
@@ -29,9 +32,6 @@ format_version: "0.2.1"
 ### Phase 3: Closing
 - [ ] Write Closing Summary
 - [ ] Validate implementation with the user
-
-## Objective
-Create v2 of the API with improved pagination, filtering, and consistent error responses. The v1 endpoints will be maintained in parallel during the migration period.
 
 ## Context
 The v1 API uses offset-based pagination which performs poorly on large datasets. Error responses are inconsistent across endpoints. External consumers have requested filtering and sorting capabilities.
