@@ -9,10 +9,13 @@ assignee_model: ""
 backlog_date: "2026-02-15T15:30"
 doing_date: ""
 done_date: ""
-format_version: "0.2.1"
+format_version: "0.3.0"
 ---
 
 # Dark mode design system
+
+## Objective
+Add dark mode support to the application. Users have requested it and it improves accessibility and reduces eye strain in low-light environments.
 
 ## Progress
 ### Phase 1: Definition
@@ -32,9 +35,6 @@ format_version: "0.2.1"
 ### Phase 4: Closing
 - [ ] Write Closing Summary
 - [ ] Validate implementation with the user
-
-## Objective
-Add dark mode support to the application. Users have requested it and it improves accessibility and reduces eye strain in low-light environments.
 
 ## Context
 The app currently uses hardcoded colors. We already use Tailwind CSS, which has native dark mode support via the `class` strategy. Need to define semantic color tokens before implementation.

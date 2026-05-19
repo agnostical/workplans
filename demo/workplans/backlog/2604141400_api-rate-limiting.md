@@ -9,10 +9,13 @@ assignee_model: ""
 backlog_date: "2026-02-10T11:30"
 doing_date: ""
 done_date: ""
-format_version: "0.2.1"
+format_version: "0.3.0"
 ---
 
 # API rate limiting strategy
+
+## Objective
+Add rate limiting to the API to prevent abuse and prepare for external consumers. After deploying authentication, we observed automated login attempts from multiple IPs.
 
 ## Progress
 ### Phase 1: Definition
@@ -29,9 +32,6 @@ format_version: "0.2.1"
 ### Phase 3: Closing
 - [ ] Write Closing Summary
 - [ ] Validate implementation with the user
-
-## Objective
-Add rate limiting to the API to prevent abuse and prepare for external consumers. After deploying authentication, we observed automated login attempts from multiple IPs.
 
 ## Context
 The API currently has no rate limiting. We already use Redis for sessions, so a Redis-based solution (`rate-limiter-flexible`) fits the existing infrastructure. Need to define limits per endpoint before promoting to backlog.

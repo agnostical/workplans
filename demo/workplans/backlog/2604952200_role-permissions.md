@@ -9,10 +9,13 @@ assignee_model: "gpt-4o"
 backlog_date: "2026-02-22T09:25"
 doing_date: ""
 done_date: ""
-format_version: "0.2.1"
+format_version: "0.3.0"
 ---
 
 # Role-based permissions
+
+## Objective
+Implement role-based access control (RBAC) to restrict actions based on user roles. Currently all authenticated users have the same permissions, which is a security concern.
 
 ## Progress
 ### Phase 1: Definition
@@ -34,9 +37,6 @@ format_version: "0.2.1"
 ### Phase 4: Closing
 - [ ] Write Closing Summary
 - [ ] Validate implementation with the user
-
-## Objective
-Implement role-based access control (RBAC) to restrict actions based on user roles. Currently all authenticated users have the same permissions, which is a security concern.
 
 ## Context
 Authentication is already implemented with JWT. The database is PostgreSQL. The frontend uses React with a custom hook pattern for feature flags. No authorization layer exists yet.

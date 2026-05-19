@@ -9,10 +9,13 @@ assignee_model: "gpt-4o"
 backlog_date: "2026-01-10T10:15"
 doing_date: "2026-01-20T09:00"
 done_date: "2026-02-08T11:10"
-format_version: "0.2.1"
+format_version: "0.3.0"
 ---
 
 # Database schema design
+
+## Objective
+Design and implement the core database schema that supports users, projects, and tasks. This schema is the foundation for all application features.
 
 ## Progress
 ### Phase 1: Definition
@@ -30,9 +33,6 @@ format_version: "0.2.1"
 ### Phase 3: Closing
 - [x] Write Closing Summary
 - [x] Validate implementation with the user
-
-## Objective
-Design and implement the core database schema that supports users, projects, and tasks. This schema is the foundation for all application features.
 
 ## Context
 The project uses PostgreSQL 16 with node-pg-migrate for migrations. No tables exist yet. The initial feature set requires users, projects, and tasks with relationships between them.

@@ -9,10 +9,13 @@ assignee_model: "grok-3"
 backlog_date: "2026-02-05T14:00"
 doing_date: "2026-02-20T10:30"
 done_date: ""
-format_version: "0.2.1"
+format_version: "0.3.0"
 ---
 
 # WebSocket real-time updates
+
+## Objective
+Add real-time capabilities to the application so that multiple users working on the same project can see changes instantly without refreshing the page.
 
 ## Progress
 ### Phase 1: Definition
@@ -35,9 +38,6 @@ format_version: "0.2.1"
 ### Phase 4: Closing
 - [ ] Write Closing Summary
 - [ ] Validate implementation with the user
-
-## Objective
-Add real-time capabilities to the application so that multiple users working on the same project can see changes instantly without refreshing the page.
 
 ## Context
 The application currently relies on polling for updates. The backend is Express with JWT authentication. Multiple users frequently work on the same project simultaneously, leading to stale data and conflicts.

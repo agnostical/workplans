@@ -9,10 +9,13 @@ assignee_model: "claude-sonnet-4"
 backlog_date: "2026-01-05T09:00"
 doing_date: "2026-01-10T10:00"
 done_date: "2026-01-30T14:10"
-format_version: "0.2.1"
+format_version: "0.3.0"
 ---
 
 # Initial project setup
+
+## Objective
+Set up the foundational project structure, tooling, and CI/CD so the team can start building features on a solid base.
 
 ## Progress
 ### Phase 1: Definition
@@ -30,9 +33,6 @@ format_version: "0.2.1"
 ### Phase 3: Closing
 - [x] Write Closing Summary
 - [x] Validate implementation with the user
-
-## Objective
-Set up the foundational project structure, tooling, and CI/CD so the team can start building features on a solid base.
 
 ## Context
 Starting a new project from scratch. The team agreed on Node.js with TypeScript, PostgreSQL as the database, and GitHub Actions for CI/CD. Docker Compose will standardize the local development environment.

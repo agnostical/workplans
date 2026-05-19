@@ -2,7 +2,7 @@
 # ─────────────────────────────────────────────────────────────────
 # build-demo.sh
 # Regenerates demo/workplans from init/workplans and creates
-# example plan files for all three states (v0.2.1 format).
+# example plan files for all three states (v0.3.0 format).
 #
 # Usage: ./scripts/build-demo.sh
 # ─────────────────────────────────────────────────────────────────
@@ -35,10 +35,13 @@ assignee_model: ""
 backlog_date: "2026-01-15T14:20"
 doing_date: ""
 done_date: ""
-format_version: "0.2.1"
+format_version: "0.3.0"
 ---
 
 # User authentication setup
+
+## Objective
+Implement user authentication for the application using JWT tokens. This is required before any user-facing feature can be deployed, as all API endpoints need to verify user identity.
 
 ## Progress
 ### Phase 1: Definition
@@ -59,9 +62,6 @@ format_version: "0.2.1"
 ### Phase 4: Closing
 - [ ] Write Closing Summary
 - [ ] Validate implementation with the user
-
-## Objective
-Implement user authentication for the application using JWT tokens. This is required before any user-facing feature can be deployed, as all API endpoints need to verify user identity.
 
 ## Context
 The application currently has no authentication. The database is PostgreSQL and the API is built with Express. The frontend expects a Bearer token in the Authorization header.
@@ -97,10 +97,13 @@ assignee_model: ""
 backlog_date: "2026-02-01T09:15"
 doing_date: ""
 done_date: ""
-format_version: "0.2.1"
+format_version: "0.3.0"
 ---
 
 # Email notification system
+
+## Objective
+Build an email notification system so users receive transactional emails (welcome, password reset, activity alerts). This unblocks the authentication flow which needs password reset emails.
 
 ## Progress
 ### Phase 1: Definition
@@ -117,9 +120,6 @@ format_version: "0.2.1"
 ### Phase 3: Closing
 - [ ] Write Closing Summary
 - [ ] Validate implementation with the user
-
-## Objective
-Build an email notification system so users receive transactional emails (welcome, password reset, activity alerts). This unblocks the authentication flow which needs password reset emails.
 
 ## Context
 The application has no email capabilities yet. We already use PostgreSQL for the database and can leverage it for a simple job queue. SendGrid is the preferred provider, with AWS SES as fallback.
@@ -151,10 +151,13 @@ assignee_model: ""
 backlog_date: "2026-02-20T15:45"
 doing_date: ""
 done_date: ""
-format_version: "0.2.1"
+format_version: "0.3.0"
 ---
 
 # Full-text search functionality
+
+## Objective
+Allow users to search across all content in the application using full-text search powered by PostgreSQL's built-in tsvector capabilities.
 
 ## Progress
 ### Phase 1: Definition
@@ -170,9 +173,6 @@ format_version: "0.2.1"
 ### Phase 3: Closing
 - [ ] Write Closing Summary
 - [ ] Validate implementation with the user
-
-## Objective
-Allow users to search across all content in the application using full-text search powered by PostgreSQL's built-in tsvector capabilities.
 
 ## Context
 The application stores content in PostgreSQL. PostgreSQL has built-in full-text search with tsvector and GIN indexes, which avoids introducing an external search engine like Elasticsearch at this stage.
@@ -204,10 +204,13 @@ assignee_model: "gpt-4o"
 backlog_date: "2026-02-22T09:25"
 doing_date: ""
 done_date: ""
-format_version: "0.2.1"
+format_version: "0.3.0"
 ---
 
 # Role-based permissions
+
+## Objective
+Implement role-based access control (RBAC) to restrict actions based on user roles. Currently all authenticated users have the same permissions, which is a security concern.
 
 ## Progress
 ### Phase 1: Definition
@@ -229,9 +232,6 @@ format_version: "0.2.1"
 ### Phase 4: Closing
 - [ ] Write Closing Summary
 - [ ] Validate implementation with the user
-
-## Objective
-Implement role-based access control (RBAC) to restrict actions based on user roles. Currently all authenticated users have the same permissions, which is a security concern.
 
 ## Context
 Authentication is already implemented with JWT. The database is PostgreSQL. The frontend uses React with a custom hook pattern for feature flags. No authorization layer exists yet.
@@ -270,10 +270,13 @@ assignee_model: "claude-sonnet-4"
 backlog_date: "2026-01-20T10:00"
 doing_date: "2026-02-10T09:30"
 done_date: ""
-format_version: "0.2.1"
+format_version: "0.3.0"
 ---
 
 # Dashboard redesign
+
+## Objective
+Redesign the main dashboard to improve usability and information density. The current layout wastes screen space and the navigation is confusing for new users.
 
 ## Progress
 ### Phase 1: Definition
@@ -295,9 +298,6 @@ format_version: "0.2.1"
 ### Phase 4: Closing
 - [ ] Write Closing Summary
 - [ ] Validate implementation with the user
-
-## Objective
-Redesign the main dashboard to improve usability and information density. The current layout wastes screen space and the navigation is confusing for new users.
 
 ## Context
 The current dashboard uses a top navbar with a single-column layout. The frontend is React with Tailwind CSS. User feedback consistently mentions difficulty finding features and wasted screen space on wide monitors.
@@ -333,10 +333,13 @@ assignee_model: "claude-opus-4"
 backlog_date: "2026-02-05T11:00"
 doing_date: "2026-02-18T09:00"
 done_date: ""
-format_version: "0.2.1"
+format_version: "0.3.0"
 ---
 
 # API v2 endpoints
+
+## Objective
+Create v2 of the API with improved pagination, filtering, and consistent error responses. The v1 endpoints will be maintained in parallel during the migration period.
 
 ## Progress
 ### Phase 1: Definition
@@ -353,9 +356,6 @@ format_version: "0.2.1"
 ### Phase 3: Closing
 - [ ] Write Closing Summary
 - [ ] Validate implementation with the user
-
-## Objective
-Create v2 of the API with improved pagination, filtering, and consistent error responses. The v1 endpoints will be maintained in parallel during the migration period.
 
 ## Context
 The v1 API uses offset-based pagination which performs poorly on large datasets. Error responses are inconsistent across endpoints. External consumers have requested filtering and sorting capabilities.
@@ -387,10 +387,13 @@ assignee_model: "grok-3"
 backlog_date: "2026-02-05T14:00"
 doing_date: "2026-02-20T10:30"
 done_date: ""
-format_version: "0.2.1"
+format_version: "0.3.0"
 ---
 
 # WebSocket real-time updates
+
+## Objective
+Add real-time capabilities to the application so that multiple users working on the same project can see changes instantly without refreshing the page.
 
 ## Progress
 ### Phase 1: Definition
@@ -413,9 +416,6 @@ format_version: "0.2.1"
 ### Phase 4: Closing
 - [ ] Write Closing Summary
 - [ ] Validate implementation with the user
-
-## Objective
-Add real-time capabilities to the application so that multiple users working on the same project can see changes instantly without refreshing the page.
 
 ## Context
 The application currently relies on polling for updates. The backend is Express with JWT authentication. Multiple users frequently work on the same project simultaneously, leading to stale data and conflicts.
@@ -454,10 +454,13 @@ assignee_model: "claude-sonnet-4"
 backlog_date: "2026-01-05T09:00"
 doing_date: "2026-01-10T10:00"
 done_date: "2026-01-30T14:10"
-format_version: "0.2.1"
+format_version: "0.3.0"
 ---
 
 # Initial project setup
+
+## Objective
+Set up the foundational project structure, tooling, and CI/CD so the team can start building features on a solid base.
 
 ## Progress
 ### Phase 1: Definition
@@ -475,9 +478,6 @@ format_version: "0.2.1"
 ### Phase 3: Closing
 - [x] Write Closing Summary
 - [x] Validate implementation with the user
-
-## Objective
-Set up the foundational project structure, tooling, and CI/CD so the team can start building features on a solid base.
 
 ## Context
 Starting a new project from scratch. The team agreed on Node.js with TypeScript, PostgreSQL as the database, and GitHub Actions for CI/CD. Docker Compose will standardize the local development environment.
@@ -511,10 +511,13 @@ assignee_model: "gpt-4o"
 backlog_date: "2026-01-10T10:15"
 doing_date: "2026-01-20T09:00"
 done_date: "2026-02-08T11:10"
-format_version: "0.2.1"
+format_version: "0.3.0"
 ---
 
 # Database schema design
+
+## Objective
+Design and implement the core database schema that supports users, projects, and tasks. This schema is the foundation for all application features.
 
 ## Progress
 ### Phase 1: Definition
@@ -532,9 +535,6 @@ format_version: "0.2.1"
 ### Phase 3: Closing
 - [x] Write Closing Summary
 - [x] Validate implementation with the user
-
-## Objective
-Design and implement the core database schema that supports users, projects, and tasks. This schema is the foundation for all application features.
 
 ## Context
 The project uses PostgreSQL 16 with node-pg-migrate for migrations. No tables exist yet. The initial feature set requires users, projects, and tasks with relationships between them.
@@ -569,10 +569,13 @@ assignee_model: "claude-sonnet-4"
 backlog_date: "2026-01-20T11:00"
 doing_date: "2026-02-01T10:00"
 done_date: "2026-02-15T15:10"
-format_version: "0.2.1"
+format_version: "0.3.0"
 ---
 
 # Logging and monitoring setup
+
+## Objective
+Implement structured logging and monitoring to gain visibility into application health and debug production issues effectively.
 
 ## Progress
 ### Phase 1: Definition
@@ -595,9 +598,6 @@ format_version: "0.2.1"
 ### Phase 4: Closing
 - [x] Write Closing Summary
 - [x] Validate implementation with the user
-
-## Objective
-Implement structured logging and monitoring to gain visibility into application health and debug production issues effectively.
 
 ## Context
 The application currently uses `console.log` with no structure or correlation. Production debugging requires SSH access to read raw logs. The infrastructure already includes Redis and PostgreSQL, and the team has access to a Grafana instance.
@@ -636,10 +636,13 @@ assignee_model: "claude-sonnet-4"
 backlog_date: "2026-01-25T09:30"
 doing_date: "2026-02-10T08:30"
 done_date: "2026-02-20T10:10"
-format_version: "0.2.1"
+format_version: "0.3.0"
 ---
 
 # CI/CD pipeline improvements
+
+## Objective
+Improve the CI/CD pipeline to reduce build times from ~12 minutes to under 5 minutes and add automated staging deployments.
 
 ## Progress
 ### Phase 1: Definition
@@ -660,9 +663,6 @@ format_version: "0.2.1"
 ### Phase 4: Closing
 - [x] Write Closing Summary
 - [x] Validate implementation with the user
-
-## Objective
-Improve the CI/CD pipeline to reduce build times from ~12 minutes to under 5 minutes and add automated staging deployments.
 
 ## Context
 The current CI pipeline runs on GitHub Actions but takes ~12 minutes because it installs dependencies from scratch every run. Deployments are manual via SSH. The team uses Docker images for production.
@@ -704,10 +704,13 @@ assignee_model: ""
 backlog_date: "2026-02-10T11:30"
 doing_date: ""
 done_date: ""
-format_version: "0.2.1"
+format_version: "0.3.0"
 ---
 
 # API rate limiting strategy
+
+## Objective
+Add rate limiting to the API to prevent abuse and prepare for external consumers. After deploying authentication, we observed automated login attempts from multiple IPs.
 
 ## Progress
 ### Phase 1: Definition
@@ -724,9 +727,6 @@ format_version: "0.2.1"
 ### Phase 3: Closing
 - [ ] Write Closing Summary
 - [ ] Validate implementation with the user
-
-## Objective
-Add rate limiting to the API to prevent abuse and prepare for external consumers. After deploying authentication, we observed automated login attempts from multiple IPs.
 
 ## Context
 The API currently has no rate limiting. We already use Redis for sessions, so a Redis-based solution (`rate-limiter-flexible`) fits the existing infrastructure. Need to define limits per endpoint before promoting to backlog.
@@ -758,10 +758,13 @@ assignee_model: ""
 backlog_date: "2026-02-15T15:30"
 doing_date: ""
 done_date: ""
-format_version: "0.2.1"
+format_version: "0.3.0"
 ---
 
 # Dark mode design system
+
+## Objective
+Add dark mode support to the application. Users have requested it and it improves accessibility and reduces eye strain in low-light environments.
 
 ## Progress
 ### Phase 1: Definition
@@ -781,9 +784,6 @@ format_version: "0.2.1"
 ### Phase 4: Closing
 - [ ] Write Closing Summary
 - [ ] Validate implementation with the user
-
-## Objective
-Add dark mode support to the application. Users have requested it and it improves accessibility and reduces eye strain in low-light environments.
 
 ## Context
 The app currently uses hardcoded colors. We already use Tailwind CSS, which has native dark mode support via the `class` strategy. Need to define semantic color tokens before implementation.
@@ -819,10 +819,13 @@ assignee_model: ""
 backlog_date: "2026-02-25T11:00"
 doing_date: ""
 done_date: ""
-format_version: "0.2.1"
+format_version: "0.3.0"
 ---
 
 # File upload system
+
+## Objective
+Allow users to upload files (images, documents) associated with projects and tasks. Users have requested the ability to attach screenshots to tasks and upload project assets.
 
 ## Progress
 ### Phase 1: Definition
@@ -844,9 +847,6 @@ format_version: "0.2.1"
 ### Phase 4: Closing
 - [ ] Write Closing Summary
 - [ ] Validate implementation with the user
-
-## Objective
-Allow users to upload files (images, documents) associated with projects and tasks. Users have requested the ability to attach screenshots to tasks and upload project assets.
 
 ## Context
 Currently the app has no file handling. The backend is Express with PostgreSQL. S3-compatible storage (MinIO for dev, AWS S3 for prod) is the preferred approach for scalability with the same API in both environments.

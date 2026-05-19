@@ -9,10 +9,13 @@ assignee_model: ""
 backlog_date: "2026-02-25T11:00"
 doing_date: ""
 done_date: ""
-format_version: "0.2.1"
+format_version: "0.3.0"
 ---
 
 # File upload system
+
+## Objective
+Allow users to upload files (images, documents) associated with projects and tasks. Users have requested the ability to attach screenshots to tasks and upload project assets.
 
 ## Progress
 ### Phase 1: Definition
@@ -34,9 +37,6 @@ format_version: "0.2.1"
 ### Phase 4: Closing
 - [ ] Write Closing Summary
 - [ ] Validate implementation with the user
-
-## Objective
-Allow users to upload files (images, documents) associated with projects and tasks. Users have requested the ability to attach screenshots to tasks and upload project assets.
 
 ## Context
 Currently the app has no file handling. The backend is Express with PostgreSQL. S3-compatible storage (MinIO for dev, AWS S3 for prod) is the preferred approach for scalability with the same API in both environments.
