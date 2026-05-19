@@ -1,15 +1,137 @@
 # Plans
 
-Plans are structured Markdown files that move through three states: **Backlog** → **Doing** → **Done**. Each state has a corresponding folder. Browse each folder to see its plans.
+A structured, agent-friendly format for managing project plans through `backlog → doing → done` states.
 
-To create a new plan, ask your AI agent. For example:
+## Quick start
 
-> _Create a plan for implementing user authentication with OAuth2_
-
-The agent will follow the rules defined in [RULES.md](RULES.md) to generate the plan file and place it in `backlog/`. As work progresses, the agent moves the file to the corresponding folder and updates its metadata.
+Plans are Markdown files that move through three folders:
 
 | State | Folder | Description |
 |-------|--------|-------------|
 | Backlog | [backlog/](backlog/) | Pending plans, waiting for definition or execution |
 | Doing | [doing/](doing/) | Plans in progress, currently being implemented |
 | Done | [done/](done/) | Completed and closed plans |
+
+To create a plan, ask your AI agent:
+
+> _Create a plan for implementing user authentication with OAuth2_
+
+The agent follows the canonical rules in [RULES.md](RULES.md) to generate the plan file and place it in `backlog/`. As work progresses, the agent moves the file between folders and updates its metadata.
+
+## Why a strict format?
+
+Plans are created and edited by multiple agents — and humans — over time. Free-form plans drift: each agent decides differently what to write where, and the data becomes unreliable. A strict format means:
+
+- Any agent can find and update any plan correctly
+- Plans validate automatically
+- Plan state is machine-readable, not just human-readable
+- Conventions stay consistent across projects
+
+The structure is the contract. The full spec lives in [RULES.md](RULES.md); this README explains the model and the workflow around it.
+
+## The kanban model
+
+Every plan moves through three states:
+
+1. **Backlog** — defined but not started. Phase 1 (Definition) is being filled in.
+2. **Doing** — actively being implemented. Phase 1 is complete; the agent and user are working through subsequent phases.
+3. **Done** — Closing phase complete, user has validated. The plan is now an immutable historical artifact.
+
+A plan must complete its **Phase 1: Definition** (entry gate) before moving to `doing/`. It must complete its **Closing phase** (exit gate) and obtain explicit user approval before moving to `done/`. These two phases are mandatory in every plan and have fixed steps.
+
+## Plan creation
+
+When you ask an agent to create a plan, it should:
+
+1. Detect the author (`git config user.name`, OS username, or ask you).
+2. Decide which branch to commit the plan on (only when the workplans folder is inside a Git repo or another VCS — skipped otherwise):
+   - Follow any policy declared in your project's agent file (CLAUDE.md, AGENTS.md, etc.).
+   - Use the current branch if you are not on `main`.
+   - Otherwise, ask whether to create a new branch first.
+3. Generate the timestamp ID from the system clock.
+4. Write the plan file in `backlog/` using the canonical template.
+5. Walk you through Phase 1: objective, phases, refinement.
+
+## File naming
+
+Files are named `{YYDDDsssss}_{description}.md`:
+
+- `YYDDDsssss` — system-clock timestamp at creation, immutable. Acts as the plan's stable identity.
+- `description` — kebab-case, matches `title`. May be renamed when `title` evolves substantially (use `git mv` to preserve history).
+
+Example: `2606455842_user-auth-setup.md` corresponds to 2026, day 064, 15:30:42.
+
+State transitions (`backlog/` → `doing/` → `done/`) never rename. They only move the file between folders and update frontmatter.
+
+## Versioning and compatibility
+
+The `version` field in [RULES.md](RULES.md) declares the active framework version. Each plan declares its own `format_version` at creation, and validators apply the rule set matching that value. This means:
+
+- Plans created under different framework versions can coexist in the same repository.
+- Migrating a plan to a new format is opt-in per plan; legacy plans keep working.
+- Historical plans in `done/` retain their original layout — they are artifacts, not living documents.
+
+Plans without `format_version` are treated as pre-0.2.1 legacy.
+
+## Work destination
+
+The `work_on` field in RULES.md frontmatter tells agents where plan execution applies. Two scenarios:
+
+**Same repo (`work_on: "."`)** — plans and code live in the same project. The agent reads plans from `workplans/` and applies code changes in the parent directory.
+
+**External repo (`work_on: "https://github.com/org/project"`)** — plans live here, code lives elsewhere. The agent applies code changes in a local clone of the target.
+
+### LOCAL.yml
+
+When `work_on` is a remote URL, the agent must resolve where the target repo lives on this machine. The resolved path is stored in `workplans/LOCAL.yml`:
+
+```yaml
+# Auto-generated by agent. Do not commit.
+work_on: "/Users/me/repos/org/project"
+```
+
+`LOCAL.yml` is always gitignored — local paths differ across machines and must not be committed.
+
+**Resolution flow** when `work_on` is a remote URL:
+
+1. Read `LOCAL.yml` — use it if the path is valid.
+2. Check if the parent directory's `git remote -v` matches the URL — use here if it does.
+3. Search the machine for a cloned directory with that remote.
+4. Found: create `LOCAL.yml`, confirm with the user.
+5. Not found: ask the user for the local path, create `LOCAL.yml`.
+
+### Two-way configuration
+
+When `work_on` is a remote URL, both repos need to be configured:
+
+- **Planning repo** — `work_on` in RULES.md points to the target project.
+- **Target repo** — its agent file (AGENTS.md / CLAUDE.md) declares where plans are managed.
+
+Without the target-side instruction, an agent working in the target repo will not know plans exist elsewhere and may try to create them locally.
+
+## Extensions
+
+Optional functionality lives in `workplans/extend/`, one subfolder per extension. The folder is not created by default — it appears only when you install your first extension.
+
+```
+workplans/
+├── extend/
+│   ├── board/    # → from agnostical/board
+│   └── notes/    # → from agnostical/notes
+```
+
+Install via giget:
+
+```bash
+npx giget gh:agnostical/board workplans/extend/board
+```
+
+Contents under `extend/` are not plan files and are excluded from validation.
+
+## Reference
+
+- **[RULES.md](RULES.md)** — canonical rules and format spec. The source of truth.
+- **[backlog/README.md](backlog/README.md)** — example plan in `backlog` state.
+- **[doing/README.md](doing/README.md)** — example plan in `doing` state.
+- **[done/README.md](done/README.md)** — example plan in `done` state.
+- **GitHub** — [agnostical/workplans](https://github.com/agnostical/workplans) — issues, releases, extensions.

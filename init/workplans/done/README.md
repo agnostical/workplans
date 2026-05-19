@@ -24,10 +24,13 @@ assignee_model: "claude-sonnet-4-6"
 backlog_date: "2026-03-05T09:30"
 doing_date: "2026-03-06T14:00"
 done_date: "2026-03-07T18:45"
-format_version: "0.2.1"
+format_version: "0.3.0"
 ---
 
 # User authentication setup
+
+## Objective
+Set up user authentication for the web application using JWT tokens, covering registration, login, and session management.
 
 ## Progress
 ### Phase 1: Definition
@@ -46,9 +49,6 @@ format_version: "0.2.1"
 ### Phase 4: Closing
 - [x] Write Closing Summary
 - [x] Validate implementation with the user
-
-## Objective
-Set up user authentication for the web application using JWT tokens, covering registration, login, and session management.
 
 ## Context
 The project currently has no authentication. The team agreed on JWT-based auth to keep the backend stateless. Must support email/password registration and OAuth via Google.

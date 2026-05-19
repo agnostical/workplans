@@ -1,15 +1,19 @@
 #!/bin/bash
 # ─────────────────────────────────────────────────────────────────
 # validate.sh
-# Validates a workplans directory against the v0.2.1 format.
+# Validates a workplans directory. Format-aware: applies the rule set
+# matching each plan's format_version (0.2.x legacy layout, with
+# Progress above Objective, vs 0.3.0+ new layout, with Objective
+# above Progress).
 #
 # Usage: ./scripts/validate.sh <workplans-dir>
 #
 # Checks:
 #   1. Frontmatter: id first field, required fields, state matches folder
-#   2. Template: allowed sections only, no deprecated sections
+#   2. Template: allowed sections only, no deprecated sections,
+#      section order matches the format_version layout
 #   3. File naming: YYDDDsssss_description.md pattern
-#   4. Structure: RULES.md exists with version/work_on fields, READMEs exist, no unexpected files
+#   4. Structure: RULES.md exists with version/work_on fields, READMEs exist
 # ─────────────────────────────────────────────────────────────────
 
 set -e
@@ -40,8 +44,26 @@ pass() {
 }
 
 # ─── Helpers ──────────────────────────────────────────────────────
+# Extract a frontmatter field. Only searches between the opening ---
+# and the next ---, so YAML-looking code blocks in the body are not
+# mistaken for frontmatter.
 get_field() {
-  grep "^${2}:" "$1" 2>/dev/null | head -1 | sed 's/^[^:]*: *//' | sed 's/^"//;s/"$//' | sed "s/^'//;s/'$//"
+  awk -v field="$2" '
+    NR == 1 && /^---$/ { in_fm = 1; next }
+    in_fm && /^---$/ { exit }
+    in_fm && $1 == field":" {
+      sub(/^[^:]+: */, "")
+      gsub(/^["'\'']|["'\'']$/, "")
+      print
+      exit
+    }
+  ' "$1" 2>/dev/null
+}
+
+# Returns 0 if version $1 >= $2 (uses sort -V for natural version order)
+version_ge() {
+  [[ "$1" == "$2" ]] && return 0
+  [[ "$(printf '%s\n%s\n' "$1" "$2" | sort -V | head -n 1)" == "$2" ]]
 }
 
 get_first_field() {
@@ -237,8 +259,15 @@ for folder in backlog doing done; do
       done
     done <<< "$sections"
 
-    # Check all 5 required sections present and in order
-    expected_order=("Progress" "Objective" "Context" "Implementation" "Closing Summary")
+    # Select expected section order based on format_version
+    plan_fv=$(get_field "$file" "format_version")
+    if [[ -n "$plan_fv" ]] && version_ge "$plan_fv" "0.3.0"; then
+      expected_order=("Objective" "Progress" "Context" "Implementation" "Closing Summary")
+      layout_label="new (format_version $plan_fv >= 0.3.0)"
+    else
+      expected_order=("Progress" "Objective" "Context" "Implementation" "Closing Summary")
+      layout_label="legacy (format_version ${plan_fv:-unset} < 0.3.0)"
+    fi
     section_array=()
     while IFS= read -r s; do
       [[ -n "$s" ]] && section_array+=("$s")
@@ -282,10 +311,10 @@ for folder in backlog doing done; do
         idx=$pos
       done
       if $in_order; then
-        pass "$folder/$bn — sections in correct order"
+        pass "$folder/$bn — sections in correct order for $layout_label"
       else
         actual_order=$(printf ", %s" "${section_array[@]}")
-        fail "$folder/$bn — sections out of order: [${actual_order:2}]"
+        fail "$folder/$bn — sections out of order for $layout_label: [${actual_order:2}]"
       fi
     fi
 
