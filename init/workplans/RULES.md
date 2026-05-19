@@ -1,6 +1,6 @@
 ---
 name: workplans
-version: 0.2.1
+version: 0.2.2
 work_on: "."
 ---
 
@@ -90,7 +90,11 @@ Validate the implementation with the user and write the Closing Summary. Once co
 _To be written when the last phase is completed._
 ```
 
-> **Note:** The template above is in English as reference. Agents must adapt user-authored content (titles, step descriptions, Implementation text) to the user's language. Only the `Phase N:` prefix and structural headings remain in English.
+> **Note:** The template above is in English as reference only. The `Phase N:` prefix and structural headings (`## Progress`, `## Objective`, `## Context`, `## Implementation`, `## Closing Summary`) are always in English. Everything else — phase titles, step descriptions, and Implementation text — must be written in the language the user is using in the conversation. Always translate the template examples to the user's active language.
+
+> **Step style:** each Progress step is one concrete action — a single line, no multi-sentence descriptions, no embedded technical detail. Recommended pattern: infinitive verb + direct object (e.g. `Create RateLimiter middleware`, not `Create RateLimiter middleware in src/... with sliding window, Redis backing store, 429 response, and whitelist via env var`). All expanded information belongs in the matching phase under `## Implementation`.
+
+> **Manual steps:** any step that cannot be executed by an AI agent — browser verification, external platform configuration, credential rotation, human-interactive testing, manual UI inspection — must be prefixed with `[manual]`. This tells the agent to skip the step during execution and report it to the user for completion. Examples: `[manual] Verify component renders in browser`, `[manual] Configure redirect URI in OAuth provider dashboard`, `[manual] Test keyboard shortcut`. The prefix appears in Progress (where the step is checked off); the Implementation text describes what the user needs to do.
 
 ### Plan Frontmatter
 
@@ -101,7 +105,7 @@ Every plan starts with YAML frontmatter on **line 1** (no blank lines before `--
 | `id` | Timestamp ID matching the filename (`YYDDDsssss`). First field, immutable |
 | `title` | Short descriptive title |
 | `state` | Must match the folder the file lives in: `backlog`, `doing`, `done` |
-| `author` | Human creator. Immutable once assigned. Comma-separated if multiple |
+| `author` | Human creator. Immutable once assigned. Comma-separated if multiple (e.g. `"Alice,Bob"`) |
 | `author_model` | AI model ID(s) that created the plan. See AI model attribution |
 | `assignee` | Person implementing |
 | `assignee_model` | AI model ID(s) that executed the plan |
@@ -144,7 +148,7 @@ Completing Phase 1 does not authorize automatic state transitions. The agent mus
 **Rules for Phase 1: Definition:**
 - It is always the first phase in both Progress and Implementation
 - The three steps are fixed and must not be modified
-- The `Phase N:` prefix is always in English. The title after the colon and the step descriptions follow the user's language
+- The `Phase N:` prefix is always in English. Phase title and step descriptions must be written in the language the user is using in the conversation. The template examples are in English as reference only; always translate to the user's active language
 - The Implementation entry for Phase 1 uses plain text (not italic): `Define the Objective, Context, and subsequent phases. Once complete, the plan is ready for execution.` — adapted to the user's language. Italic is reserved exclusively for temporary placeholders that will be replaced
 - A plan must not move to `doing/` until all three steps in Phase 1 are checked
 - Subsequent phases (Phase 2, Phase 3, etc.) contain the actual work
@@ -170,14 +174,14 @@ Phase N: Closing           ← exit gate (mandatory)
 **Rules for the Closing phase:**
 - It is always the last phase in both Progress and Implementation
 - The two steps are fixed and must not be modified
-- The `Phase N:` prefix is always in English. The title after the colon and the step descriptions follow the user's language
+- The `Phase N:` prefix is always in English. Phase title and step descriptions must be written in the language the user is using in the conversation. The template examples are in English as reference only; always translate to the user's active language
 - The Implementation entry for the Closing phase uses plain text (not italic): `Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.` — adapted to the user's language
 - A plan must not move to `done/` until both steps in the Closing phase are checked
 - The agent must request explicit approval from the user before moving the plan to `done/`
 
 ## Rules
 
-All 24 rules are mandatory. Ordered by criticality: **Structure** (framework integrity) → **Template** (plan validity) → **Data** (field correctness).
+All 25 rules are mandatory. Ordered by criticality: **Structure** (framework integrity) → **Template** (plan validity) → **Data** (field correctness).
 
 | # | Category | Rule |
 |---|----------|------|
@@ -193,18 +197,19 @@ All 24 rules are mandatory. Ordered by criticality: **Structure** (framework int
 | 10 | Template | Phase 1: Definition is mandatory in every plan with three fixed steps. Must not be modified |
 | 11 | Template | Closing phase is mandatory as the last phase in every plan with two fixed steps. Must not be modified |
 | 12 | Template | Steps grouped by phase (`### Phase N: Name`), each concrete and verifiable. Use "Phase" and "Step" only (never "Stage") |
-| 13 | Template | Technical detail in Implementation, summary in Progress |
+| 13 | Template | Progress steps: one concrete action per line. No multi-sentence descriptions, no embedded technical detail. All expanded information lives in Implementation |
 | 14 | Template | Closing Summary is the last section, written when the last phase is completed |
 | 15 | Template | Every `.md` plan must follow the template and live in its state folder |
 | 16 | Template | A plan must not move to `doing/` until Phase 1: Definition is complete |
 | 17 | Template | A plan must not move to `done/` until the Closing phase is complete and the user has approved |
 | 18 | Template | Issue references go inline as Markdown links in the relevant step or section, not in frontmatter. Use `[#N](url)` format |
-| 19 | Data | Multi-value fields use comma-separated strings; datetimes use ISO 8601 `YYYY-MM-DDThh:mm`, `""` if not reached |
+| 19 | Data | Multi-value fields use comma-separated strings without spaces around the comma (e.g. `"alice,bob"`, `"claude-sonnet-4-6,claude-opus-4-6"`). Datetimes use ISO 8601 `YYYY-MM-DDThh:mm`, `""` if not reached |
 | 20 | Data | Datetimes must come from the system clock. Hardcoded, estimated, or placeholder values are forbidden |
 | 21 | Data | `author` is immutable once assigned; multiple authors are comma-separated |
 | 22 | Data | `_` separates timestamp ID from description; uniqueness = timestamp + description |
 | 23 | Data | `format_version` is immutable and must match the `version` field in RULES.md at creation time |
 | 24 | Template | Plan files must not contain emojis. Use plain descriptive text instead |
+| 25 | Template | Steps that cannot be executed by an AI agent must be prefixed with `[manual]`. The agent skips these during execution and reports them to the user |
 
 ---
 
@@ -225,6 +230,23 @@ All 24 rules are mandatory. Ordered by criticality: **Structure** (framework int
 Example: `2606455842_user-auth-setup.md` (2026, day 064, 15:30:42)
 
 The timestamp ID is generated **once at creation** and **never changes**. State transitions only move the file to a different folder. The filename stays the same.
+
+### Dots inside version or number identifiers
+
+Any dot (`.`) inside a number, version identifier, or decimal value in the description segment must be replaced with a dash (`-`) to preserve digit boundaries in kebab-case. Compacting the digits removes the separators and creates ambiguity (`v0.2.2` vs `v0.22` both collapse to `v022`); the dash preserves readability and remains kebab-case-compatible.
+
+| Case | Compact (ambiguous) | Dot→dash (clear) |
+|------|---------------------|------------------|
+| Version `v0.2.2` | `v022` | `v0-2-2` |
+| Node `18.2` | `node182` | `node-18-2` |
+| IP `192.168.1.1` | `19216811` | `192-168-1-1` |
+| Decimal `3.14` | `314` | `3-14` |
+
+Examples:
+
+- Valid: `2606583094_release-v0-2-0-workplans.md`
+- Invalid: `2606583094_release-0.2.0-workplans.md` (literal dots break kebab-case)
+- Invalid: `2606583094_release-v020-workplans.md` (digit boundaries lost)
 
 ### Timestamp generation (filename ID)
 
@@ -256,6 +278,8 @@ Generic usernames (`admin`, `root`, `guest`, `user`, `default`, `ubuntu`, `ec2-u
 
 **On creation (`backlog/`):** detection runs and must succeed before the plan is created. If all automatic detection fails, the user is prompted. No plan is created without a known author.
 
+**Normalization:** before writing the `author` field, the agent must normalize the value by collapsing any sequence of consecutive whitespace into a single space and trimming leading and trailing whitespace. This applies regardless of the source (`git config`, OS username, or user input). Example: `"Sebastian  Serna"` (double space) → `"Sebastian Serna"`.
+
 ## AI model attribution
 
 The `author_model` and `assignee_model` fields must never be empty if an AI agent participated. The model ID is the root attribution. An optional client suffix records the tool used to run the model.
@@ -265,6 +289,7 @@ The `author_model` and `assignee_model` fields must never be empty if an AI agen
 | Model known, direct client | `{model}` | `claude-opus-4-6` |
 | Model known, via client | `{model}/{client}` | `claude-opus-4-6/cursor` |
 | Model unknown | `{client}/auto` | `cursor/auto` |
+| Multiple models | `{model1},{model2}` | `claude-sonnet-4-6,claude-opus-4-6` |
 
 The client suffix is omitted when the agent runs directly (API, Claude Code, web chat). If the user knows the exact model, always use the model ID.
 
@@ -273,6 +298,7 @@ The client suffix is omitted when the agent runs directly (API, Claude Code, web
 - **Template structure** (section headings, `Phase` keyword) and **filenames** are always in English
 - **Frontmatter field names** are always in English (they are part of the schema)
 - **User-authored content** (plan title, descriptions, steps, closing summary) follows the user's language
+- **Orthography** of user-authored content must be preserved, including accents, ñ, and any other special characters of the user's language. UTF-8 is the standard encoding for Markdown files; agents must never strip or substitute these characters
 
 ## Extensions
 
@@ -292,16 +318,6 @@ npx giget gh:agnostical/board workplans/extend/board
 ```
 
 The `extend/` folder and its contents are not plan files. They are excluded from validation.
-
-## Validation
-
-After creating, moving, or deleting plans, run the validation script to verify integrity:
-
-```bash
-bash scripts/validate.sh <workplans-dir>
-```
-
-The script checks structure, file naming, frontmatter, and template sections. Fix any errors before continuing.
 
 ## Work destination (Experimental)
 
