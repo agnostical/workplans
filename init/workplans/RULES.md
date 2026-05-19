@@ -1,6 +1,6 @@
 ---
 name: workplans
-version: 0.2.2
+version: 0.3.0
 work_on: "."
 ---
 
@@ -51,10 +51,13 @@ assignee_model: ""
 backlog_date: "YYYY-MM-DDThh:mm"
 doing_date: ""
 done_date: ""
-format_version: "0.2.1"
+format_version: "0.3.0"
 ---
 
 # User authentication setup
+
+## Objective
+Brief description of what this plan aims to achieve and why.
 
 ## Progress
 ### Phase 1: Definition
@@ -69,9 +72,6 @@ format_version: "0.2.1"
 ### Phase 3: Closing
 - [ ] Write Closing Summary
 - [ ] Validate implementation with the user
-
-## Objective
-Brief description of what this plan aims to achieve and why.
 
 ## Context
 Relevant background, constraints, or references that inform the plan.
@@ -140,8 +140,6 @@ Section order depends on `format_version`:
 | `0.2.x` or lower (legacy layout) | `Progress` → `Objective` → `Context` → `Implementation` → `Closing Summary` |
 
 The new layout follows the natural gradient *purpose → progress → context → detail*: a reader sees what the plan is about before scanning what is done. Plans created before v0.3.0 keep the legacy order so historical artifacts in `done/` validate without forced migration.
-
-The canonical template above still shows the legacy layout because the framework `version` is still `0.2.2`. When `version` bumps to `0.3.0` later in this release, the canonical template switches to the new layout.
 
 ### Mandatory Phase 1: Definition
 
