@@ -1,0 +1,37 @@
+{
+  "name": "workplans",
+  "version": "0.1.0",
+  "description": "CLI for the Workplans framework — install and update markdown plan structures for AI agents.",
+  "type": "module",
+  "bin": {
+    "workplans": "./bin/cli.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "files": [
+    "bin/",
+    "commands/",
+    "README.md"
+  ],
+  "keywords": [
+    "workplans",
+    "cli",
+    "ai-agents",
+    "scaffolding",
+    "framework",
+    "plans"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/agnostical/workplans.git",
+    "directory": "cli"
+  },
+  "homepage": "https://github.com/agnostical/workplans/tree/main/cli#readme",
+  "bugs": "https://github.com/agnostical/workplans/issues",
+  "author": "Sebastian Serna",
+  "license": "MIT",
+  "dependencies": {
+    "giget": "^3.1.2"
+  }
+}
