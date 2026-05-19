@@ -18,6 +18,7 @@ export async function runUpdate() {
   }
 
   console.log("Updating workplans framework...");
+  console.log("  Downloading template from gh:agnostical/workplans/init...");
 
   const tempDir = await mkdtemp(join(tmpdir(), "workplans-update-"));
 
@@ -40,6 +41,11 @@ export async function runUpdate() {
         await mkdir(target, { recursive: true });
         console.log(`  Created workplans/${folder}/`);
       }
+      await copyFile(
+        join(sourceDir, folder, "README.md"),
+        join(target, "README.md")
+      );
+      console.log(`  Updated workplans/${folder}/README.md`);
     }
 
     console.log("");
