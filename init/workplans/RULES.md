@@ -31,7 +31,7 @@ workplans/
 
 New plans are created directly in `backlog/`. Every plan starts with a mandatory **Phase 1: Definition** (entry gate) and ends with a mandatory **Closing phase** (exit gate). Early-stage exploration belongs in notes (see Extensions), not in structured plans.
 
-The filename never changes on state transitions. Only the folder and frontmatter are updated.
+State transitions only move the file to a different folder and update frontmatter. They do not rename the file. The filename description, however, may be renamed separately when `title` changes substantially — see File naming.
 
 ## Plan Format
 
@@ -199,7 +199,7 @@ All 25 rules are mandatory. Ordered by criticality: **Structure** (framework int
 | # | Category | Rule |
 |---|----------|------|
 | 1 | Structure | `state` must match the folder the file lives in |
-| 2 | Structure | `id` is the first frontmatter field, matches filename timestamp, immutable after creation |
+| 2 | Structure | `id` is the first frontmatter field and matches the timestamp portion of the filename. The `id` and its timestamp are immutable. The description portion of the filename is mutable when `title` changes substantially — see File naming |
 | 3 | Structure | `workplans/` only contains structured plan files. No notes, docs, or unstructured content |
 | 4 | Structure | Do not create files or folders that alter the `workplans/` structure |
 | 5 | Structure | README files and RULES.md are system files. Do not remove or edit manually |
@@ -242,7 +242,33 @@ All 25 rules are mandatory. Ordered by criticality: **Structure** (framework int
 
 Example: `2606455842_user-auth-setup.md` (2026, day 064, 15:30:42)
 
-The timestamp ID is generated **once at creation** and **never changes**. State transitions only move the file to a different folder. The filename stays the same.
+The timestamp ID is generated **once at creation** and **never changes**. State transitions only move the file to a different folder. The timestamp portion of the filename stays the same; the description portion is mutable (see below).
+
+### Mutability of the filename segments
+
+| Segment | Mutability | Rationale |
+|---------|------------|-----------|
+| `{YYDDDsssss}` (timestamp ID) | **Immutable** | Identity and chronological order remain stable across the lifetime of the plan |
+| `_` (separator) | Fixed | Always a single underscore between ID and description |
+| `{description-in-kebab-case}` | **Mutable** when `title` changes substantially | The description must stay synchronized with `title`; cosmetic edits to `title` (typo fixes, minor wording) do not require a rename |
+
+State transitions (`backlog/` → `doing/` → `done/`) never rename — they only move the file. A rename is a separate, deliberate action triggered by a `title` change.
+
+### Renaming the description segment
+
+When `title` changes such that the existing description no longer reflects it, rename the file using `git mv` so history is preserved:
+
+```bash
+git mv workplans/doing/2606455842_old-description.md \
+       workplans/doing/2606455842_new-description-in-kebab-case.md
+```
+
+Constraints:
+
+- The timestamp portion (`{YYDDDsssss}_`) is preserved exactly.
+- The new description follows all naming rules (kebab-case, dot→dash for version/number identifiers, no special characters).
+- The new description matches the updated `title` field. After renaming, verify both reflect the same intent.
+- Use `git mv` (or the equivalent in your tooling) so the rename is tracked as a rename, not as a delete + add. This keeps blame and history continuous.
 
 ### Dots inside version or number identifiers
 
