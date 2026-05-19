@@ -34,10 +34,13 @@ assignee_model: ""
 backlog_date: "YYYY-MM-DDThh:mm"
 doing_date: ""
 done_date: ""
-format_version: "0.2.1"
+format_version: "0.3.0"
 ---
 
 # User authentication setup
+
+## Objective
+Brief description of what this plan aims to achieve and why.
 
 ## Progress
 ### Phase 1: Definition
@@ -52,9 +55,6 @@ format_version: "0.2.1"
 ### Phase 3: Closing
 - [ ] Write Closing Summary
 - [ ] Validate implementation with the user
-
-## Objective
-Brief description of what this plan aims to achieve and why.
 
 ## Context
 Relevant background, constraints, or references that inform the plan.
@@ -96,6 +96,7 @@ workplans/
 ├── backlog/       # Pending plans
 ├── doing/         # Work in progress
 ├── done/          # Completed plans
+├── extend/        # Optional extensions (created on demand)
 ├── README.md      # General info
 └── RULES.md       # Framework rules (source of truth)
 ```
