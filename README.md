@@ -77,19 +77,36 @@ _To be written when the last phase is completed._
 
 ### 1. Download the workplans folder
 
-#### Option A: From GitHub
+#### Option A: With the workplans CLI (recommended)
+If you have Node.js installed, open the terminal in your project folder and run:
+
+```bash
+npx workplans init
+```
+
+This is non-destructive — it fails with a clear error if a `workplans/` folder already exists in the current directory. To refresh `RULES.md` and `README.md` later when a new framework release ships, run:
+
+```bash
+npx workplans update
+```
+
+`update` refreshes only the framework system files. Your plans inside `backlog/`, `doing/`, and `done/` are never touched.
+
+#### Option B: From GitHub
 Download the `.zip`, extract it, and copy the `workplans` folder (inside `init/`) into your project.
 
 [![Download latest release](https://img.shields.io/github/v/release/agnostical/workplans?label=Download&style=for-the-badge&logo=github)](https://github.com/agnostical/workplans/releases/latest)
 
-#### Option B: Using the terminal
-If you have Node.js installed, open the terminal in your project folder and run:
+#### Option C: Using giget directly
+If you prefer not to install the CLI, you can use `giget`:
 
 ```bash
 npx giget gh:agnostical/workplans/init . --force
 ```
 
-Both options give you the same ready-to-use folder with three state directories for your plans and a RULES.md that acts as the source of truth for your AI agent:
+Note: this overwrites all files unconditionally, including existing plans. Use Option A for safer updates.
+
+All three options give you the same ready-to-use folder with three state directories for your plans and a RULES.md that acts as the source of truth for your AI agent:
 
 ```
 workplans/
