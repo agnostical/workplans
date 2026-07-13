@@ -36,11 +36,30 @@ const registry = new Map([
         "Refresh RULES.md/README.md and ensure state folders exist (never touches user plans)",
     },
   ],
+  [
+    "list",
+    {
+      load: () => import("../commands/list.mjs"),
+      fn: "runList",
+      positionals: 0,
+      summary: "List available plan templates",
+    },
+  ],
+  [
+    "add",
+    {
+      load: () => import("../commands/add.mjs"),
+      fn: "runAdd",
+      positionals: 1,
+      usage: "add <template>",
+      summary: "Add a plan template to your backlog with a fresh id",
+    },
+  ],
 ]);
 
 function buildHelp() {
   const lines = [...registry.entries()].map(
-    ([name, cmd]) => `  ${name.padEnd(10)}${cmd.summary}`
+    ([name, cmd]) => `  ${(cmd.usage || name).padEnd(16)}${cmd.summary}`
   );
   return `workplans v${pkg.version}
 
