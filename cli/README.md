@@ -13,10 +13,16 @@ This scaffolds a `workplans/` folder in the current directory with `RULES.md`, `
 ## Commands
 
 ```bash
-npx workplans init     # Scaffold the framework (fails if workplans/ already exists)
-npx workplans update   # Refresh RULES.md and README.md, ensure state folders exist
-                       # User plans are never touched
+npx workplans init             # Scaffold the framework (fails if workplans/ already exists)
+npx workplans update           # Refresh RULES.md and README.md, ensure state folders exist
+                               # User plans are never touched
+npx workplans list             # List available plan templates
+npx workplans add <template>   # Add a template to workplans/backlog/ with a fresh id
 ```
+
+### Templates
+
+`add` copies a ready-made plan from the [template catalog](https://github.com/agnostical/workplans/tree/main/templates) into your backlog, rewriting its frontmatter: a fresh timestamp id (collision-safe), `state: "backlog"`, `backlog_date` now, and `format_version` matching your local RULES.md. Phase 1: Definition arrives unchecked on purpose — refine the plan against your real project before executing it. Adding the same template twice is refused (non-destructive). See the [catalog README](https://github.com/agnostical/workplans/tree/main/templates#contributing-a-template) to contribute new templates.
 
 ### Flags
 
