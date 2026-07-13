@@ -67,7 +67,10 @@ function withTimeout(promise, ms, what) {
   return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
 }
 
-/** Downloads the init template (the directory containing workplans/) into destDir. */
+/**
+ * Downloads the init template (the directory containing workplans/) into destDir.
+ * Transient failures (offline, timeout) are retried once after a short delay.
+ */
 export async function downloadInit(destDir, { timeoutMs = DOWNLOAD_TIMEOUT_MS } = {}) {
   const local = localSource();
   if (local) {
@@ -75,15 +78,24 @@ export async function downloadInit(destDir, { timeoutMs = DOWNLOAD_TIMEOUT_MS } 
     return;
   }
   const { downloadTemplate } = await import("giget");
-  try {
-    await withTimeout(
-      downloadTemplate(REMOTE_SOURCE, { dir: destDir, force: true }),
-      timeoutMs,
-      "Template download"
-    );
-  } catch (err) {
-    throw err instanceof DownloadError ? err : classify(err);
+  const RETRIABLE = new Set(["offline", "timeout"]);
+  let lastError;
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
+      await withTimeout(
+        downloadTemplate(REMOTE_SOURCE, { dir: destDir, force: true }),
+        timeoutMs,
+        "Template download"
+      );
+      return;
+    } catch (err) {
+      lastError = err instanceof DownloadError ? err : classify(err);
+      if (attempt === 2 || !RETRIABLE.has(lastError.kind)) throw lastError;
+      console.log("  Download failed, retrying...");
+      await new Promise((r) => setTimeout(r, 1_000));
+    }
   }
+  throw lastError;
 }
 
 /** Reads the `version:` field from a RULES.md frontmatter block (first --- block only). */
