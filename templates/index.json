@@ -1,0 +1,19 @@
+{
+  "templates": [
+    {
+      "name": "auth-setup",
+      "title": "User authentication setup",
+      "description": "Provider-agnostic user authentication: sign up, log in, recovery, protected routes"
+    },
+    {
+      "name": "ci-cd-pipeline",
+      "title": "CI/CD pipeline setup",
+      "description": "Continuous integration and deployment with rollback, platform decided in-plan"
+    },
+    {
+      "name": "refactor-legacy-module",
+      "title": "Legacy module refactor",
+      "description": "Behavior-preserving refactor with characterization tests as the safety net"
+    }
+  ]
+}
