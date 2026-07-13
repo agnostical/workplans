@@ -3,33 +3,67 @@
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { runInit } from "../commands/init.mjs";
-import { runUpdate } from "../commands/update.mjs";
+import { installSigintCleanup } from "../lib/download.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const pkg = JSON.parse(readFileSync(join(__dirname, "..", "package.json"), "utf8"));
 
-const HELP = `workplans v${pkg.version}
+/**
+ * Command registry. Adding a command is one entry here plus one module in
+ * commands/ — the router needs no other change.
+ *   load        dynamic import of the command module
+ *   fn          exported function to run
+ *   positionals number of positional arguments after the command name
+ *   summary     one-line description for --help
+ */
+const registry = new Map([
+  [
+    "init",
+    {
+      load: () => import("../commands/init.mjs"),
+      fn: "runInit",
+      positionals: 0,
+      summary: "Scaffold the workplans framework in the current directory",
+    },
+  ],
+  [
+    "update",
+    {
+      load: () => import("../commands/update.mjs"),
+      fn: "runUpdate",
+      positionals: 0,
+      summary:
+        "Refresh RULES.md/README.md and ensure state folders exist (never touches user plans)",
+    },
+  ],
+]);
+
+function buildHelp() {
+  const lines = [...registry.entries()].map(
+    ([name, cmd]) => `  ${name.padEnd(10)}${cmd.summary}`
+  );
+  return `workplans v${pkg.version}
 
 Usage:
   npx workplans <command>
 
 Commands:
-  init      Scaffold the workplans framework in the current directory
-  update    Refresh RULES.md/README.md and ensure state folders exist
-            (never touches user plans)
+${lines.join("\n")}
 
 Options:
   -h, --help     Show this help
   -V, --version  Show version
 
 More: https://github.com/agnostical/workplans`;
+}
 
 async function main() {
-  const arg = process.argv[2];
+  installSigintCleanup();
+
+  const [arg, ...rest] = process.argv.slice(2);
 
   if (!arg || arg === "-h" || arg === "--help") {
-    console.log(HELP);
+    console.log(buildHelp());
     return;
   }
 
@@ -38,19 +72,24 @@ async function main() {
     return;
   }
 
+  const command = registry.get(arg);
+  if (!command) {
+    console.error(`Unknown command: ${arg}\n`);
+    console.error(buildHelp());
+    process.exit(1);
+  }
+
+  if (rest.length !== command.positionals) {
+    console.error(
+      `'${arg}' expects ${command.positionals} argument(s), got ${rest.length}.\n`
+    );
+    console.error(buildHelp());
+    process.exit(1);
+  }
+
   try {
-    switch (arg) {
-      case "init":
-        await runInit();
-        break;
-      case "update":
-        await runUpdate();
-        break;
-      default:
-        console.error(`Unknown command: ${arg}\n`);
-        console.error(HELP);
-        process.exit(1);
-    }
+    const mod = await command.load();
+    await mod[command.fn](...rest);
   } catch (err) {
     console.error(`Error: ${err.message}`);
     process.exit(1);

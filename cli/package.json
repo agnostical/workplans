@@ -1,7 +1,7 @@
 {
   "name": "workplans",
   "version": "0.1.1",
-  "description": "CLI for the Workplans framework — install and update markdown plan structures for AI agents.",
+  "description": "CLI for the Workplans framework \u2014 install and update markdown plan structures for AI agents.",
   "type": "module",
   "bin": {
     "workplans": "./bin/cli.mjs"
@@ -12,6 +12,7 @@
   "files": [
     "bin/",
     "commands/",
+    "lib/",
     "README.md"
   ],
   "keywords": [
@@ -33,5 +34,8 @@
   "license": "MIT",
   "dependencies": {
     "giget": "^3.1.2"
+  },
+  "scripts": {
+    "test": "node --test"
   }
 }
