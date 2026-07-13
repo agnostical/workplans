@@ -136,7 +136,7 @@ H1 is the first line after the frontmatter and must match `title` exactly. One H
 
 ### Mandatory phases
 
-Every plan must start with **Phase 1: Definition** (entry gate) and end with a **Closing** phase (exit gate). Steps in both are fixed and must not be modified:
+Every plan must start with **Phase 1: Definition** (entry gate) and end with a **Closing** phase (exit gate). The structure, action, and order of steps in both are fixed — but the phase name and step text translate to the user's active conversation language (only the `Phase N:` prefix and the H2 headings remain English):
 
 ```markdown
 ### Phase 1: Definition
@@ -149,13 +149,26 @@ Every plan must start with **Phase 1: Definition** (entry gate) and end with a *
 - [ ] Validate implementation with the user
 ```
 
+The same template applied in Spanish (`Closing Summary` stays in English inside step text because it references the exact H2 section name, which is always English):
+
+```markdown
+### Phase 1: Definición
+- [ ] Definir objetivo y contexto
+- [ ] Definir fases y pasos
+- [ ] Refinar con el usuario
+
+### Phase N: Cierre
+- [ ] Escribir Closing Summary
+- [ ] Validar implementación con el usuario
+```
+
 A plan in `backlog/` with Phase 1 unchecked is still being defined. A plan cannot move to `doing/` until all three steps are checked. A plan cannot move to `done/` until both Closing steps are checked and the user has explicitly approved.
 
-The Implementation entries for Phase 1 and Closing use fixed plain-text descriptions, translated to the user's language: `Define the Objective, Context, and subsequent phases. Once complete, the plan is ready for execution.` and `Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.` respectively. Italic in plan files is reserved for temporary placeholders (e.g. `_To be written when the last phase is completed._`).
+The Implementation entries for Phase 1 and Closing use fixed plain-text descriptions that also translate to the user's language. English canonical: `Define the Objective, Context, and subsequent phases. Once complete, the plan is ready for execution.` and `Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.` The same entries in Spanish: `Define el Objective, el Context y las fases subsiguientes. Una vez completas, el plan queda listo para ejecución.` and `Valida la implementación con el usuario y escribe el Closing Summary. Una vez completa, el plan queda listo para moverse a done.` Italic in plan files is reserved for temporary placeholders (e.g. `_To be written when the last phase is completed._`).
 
 ## Rules
 
-All 26 rules are mandatory. Ordered by criticality: **Structure** (framework integrity) → **Template** (plan validity) → **Data** (field correctness).
+All 27 rules are mandatory. Ordered by criticality: **Structure** (framework integrity) → **Template** (plan validity) → **Data** (field correctness).
 
 | # | Category | Rule |
 |---|----------|------|
@@ -185,6 +198,7 @@ All 26 rules are mandatory. Ordered by criticality: **Structure** (framework int
 | 24 | Template | Plan files must not contain emojis. Use plain descriptive text instead |
 | 25 | Template | Steps that cannot be executed by an AI agent (browser checks, external dashboard configuration, manual UI testing, credential rotation) must be prefixed with `[manual]`. The agent skips them and reports to the user; Implementation describes what the user needs to do |
 | 26 | Structure | When the workplans folder is inside a Git repository (or any VCS with branch semantics), the branch for a new plan is decided explicitly before commit: declared policy in agent file → current non-main branch → ask the user. Never default silently to `main`. Outside a VCS, this rule does not apply |
+| 27 | Template | Phase 1 (Definition) and the Closing phase translate their phase name and step text to the user's active conversation language. Only the `Phase N:` prefix, H2 headings, and `Closing Summary` (when referenced in steps) stay in English. The English template in this document is reference, not literal output |
 
 ## File naming
 
