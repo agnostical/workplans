@@ -124,6 +124,56 @@ export async function fetchRemoteVersion({ timeoutMs = VERSION_CHECK_TIMEOUT_MS 
   }
 }
 
+// ─── Templates ──────────────────────────────────────────────────
+// WORKPLANS_TEMPLATES_SOURCE (env) overrides the GitHub source with a local
+// directory shaped like templates/ (index.json + <name>.md files).
+
+const RAW_TEMPLATES_BASE =
+  "https://raw.githubusercontent.com/agnostical/workplans/main/templates";
+
+function templatesLocalSource() {
+  return process.env.WORKPLANS_TEMPLATES_SOURCE || null;
+}
+
+async function fetchRawTemplateFile(file, timeoutMs, what) {
+  const local = templatesLocalSource();
+  if (local) {
+    try {
+      return await readFile(join(local, file), "utf8");
+    } catch (err) {
+      if (err.code === "ENOENT") return null;
+      throw err;
+    }
+  }
+  let res;
+  try {
+    res = await withTimeout(fetch(`${RAW_TEMPLATES_BASE}/${file}`), timeoutMs, what);
+  } catch (err) {
+    throw err instanceof DownloadError ? err : classify(err);
+  }
+  if (res.status === 404) return null;
+  if (!res.ok) throw classify(new Error(`HTTP ${res.status}`));
+  return res.text();
+}
+
+/** Returns the template catalog: [{ name, title, description }]. */
+export async function fetchTemplatesIndex({ timeoutMs = VERSION_CHECK_TIMEOUT_MS } = {}) {
+  const raw = await fetchRawTemplateFile("index.json", timeoutMs, "Template list download");
+  if (raw === null) {
+    throw new DownloadError("not-found", "Template catalog not found. Check https://github.com/agnostical/workplans/tree/main/templates");
+  }
+  try {
+    return JSON.parse(raw).templates;
+  } catch {
+    throw new DownloadError("unknown", "Template catalog is malformed. Please report this at https://github.com/agnostical/workplans/issues");
+  }
+}
+
+/** Returns the raw markdown of one template, or null when it does not exist. */
+export async function fetchTemplate(name, { timeoutMs = VERSION_CHECK_TIMEOUT_MS } = {}) {
+  return fetchRawTemplateFile(`${name}.md`, timeoutMs, "Template download");
+}
+
 // ─── SIGINT cleanup ──────────────────────────────────────────────
 // Temp dirs registered here are removed if the user interrupts a download.
 
