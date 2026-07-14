@@ -15,6 +15,8 @@ An open framework for managing AI-driven work plans using structured Markdown fi
 - **Unique IDs:** Each plan gets an immutable ID derived from the system clock (including ordinal day of the year + exact second of the day), preventing duplicates across teams and enabling conflict-free collaboration in shared repositories.
 - **Context-efficient structure:** Compact Markdown + YAML frontmatter keeps plans parseable and self-contained, reducing noise in the AI agent's context window.
 - **Built for collaboration:** Plans track authors, assignees, and AI models involved, keeping a clear record of who created and executed each plan.
+- **Tracker-ready:** Typed relations, priority, estimates with a declarable scale, and a sync contract (`tracked_in` + plan marker) that lets plans mirror into Linear, Jira, or GitHub without giving up the markdown as the source of truth.
+- **Extensible:** Optional extensions (like the [visual board](https://github.com/agnostical/board)) can be installed in the `extend/` folder.
 
 ## What is a plan?
 
@@ -24,17 +26,21 @@ The example below shows the required sections and field order. AI agents fill in
 
 ```markdown
 ---
+format: "0.4.0"
 id: 2606455842
 title: "User authentication setup"
-state: "backlog"
+priority: ""
+estimate: ""
 author: ""
 author_model: ""
 assignee: ""
 assignee_model: ""
+state: "backlog"
 backlog_date: "YYYY-MM-DDThh:mm"
 doing_date: ""
 done_date: ""
-format_version: "0.3.0"
+tracked_in: ""
+relations:
 ---
 
 # User authentication setup
@@ -164,6 +170,14 @@ Move the dashboard-redesign plan to doing
 ```
 
 The agent will create plans, move them between states, and update progress as it works. See the [RULES.md](init/workplans/RULES.md) inside the workplans folder for the complete template and rules.
+
+## Extensions
+
+Optional extensions can be installed in `workplans/extend/`. For example, the [visual board](https://github.com/agnostical/board) provides a Kanban-style dashboard:
+
+```bash
+npx giget gh:agnostical/board workplans/extend/board
+```
 
 ## License
 
