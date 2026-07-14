@@ -203,6 +203,21 @@ Five H2 sections, Title Case. Order depends on the plan's declared format:
 
 H1 is the first line after the frontmatter and must match `title` exactly. One H1 per file.
 
+### Execution sequence
+
+Optional subsection at the end of `## Progress`, only for plans with 5+ phases where grouping adds value. It groups related phases into lettered blocks indicating what to execute together and in what order:
+
+```markdown
+### Execution sequence
+- **A: Infrastructure** — Phase 1
+- **B: Base components** — Phases 2, 3
+- **C: Templates & migration** — Phases 4, 5
+```
+
+- Heading is exactly `### Execution sequence`, placed after all phase checklists.
+- Format: `**Letter: Name**` — the name summarizes the block's purpose — followed by its phase(s).
+- Non-invasive: phases keep their numbering and `### Phase N: Name` hierarchy unchanged.
+
 ### Mandatory phases
 
 Every plan must start with **Phase 1: Definition** (entry gate) and end with a **Closing** phase (exit gate). The structure, action, and order of steps in both are fixed — but the phase name and step text translate to the user's active conversation language (only the `Phase N:` prefix and the H2 headings remain English):
