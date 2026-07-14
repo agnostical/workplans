@@ -436,4 +436,26 @@ Optional extensions live in `workplans/extend/`, one subfolder per extension. Th
 
 ## Compatibility
 
-The `version` field declares the active framework version. Plans declare their own `format_version`; validators apply the rule set matching that value, so plans from different framework versions coexist. Plans without `format_version` are implicitly pre-0.2.1 (legacy layout, Progress first).
+The `version` field declares the active framework version. Plans declare their own `format` (or `format_version`, its pre-0.4.0 name — parsers accept both); validators apply the rule set matching that value, so plans from different framework versions coexist. Plans without either field are implicitly pre-0.2.1 (legacy layout, Progress first).
+
+### Migration
+
+When a plan's declared format is older than the framework `version`, the agent asks the user whether to migrate it — never silently:
+
+| Folder | Migration |
+|--------|-----------|
+| `backlog/` | Offered by default |
+| `doing/` | Only on explicit user request |
+| `done/` | Never — historical record, immutable with its original format |
+
+- If the user declines, record the decision for the session and do not ask again.
+- A migrated plan updates its format field to the current version in the same change.
+- Migration alters frontmatter and section order only. Checkboxes, dates, and user content are preserved verbatim.
+- The CLI exposes the same operation as `workplans migrate`, so migration is reproducible rather than agent-improvised.
+
+### Supported transitions
+
+| From | To | Transformation |
+|------|----|----------------|
+| pre-0.2.1, 0.2.x | 0.3.0 | Reorder the five H2 sections to the new layout (Objective first); set `format_version: "0.3.0"` |
+| 0.3.x | 0.4.0 | Rename `format_version` to `format` and move it first; reorder fields to the 0.4.0 order; add `priority`, `estimate`, `tracked_in` as `""` and the bare `relations:` key |
