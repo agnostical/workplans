@@ -106,11 +106,11 @@ Frontmatter starts on line 1, no leading blank lines. All fields present, in the
 
 | Field | Description |
 |-------|-------------|
-| `format` | Format the plan follows; the discriminator that says which schema governs the rest of the file, hence first. At creation, equals `version` in RULES.md. Read-alias: `format_version` (pre-0.4.0 name) |
+| `format` | The schema discriminator, hence first. At creation, equals `version` in RULES.md. Read-alias: `format_version` (pre-0.4.0 name) |
 | `id` | Timestamp ID matching the filename (`YYDDDsssss`). Immutable |
 | `title` | Short descriptive title |
-| `priority` | Urgency: `urgent`, `high`, `medium`, `low`, or `""`. Mutable for life. See Triage |
-| `estimate` | Complexity in the project's declared scale. Set when Phase 1 completes; immutable in `doing/`. See Triage |
+| `priority` | Urgency signal; mutable. See Triage |
+| `estimate` | Complexity in the project's declared scale; immutable in `doing/`. See Triage |
 | `author` | Human creator. Immutable. Comma-separated if multiple (e.g. `"Alice,Bob"`) |
 | `author_model` | AI model ID(s) that created the plan. See AI model attribution |
 | `assignee` | Person implementing |
@@ -119,8 +119,8 @@ Frontmatter starts on line 1, no leading blank lines. All fields present, in the
 | `backlog_date` | Datetime created (`YYYY-MM-DDThh:mm`) |
 | `doing_date` | Datetime work started |
 | `done_date` | Datetime completed |
-| `tracked_in` | Mirror URL(s) in external tracker(s), written by sync tooling; `""` = not tracked. See Tracker sync |
-| `relations` | Typed relations to other plans. Nested map; empties to the bare key (`relations:` with no value). See Relations |
+| `tracked_in` | Mirror URL(s) in external tracker(s); `""` = not tracked. See Tracker sync |
+| `relations` | Typed relations to other plans; bare key when empty. See Relations |
 
 ### Relations
 
@@ -134,49 +134,31 @@ relations:
 
 | Type | Meaning |
 |------|---------|
-| `blocked_by` | Hard dependency: every referenced plan must be `done` before this plan moves to `doing` |
+| `blocked_by` | Hard dependency: every referenced plan must be `done` before this plan moves to `doing`. Cycles are invalid |
 | `relates_to` | Soft, non-blocking association |
 | `supersedes` | This plan replaces the referenced plan(s) |
 | `parent` | Hierarchy: the `id` of the parent/epic plan |
 
-- References are id-pure: the immutable plan `id` only, never titles or filename slugs. Tooling resolves ids to titles at display time.
-- Only the types in use appear as sub-keys. Empty form: the bare key `relations:` with no value.
-- Inverses (`blocks`, `superseded_by`, `children`) are derived by tooling, never stored; each edge is written on the actionable side only.
-- Cycles in `blocked_by` are invalid.
-- `relations` is the only nested frontmatter field: nesting is reserved for open-ended membership; all other fields stay flat scalars.
+References are id-pure — the immutable `id` only, never titles or slugs; tooling resolves ids to titles at display time. Only the types in use appear as sub-keys; the empty form is the bare key `relations:` with no value. Inverses (`blocks`, `superseded_by`, `children`) are derived, never stored — each edge is written on the actionable side only. `relations` is the only nested field: nesting is reserved for open-ended membership, all other fields stay flat scalars.
 
 ### Triage
 
-`estimate` and `priority` dimension and order plans.
-
-**`estimate`** — complexity in the scale declared by the project's `estimate_scale` constant (see Project constants). Presets:
+**`estimate`** — complexity in the scale declared by the project's `estimate_scale` constant (see Project constants); the value must belong to the scale's token set. Set or confirmed when Phase 1: Definition completes (`""` before that); immutable once the plan is in `doing/`. A top-band value signals the plan should be split before execution. Comparability is intra-project. Presets:
 
 | Scale | Tokens | Split signal (top band) |
 |-------|--------|-------------------------|
 | `fibonacci` (default) | 1, 2, 3, 5, 8, 13, 21 | 13, 21 |
 | `tshirt` | xs, s, m, l, xl | xl |
 
-- Set or confirmed when Phase 1: Definition completes — the moment scope exists; `""` before that.
-- Immutable once the plan is in `doing/`, preserving estimated-vs-actual analysis.
-- A value in the scale's top band signals the plan should be split before execution.
-- The value must belong to the declared scale's token set. Comparability is intra-project.
-
 **`priority`** — `urgent`, `high`, `medium`, `low`, or `""` (no priority). Mutable through the plan's whole life. Soft selection signal: among plans not blocked by relations, pick the highest priority first. It complements, never overrides, `blocked_by` gating — a blocked plan is not selectable regardless of priority.
 
 ### Tracker sync
 
-`tracked_in` links a plan to its mirror artifact in an external tracker (issue, task, card, epic — the URL is self-describing: the domain identifies the provider, the path the artifact kind).
+`tracked_in` links a plan to its mirror artifact in an external tracker — issue, task, card, epic: the URL is self-describing (e.g. `"https://linear.app/acme/issue/ENG-135"`). Written by sync tooling on local runs; `""` means not tracked. Multiple trackers: comma-separated URLs, **one mirror per tracker** — two mirrors in the same tracker signals the plan should be split, not a supported case.
 
-```yaml
-tracked_in: "https://linear.app/acme/issue/ENG-135"
-```
+The sync idempotency key is the marker **`plan:<id>`** in the mirror's description, not this field: sync tooling must tolerate an empty `tracked_in` and resolve by marker (read-alias `workplan:<id>`; new mirrors write `plan:<id>` only). The field is self-healing — a stale URL is re-resolved by marker and rewritten on the next run.
 
-- Written by sync tooling on local runs after creating the mirror. `""` means not tracked.
-- Multiple trackers: comma-separated URLs, **one mirror per tracker**. Two mirrors in the same tracker signals the plan should be split, not a supported case.
-- The sync idempotency key is the marker **`plan:<id>`** in the mirror's description, not this field. Sync tooling must tolerate an empty `tracked_in` and resolve by marker (read-alias: `workplan:<id>`; new mirrors write `plan:<id>` only).
-- `tracked_in` is self-healing: if a stored URL goes stale, the next sync run re-resolves by marker and rewrites it.
-- Source-of-truth split: the markdown owns plan content, state, and dates; the tracker owns its visual organization (projects, milestones, tracker-side assignment), which sync never overwrites. A child plan's epic/project derives from the `tracked_in` of its `parent` target.
-- Rule 18 is unchanged: `tracked_in` covers only the plan-level mirror; inline issue links stay in prose.
+Source-of-truth split: the markdown owns plan content, state, and dates; the tracker owns its visual organization (projects, milestones, tracker-side assignment), which sync never overwrites. A child plan's epic/project derives from the `tracked_in` of its `parent` target. Rule 18 is unchanged: `tracked_in` covers only the plan-level mirror; inline issue links stay in prose.
 
 ### Sections
 
@@ -193,22 +175,19 @@ Five H2 sections, Title Case. Order depends on the plan's declared format:
 | `## Progress` | Checklist mirror of Implementation phases |
 | `## Context` | Background, constraints, or references |
 | `## Implementation` | Technical detail organized by phase |
-| `## Closing Summary` | Leader paragraph plus optional labeled subsections, written when the last phase is completed (see Closing Summary structure). Until then: `_To be written when the last phase is completed._` |
+| `## Closing Summary` | Leader paragraph plus optional labeled subsections (see Closing Summary structure). Until then: `_To be written when the last phase is completed._` |
 
 H1 is the first line after the frontmatter and must match `title` exactly. One H1 per file.
 
 ### Execution sequence
 
-Optional subsection at the end of `## Progress`, only for plans with 5+ phases where grouping adds value. It groups related phases into lettered blocks indicating what to execute together and in what order:
+Optional subsection at the end of `## Progress` (after all phase checklists), only for plans with 5+ phases where grouping adds value: lettered blocks naming what to execute together and in what order. Non-invasive — phases keep their numbering and `### Phase N: Name` hierarchy unchanged.
 
 ```markdown
 ### Execution sequence
 - **A: Infrastructure** — Phase 1
 - **B: Base components** — Phases 2, 3
-- **C: Templates & migration** — Phases 4, 5
 ```
-
-Heading is exactly `### Execution sequence`, placed after all phase checklists; the block name summarizes the group's purpose. Non-invasive: phases keep their numbering and `### Phase N: Name` hierarchy unchanged.
 
 ### Mandatory phases
 
@@ -247,26 +226,26 @@ The Implementation entries for Phase 1 and Closing use fixed plain-text descript
 The Closing Summary opens with a mandatory **leader paragraph** — the literal export unit: changelog entries, mirror closing comments, and any other projection copy it verbatim, never rewrite it. Nothing that does not travel outside the repo may appear:
 
 1. Opens with the result, never the process.
-2. No actor: no people, no models, no team. Impersonal constructions or the deliverable as subject.
+2. No actor — no people, models, or team: impersonal constructions or the deliverable as subject.
 3. No references that do not travel: phase numbers, plan ids, repo-internal paths.
 4. No temporal deictics ("today", "this week").
-5. No links: the paragraph is pure narrative; pointers live in `References`.
+5. No links — pointers live in `References`.
 6. 3-6 sentences, hard cap.
 7. Litmus test: it must read correctly on a release page with zero context.
 
-After the leader paragraph, optional subsections group detail under fixed English H3 labels — the recommended, non-exclusive vocabulary. If you group, use these names:
+After the leader paragraph, optional subsections group detail under fixed English H3 labels, one item per bullet. If you group, use these names:
 
 | Label | Content |
 |-------|---------|
-| `Delivered` | What shipped, one item per bullet |
+| `Delivered` | What shipped |
 | `Decisions` | Decisions taken and deviations from the plan |
 | `Verification` | How the result was verified |
 | `Deferred` | Work moved out; every item names its destination plan id |
-| `References` | Delivery evidence links (PR, deploy, published doc). One link per bullet, labeled with its evidence kind, absolute URLs only |
+| `References` | Delivery evidence links (PR, deploy, published doc), one per bullet, labeled, absolute URLs only |
 
-Normative status: only the leader paragraph is unconditionally mandatory. `References` is conditionally mandatory — present if the work produced verifiable artifacts, omitted when there is no linkable evidence, never left empty. The other four are purely optional. Custom labels are allowed only when no recommended label fits — never a synonym of an existing one — in English, under the same format rules. Total section budget: ~40 lines. Banned: signatures, model attribution in prose, evaluative blocks.
+Only the leader paragraph is unconditionally mandatory. `References` is conditionally mandatory — present if the work produced verifiable artifacts, omitted when there is no linkable evidence, never left empty. The other four are purely optional. Custom labels only when no recommended label fits — never a synonym of an existing one — in English, under the same rules. Total budget: ~40 lines. Banned: signatures, model attribution in prose, evaluative blocks.
 
-**Extraction contract.** A closed plan guarantees: `id`, `title`, `done_date`, the leader paragraph, and parseable subsections. Derived changelog entries and mirror closing comments copy the leader paragraph verbatim and append the `References` links. The framework ships no CHANGELOG.md — generation is tooling (a CLI command or a viewer reading plans directly). Pre-existing manual changelogs freeze as legacy for older-format plans; derivation applies going forward only.
+**Extraction contract.** A closed plan guarantees: `id`, `title`, `done_date`, the leader paragraph, and parseable subsections. Derived changelog entries and mirror closing comments copy the leader paragraph verbatim and append the `References` links. The framework ships no CHANGELOG.md — generation is tooling. Pre-existing manual changelogs freeze as legacy for older-format plans; derivation applies going forward only.
 
 ## Rules
 
@@ -296,18 +275,18 @@ All 34 rules are mandatory. Ordered by criticality: **Structure** (framework int
 | 20 | Data | Datetimes must come from the system clock. Hardcoded, estimated, or placeholder values are forbidden |
 | 21 | Data | `author` is immutable once assigned; multiple authors are comma-separated |
 | 22 | Data | `_` separates timestamp ID from description; uniqueness = timestamp + description |
-| 23 | Data | `format` reflects the current format. At creation, equals RULES.md `version`. Mutable only on explicit migration; signals which rule set validators apply. Parsers accept `format_version` as read-alias |
+| 23 | Data | `format` reflects the current format. At creation, equals RULES.md `version`. Mutable only on explicit migration; signals which rule set validators apply |
 | 24 | Template | Plan files must not contain emojis. Use plain descriptive text instead |
 | 25 | Template | Steps that cannot be executed by an AI agent (browser checks, external dashboard configuration, manual UI testing, credential rotation) must be prefixed with `[manual]`. The agent skips them and reports to the user; Implementation describes what the user needs to do |
 | 26 | Structure | When the workplans folder is inside a Git repository (or any VCS with branch semantics), the branch for a new plan is decided explicitly before commit: declared policy in agent file → current non-main branch → ask the user. Never default silently to `main`. Outside a VCS, this rule does not apply |
 | 27 | Template | Phase 1 (Definition) and the Closing phase translate their phase name and step text to the user's active conversation language, preserving full orthography (accents, diacritics). Only the `Phase N:` prefix, H2 headings, and `Closing Summary` (when referenced in steps) stay in English. The English template in this document is reference, not literal output |
 | 28 | Data | `relations` sub-keys are limited to `blocked_by`, `relates_to`, `supersedes`, `parent`. Targets are immutable plan `id`s, comma-separated; no titles or slugs |
-| 29 | Template | A plan with a non-empty `blocked_by` must not move to `doing/` until every referenced plan is `done`. Cycles in `blocked_by` are invalid |
-| 30 | Data | `estimate` is set when Phase 1: Definition completes, must belong to the declared `estimate_scale` token set, and is immutable once the plan is in `doing/` |
-| 31 | Data | `priority` is one of `urgent`, `high`, `medium`, `low`, `""`. Mutable; a plan blocked by relations is not selectable regardless of priority |
-| 32 | Data | `tracked_in` holds the mirror URL(s), one mirror per tracker, comma-separated. Written by sync tooling; agents do not edit it manually |
-| 33 | Template | The Closing Summary of a done plan opens with the leader paragraph; subsection grouping uses the recommended vocabulary; exports copy the paragraph verbatim — see Closing Summary structure |
-| 34 | Structure | Subfolders inside `workplans/` (beyond the state folders and `extend/`) are invalid. One repo, one project — a multi-project layout is not part of this version |
+| 29 | Template | A plan with a non-empty `blocked_by` must not move to `doing/` until every referenced plan is `done`. Cycles are invalid |
+| 30 | Data | `estimate` is set when Phase 1: Definition completes, must belong to the declared scale's token set, and is immutable once in `doing/` |
+| 31 | Data | `priority` is `urgent`, `high`, `medium`, `low`, or `""`. Mutable; a blocked plan is not selectable regardless of priority |
+| 32 | Data | `tracked_in` holds the mirror URL(s), one per tracker, comma-separated. Written by sync tooling, not edited manually |
+| 33 | Template | A done plan's Closing Summary opens with the leader paragraph and groups detail only under the recommended vocabulary — see Closing Summary structure |
+| 34 | Structure | Subfolders inside `workplans/` beyond the state folders and `extend/` are invalid — single-project layout only in this version |
 
 ## File naming
 
@@ -375,7 +354,7 @@ The client suffix is omitted when the agent runs directly (API, Claude Code, web
 
 ## Project constants
 
-The frontmatter of the root `workplans/README.md` carries the project constants. All are optional with defaults; in the common case the frontmatter does not exist at all — it appears the first time there is something to declare:
+The frontmatter of the root `workplans/README.md` is the only project-level config location; RULES.md frontmatter carries framework metadata only (`name`, `version`). All constants are optional with defaults — in the common case the frontmatter does not exist at all, appearing the first time there is something to declare:
 
 ```yaml
 ---
@@ -391,9 +370,7 @@ estimate_scale: "fibonacci"
 | `tracker` | No tracker sync |
 | `estimate_scale` | `fibonacci` |
 
-- The root README frontmatter is the only project-level config location; RULES.md frontmatter carries framework metadata only (`name`, `version`).
-- The root `README.md` is user-owned after init: framework updates never modify an existing root README. The state-folder READMEs remain system files.
-- No `name` constant (the machine name is the folder/repo; the display name is the README's H1) and no provider constant (the `tracker` URL's domain selects the sync adapter).
+The root `README.md` is user-owned after init: framework updates never modify an existing root README (state-folder READMEs remain system files). There is no `name` constant (machine name = folder/repo; display name = the README's H1) and no provider constant (the `tracker` URL's domain selects the sync adapter).
 
 ## Work destination
 
@@ -415,7 +392,7 @@ Only `"."` or a remote URL are valid — never local paths (they differ across m
 
 When `work_on` is a remote URL, the local path is resolved into `workplans/LOCAL.yml` (auto-generated, gitignored, never committed). When both repos must be configured (plans live in one, code in another), the target repo's agent file (AGENTS.md / CLAUDE.md) must point back to where the plans live. See [README.md](README.md#work-destination) for the full resolution flow.
 
-**Execution conventions.** When the planning and execution repos are separate, the target repo's agent file (AGENTS.md, CLAUDE.md, or equivalent) is the source of truth for execution: git workflow, branch naming, commit and PR format, language. The planning repo's agent file governs only the plan files. Read the target's agent file before committing there; on conflict, it prevails for everything execution-related. If the target repo has none, report it and ask the user instead of assuming the planning repo's conventions.
+**Execution conventions.** When the planning and execution repos are separate, the target repo's agent file (AGENTS.md, CLAUDE.md, or equivalent) is the source of truth for execution: git workflow, branching, commit and PR format, language. The planning repo's agent file governs only the plan files; on conflict, the target's prevails for everything execution-related. Read it before committing there; if the target repo has none, report it and ask the user instead of assuming the planning repo's conventions.
 
 ## Extensions
 
@@ -423,11 +400,11 @@ Optional extensions live in `workplans/extend/`, one subfolder per extension. Th
 
 ## Compatibility
 
-The `version` field declares the active framework version. Plans declare their own `format` (or `format_version`, its pre-0.4.0 name — parsers accept both); validators apply the rule set matching that value, so plans from different framework versions coexist. Plans without either field are implicitly pre-0.2.1 (legacy layout, Progress first).
+The `version` field declares the active framework version. Plans declare their own `format` (read-alias `format_version`); validators apply the rule set matching that value, so plans from different framework versions coexist. Plans without either field are implicitly pre-0.2.1 (legacy layout, Progress first).
 
 ### Migration
 
-When a plan's declared format is older than the framework `version`, the agent asks the user whether to migrate it — never silently:
+When a plan's declared format is older than the framework `version`, the agent asks the user whether to migrate it — never silently. If the user declines, record the decision for the session and do not ask again.
 
 | Folder | Migration |
 |--------|-----------|
@@ -435,14 +412,11 @@ When a plan's declared format is older than the framework `version`, the agent a
 | `doing/` | Only on explicit user request |
 | `done/` | Never — historical record, immutable with its original format |
 
-- If the user declines, record the decision for the session and do not ask again.
-- A migrated plan updates its format field to the current version in the same change.
-- Migration alters frontmatter and section order only. Checkboxes, dates, and user content are preserved verbatim.
-- The CLI exposes the same operation as `workplans migrate` for reproducibility.
+Migration alters frontmatter and section order only — checkboxes, dates, and user content are preserved verbatim — and updates the format field to the current version in the same change. The CLI exposes the same operation as `workplans migrate` for reproducibility.
 
 ### Supported transitions
 
 | From | To | Transformation |
 |------|----|----------------|
 | pre-0.2.1, 0.2.x | 0.3.0 | Reorder the five H2 sections to the new layout (Objective first); set `format_version: "0.3.0"` |
-| 0.3.x | 0.4.0 | Rename `format_version` to `format` and move it first; reorder fields to the 0.4.0 order; add `priority`, `estimate`, `tracked_in` as `""` and the bare `relations:` key |
+| 0.3.x | 0.4.0 | Rename `format_version` → `format`, reorder fields to the 0.4.0 order, add `priority`/`estimate`/`tracked_in` as `""` and the bare `relations:` key |
