@@ -165,7 +165,7 @@ test("add requires exactly one positional argument", () => {
   assert.match(r.stderr, /expects 1 argument/);
 });
 
-test("add instantiates the template with fresh id, dates and local format_version", () => {
+test("add instantiates the template with fresh id, dates and the 0.4.0 contract", () => {
   const cwd = freshProject();
   const r = run(["add", "demo-template"], cwd);
   assert.equal(r.status, 0);
@@ -181,7 +181,13 @@ test("add instantiates the template with fresh id, dates and local format_versio
   assert.match(content, /^state: "backlog"$/m);
   assert.match(content, /^backlog_date: "\d{4}-\d{2}-\d{2}T\d{2}:\d{2}"$/m);
   assert.match(content, /^doing_date: ""$/m);
-  assert.match(content, /^format_version: "0\.9\.0"$/m, "format_version comes from local RULES.md");
+  // The local framework is 0.4.0+, so the template lands migrated to the
+  // 0.4.0 contract instead of stamping a version its shape would contradict.
+  assert.match(content, /^format: "0\.4\.0"$/m);
+  assert.match(content, /^priority: ""$/m);
+  assert.match(content, /^tracked_in: ""$/m);
+  assert.match(content, /^relations:$/m);
+  assert.ok(!/^format_version:/m.test(content), "format_version renamed to format");
   assert.match(content, /# Demo template/, "body is preserved");
 });
 

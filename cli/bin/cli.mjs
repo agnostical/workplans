@@ -35,7 +35,7 @@ const registry = new Map([
       fn: "runUpdate",
       positionals: 0,
       summary:
-        "Refresh RULES.md/README.md and ensure state folders exist (never touches user plans)",
+        "Refresh system files and ensure state folders exist (never touches user plans or the root README)",
     },
   ],
   [

@@ -3,6 +3,8 @@ import { readFile, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { fetchTemplate, readVersionFromRules } from "../lib/download.mjs";
 import { generateId, frontmatterDate } from "../lib/planid.mjs";
+import { compareVersions } from "../lib/semver.mjs";
+import { transitionTo040 } from "../lib/transitions.mjs";
 
 /**
  * Rewrites the template frontmatter for a fresh plan: new id, backlog state,
@@ -73,7 +75,17 @@ export async function runAdd(name) {
     ? readVersionFromRules(await readFile(rulesPath, "utf8"))
     : null;
 
-  const plan = instantiate(content, { id, date: frontmatterDate(now), formatVersion });
+  // On a 0.4.0+ framework, keep the template's own declared format and apply
+  // the documented transition instead of stamping a version the shape of the
+  // frontmatter would contradict.
+  const needs040 =
+    formatVersion !== null && (compareVersions(formatVersion, "0.4.0") ?? -1) >= 0;
+  let plan = instantiate(content, {
+    id,
+    date: frontmatterDate(now),
+    formatVersion: needs040 ? null : formatVersion,
+  });
+  if (needs040) plan = transitionTo040(plan);
   const filename = `${id}_${name}.md`;
 
   try {
