@@ -1,7 +1,6 @@
 ---
 name: workplans
 version: 0.3.1
-work_on: "."
 ---
 
 # Workplans: Rules
@@ -35,7 +34,7 @@ State transitions move the file and update frontmatter; they never rename. The f
 
 The branch a plan is committed on is an explicit decision, not a side-effect of the current shell state. Resolve in order, stop at the first match. The VCS check (step 2) only fires when no policy is declared — a declared policy implies a VCS is present, so no further verification is needed:
 
-1. **Policy declared** in the agent file (AGENTS.md, CLAUDE.md, etc.) → follow it.
+1. **Policy declared** in the agent file (AGENTS.md, CLAUDE.md, etc.) → follow it. A planning-only repo may declare a main-only policy (e.g. "all plans commit directly to main; no feature branches for plan files"), which keeps every plan visible on the main branch.
 2. **No VCS detected** (`git rev-parse --is-inside-work-tree` does not return `true`) → write the plan to disk, no branch question.
 3. **VCS + current branch is not the main branch** → commit on the current branch.
 4. **VCS + current branch is main** → ask the user whether to create a new branch first or commit on main.
@@ -278,7 +277,7 @@ Normative status: the leader paragraph is the only unconditionally mandatory ele
 
 ## Rules
 
-All 33 rules are mandatory. Ordered by criticality: **Structure** (framework integrity) → **Template** (plan validity) → **Data** (field correctness).
+All 34 rules are mandatory. Ordered by criticality: **Structure** (framework integrity) → **Template** (plan validity) → **Data** (field correctness).
 
 | # | Category | Rule |
 |---|----------|------|
@@ -286,7 +285,7 @@ All 33 rules are mandatory. Ordered by criticality: **Structure** (framework int
 | 2 | Structure | The timestamp portion of the filename and the matching `id` are immutable. The description portion of the filename is mutable when `title` changes substantially — see File naming |
 | 3 | Structure | `workplans/` only contains structured plan files. No notes, docs, or unstructured content |
 | 4 | Structure | Do not create files or folders that alter the `workplans/` structure |
-| 5 | Structure | README files and RULES.md are system files. Do not remove or edit manually |
+| 5 | Structure | RULES.md and the state-folder READMEs are system files: do not remove or edit manually. The root README.md is user-owned after init and carries the project constants |
 | 6 | Structure | Do not add custom frontmatter fields or markdown sections beyond the defined format |
 | 7 | Template | H1 must match the `title` field |
 | 8 | Template | H2 sections must use Title Case. Only 5 valid sections. Section order depends on the plan's declared format |
@@ -315,6 +314,7 @@ All 33 rules are mandatory. Ordered by criticality: **Structure** (framework int
 | 31 | Data | `priority` is one of `urgent`, `high`, `medium`, `low`, `""`. Mutable; a plan blocked by relations is not selectable regardless of priority |
 | 32 | Data | `tracked_in` holds the mirror URL(s), one mirror per tracker, comma-separated. Written by sync tooling; agents do not edit it manually |
 | 33 | Template | The Closing Summary of a done plan opens with the leader paragraph; subsection grouping uses the recommended vocabulary; exports copy the paragraph verbatim — see Closing Summary structure |
+| 34 | Structure | Subfolders inside `workplans/` (beyond the state folders and `extend/`) are invalid. One repo, one project — a multi-project layout is not part of this version |
 
 ## File naming
 
@@ -386,13 +386,35 @@ The client suffix is omitted when the agent runs directly (API, Claude Code, web
 - **User-authored content** (title, descriptions, steps, summary) follows the user's active conversation language.
 - **Orthography** must be preserved: accents, ñ, and other special characters of the user's language. UTF-8 is the encoding for Markdown files.
 
+## Project constants
+
+The frontmatter of the root `workplans/README.md` carries the project constants. All are optional with defaults; in the common case the frontmatter does not exist at all — it appears the first time there is something to declare:
+
+```yaml
+---
+work_on: "https://github.com/acme/backend"
+tracker: "https://linear.app/acme/team/ENG"
+estimate_scale: "fibonacci"
+---
+```
+
+| Constant | Absent means |
+|----------|--------------|
+| `work_on` | Plans target this same repo (equivalent to `"."`) |
+| `tracker` | No tracker sync |
+| `estimate_scale` | `fibonacci` |
+
+- The root README frontmatter is the only project-level config location. RULES.md frontmatter carries framework metadata only (`name`, `version`).
+- The root `README.md` is user-owned after init: framework updates never modify an existing root README. The state-folder READMEs (`backlog/`, `doing/`, `done/`) remain system files.
+- No `name` constant: the project's machine name derives from the folder/repo, and the human display name is the README's H1. No provider constant: the `tracker` URL's domain selects the sync adapter.
+
 ## Work destination
 
-The `work_on` field in RULES.md frontmatter declares where plan execution applies. Valid values:
+The `work_on` constant declares where plan execution applies. Valid values:
 
 | Value | Meaning |
 |-------|---------|
-| `"."` (default) | Parent directory of `workplans/`. Plans target the same project |
+| `"."` or absent (default) | Parent directory of `workplans/`. Plans target the same project |
 | Remote URL | Plans target a different project (e.g. `https://github.com/org/project`) |
 
 Two destinations for changes:
@@ -402,9 +424,11 @@ Two destinations for changes:
 | Plan files (Markdown, frontmatter, folder moves) | Inside `workplans/` |
 | Plan execution (code, configs, assets) | At `work_on` |
 
-Only `"."` or a remote URL are valid in RULES.md — never local paths (they differ across machines).
+Only `"."` or a remote URL are valid — never local paths (they differ across machines).
 
 When `work_on` is a remote URL, the local path is resolved into `workplans/LOCAL.yml` (auto-generated, gitignored, never committed). When both repos must be configured (plans live in one, code in another), the target repo's agent file (AGENTS.md / CLAUDE.md) must point back to where the plans live. See [README.md](README.md#work-destination) for the full resolution flow.
+
+**Execution conventions.** When the planning repo and the execution repo are separate, the target repo's agent file (AGENTS.md, CLAUDE.md, or equivalent) is the source of truth for execution: git workflow, branch naming, commit and PR format, language. The planning repo's agent file governs only the plan files and the project's purpose. Before committing in the target repo, read and follow its agent file; on conflict, the target repo's conventions prevail for everything execution-related. If the target repo has no agent file, report it and ask the user for conventions instead of assuming the planning repo's.
 
 ## Extensions
 
