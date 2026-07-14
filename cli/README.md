@@ -14,11 +14,23 @@ This scaffolds a `workplans/` folder in the current directory with `RULES.md`, `
 
 ```bash
 npx workplans init             # Scaffold the framework (fails if workplans/ already exists)
-npx workplans update           # Refresh RULES.md and README.md, ensure state folders exist
-                               # User plans are never touched
+npx workplans update           # Refresh system files (RULES.md, state-folder READMEs)
+                               # User plans and the root README are never touched
+npx workplans migrate          # Migrate backlog plans to the installed format version
 npx workplans list             # List available plan templates
 npx workplans add <template>   # Add a template to workplans/backlog/ with a fresh id
 ```
+
+### Update ownership
+
+`update` replaces system files only: `RULES.md` and the state-folder READMEs. The root `workplans/README.md` is user-owned after init — it carries the project constants (`work_on`, `tracker`, `estimate_scale`) in its frontmatter — so `update` creates it only when missing and never overwrites it. If your `RULES.md` still declares `work_on` (pre-0.4.0 layout), `update` moves it into the README frontmatter automatically before replacing `RULES.md`.
+
+### Migrate
+
+`migrate` brings plans written against an older format up to the version installed in `RULES.md`, applying the documented transition for each version pair (for 0.3.x → 0.4.0: field reorder, `format_version` → `format` rename, new empty fields, bare `relations:` key). Content sections are preserved verbatim.
+
+- Scope: `backlog/` by default; `doing/` only with `--doing`; `done/` is never migrated (historical record).
+- `--dry-run` lists what would change without writing.
 
 ### Templates
 

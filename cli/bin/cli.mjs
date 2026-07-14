@@ -14,6 +14,8 @@ const pkg = JSON.parse(readFileSync(join(__dirname, "..", "package.json"), "utf8
  *   load        dynamic import of the command module
  *   fn          exported function to run
  *   positionals number of positional arguments after the command name
+ *   flags       allowed flags; when present, the matched flags are passed
+ *               to fn as a trailing Set
  *   summary     one-line description for --help
  */
 const registry = new Map([
@@ -34,6 +36,17 @@ const registry = new Map([
       positionals: 0,
       summary:
         "Refresh RULES.md/README.md and ensure state folders exist (never touches user plans)",
+    },
+  ],
+  [
+    "migrate",
+    {
+      load: () => import("../commands/migrate.mjs"),
+      fn: "runMigrate",
+      positionals: 0,
+      flags: ["--doing", "--dry-run"],
+      usage: "migrate [--doing] [--dry-run]",
+      summary: "Migrate backlog plans to the installed format (doing/ needs --doing; done/ never)",
     },
   ],
   [
@@ -98,9 +111,21 @@ async function main() {
     process.exit(1);
   }
 
-  if (rest.length !== command.positionals) {
+  const allowedFlags = new Set(command.flags || []);
+  const flagArgs = rest.filter((a) => a.startsWith("-"));
+  const positionals = rest.filter((a) => !a.startsWith("-"));
+
+  for (const flag of flagArgs) {
+    if (!allowedFlags.has(flag)) {
+      console.error(`Unknown flag for '${arg}': ${flag}\n`);
+      console.error(buildHelp());
+      process.exit(1);
+    }
+  }
+
+  if (positionals.length !== command.positionals) {
     console.error(
-      `'${arg}' expects ${command.positionals} argument(s), got ${rest.length}.\n`
+      `'${arg}' expects ${command.positionals} argument(s), got ${positionals.length}.\n`
     );
     console.error(buildHelp());
     process.exit(1);
@@ -108,7 +133,8 @@ async function main() {
 
   try {
     const mod = await command.load();
-    await mod[command.fn](...rest);
+    const args = command.flags ? [...positionals, new Set(flagArgs)] : positionals;
+    await mod[command.fn](...args);
   } catch (err) {
     console.error(`Error: ${err.message}`);
     process.exit(1);
