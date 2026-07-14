@@ -433,11 +433,17 @@ for folder in backlog doing done; do
 
     # Check Closing phase exists (last phase, title follows user's language)
     # Get the last ### Phase N: heading and check it's the closing phase
-    last_phase=$(grep "### Phase [0-9]*:" "$file" | tail -1)
+    last_phase=$(grep "### Phase [0-9][0-9]*:" "$file" | tail -1)
     if [[ -n "$last_phase" ]]; then
       pass "$folder/$bn — Closing phase present"
     else
       fail "$folder/$bn — missing mandatory Closing phase"
+    fi
+
+    # Phase headings must carry a number: a literal "Phase N:" is template
+    # imitation, not a valid heading
+    if grep -qE "^#+ Phase [^0-9:]+:" "$file"; then
+      fail "$folder/$bn — phase heading without a number (literal 'Phase N:'?)"
     fi
 
     # 0.4.0+ done plans: Closing Summary opens with the leader paragraph
@@ -451,6 +457,12 @@ for folder in backlog doing done; do
         fail "$folder/$bn — Closing Summary must open with the leader paragraph (found heading or bullet first)"
       else
         pass "$folder/$bn — Closing Summary leader paragraph present"
+      fi
+
+      # Subsection labels must be H3 headings, not plain-text lines
+      if awk '/^## Closing Summary/{f=1;next} /^## /{f=0} f' "$file" \
+        | grep -qE '^(Delivered|Decisions|Verification|Deferred|References):?[[:space:]]*$'; then
+        fail "$folder/$bn — Closing Summary label written as plain text; use an H3 heading (### Label)"
       fi
     fi
   done
