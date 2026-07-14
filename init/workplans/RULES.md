@@ -199,7 +199,7 @@ Five H2 sections, Title Case. Order depends on the plan's declared format:
 | `## Progress` | Checklist mirror of Implementation phases |
 | `## Context` | Background, constraints, or references |
 | `## Implementation` | Technical detail organized by phase |
-| `## Closing Summary` | Bullet points written when the last phase is completed. Until then: `_To be written when the last phase is completed._` |
+| `## Closing Summary` | Leader paragraph plus optional labeled subsections, written when the last phase is completed (see Closing Summary structure). Until then: `_To be written when the last phase is completed._` |
 
 H1 is the first line after the frontmatter and must match `title` exactly. One H1 per file.
 
@@ -235,9 +235,35 @@ A plan in `backlog/` with Phase 1 unchecked is still being defined. A plan canno
 
 The Implementation entries for Phase 1 and Closing use fixed plain-text descriptions that also translate to the user's language. English canonical: `Define the Objective, Context, and subsequent phases. Once complete, the plan is ready for execution.` and `Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.` The same entries in Spanish: `Define el Objective, el Context y las fases subsiguientes. Una vez completas, el plan queda listo para ejecución.` and `Valida la implementación con el usuario y escribe el Closing Summary. Una vez completa, el plan queda listo para moverse a done.` Italic in plan files is reserved for temporary placeholders (e.g. `_To be written when the last phase is completed._`).
 
+### Closing Summary structure
+
+The Closing Summary opens with a mandatory **leader paragraph**. It is the literal export unit: the changelog entry, the mirror's closing comment, and any other projection copy it verbatim — never rewrite it. Its rules are about portability as much as voice; nothing that does not travel outside the repo may appear:
+
+1. Opens with the result, never the process.
+2. No actor: no people, no models, no team. Impersonal constructions or the deliverable as subject.
+3. No references that do not travel: phase numbers, plan ids, repo-internal paths.
+4. No temporal deictics ("today", "this week").
+5. No links: the paragraph is pure narrative; pointers live in `References`.
+6. 3-6 sentences, hard cap.
+7. Litmus test: it must read correctly on a release page with zero context.
+
+After the leader paragraph, optional subsections group detail under fixed English H3 labels — the recommended, non-exclusive vocabulary. If you group, use these names:
+
+| Label | Content |
+|-------|---------|
+| `Delivered` | What shipped, one item per bullet |
+| `Decisions` | Decisions taken and deviations from the plan |
+| `Verification` | How the result was verified |
+| `Deferred` | Work moved out; every item names its destination plan id |
+| `References` | Delivery evidence links (PR, deploy, published doc). One link per bullet, labeled with its evidence kind, absolute URLs only |
+
+Normative status: the leader paragraph is the only unconditionally mandatory element. `References` is conditionally mandatory — present if the work produced verifiable artifacts, omitted when there is no linkable evidence, never left empty. The other four are purely optional. Custom labels are allowed only when no recommended label fits — never a synonym or rename of an existing one — in English and under the same format rules. Total section budget: ~40 lines. Banned: signatures, model attribution in prose, evaluative blocks.
+
+**Extraction contract.** A closed plan guarantees: `id`, `title`, `done_date`, the leader paragraph, and parseable subsections. Derived changelog entries and mirror closing comments copy the leader paragraph verbatim and append the `References` links. The framework does not include a CHANGELOG.md — generation is tooling (a CLI command or a viewer reading plans directly). Pre-existing manual changelogs freeze as legacy for plans with an older format; derivation applies going forward only.
+
 ## Rules
 
-All 32 rules are mandatory. Ordered by criticality: **Structure** (framework integrity) → **Template** (plan validity) → **Data** (field correctness).
+All 33 rules are mandatory. Ordered by criticality: **Structure** (framework integrity) → **Template** (plan validity) → **Data** (field correctness).
 
 | # | Category | Rule |
 |---|----------|------|
@@ -273,6 +299,7 @@ All 32 rules are mandatory. Ordered by criticality: **Structure** (framework int
 | 30 | Data | `estimate` is set when Phase 1: Definition completes, must belong to the declared `estimate_scale` token set, and is immutable once the plan is in `doing/` |
 | 31 | Data | `priority` is one of `urgent`, `high`, `medium`, `low`, `""`. Mutable; a plan blocked by relations is not selectable regardless of priority |
 | 32 | Data | `tracked_in` holds the mirror URL(s), one mirror per tracker, comma-separated. Written by sync tooling; agents do not edit it manually |
+| 33 | Template | The Closing Summary of a done plan opens with the leader paragraph; subsection grouping uses the recommended vocabulary; exports copy the paragraph verbatim — see Closing Summary structure |
 
 ## File naming
 
