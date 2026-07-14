@@ -46,17 +46,17 @@ This rule applies to the plan file itself. Execution changes follow their own br
 
 ```markdown
 ---
+format: "0.4.0"
 id: 2606455842
 title: "User authentication setup"
-state: "backlog"
 author: ""
 author_model: ""
 assignee: ""
 assignee_model: ""
+state: "backlog"
 backlog_date: "YYYY-MM-DDThh:mm"
 doing_date: ""
 done_date: ""
-format_version: "0.3.0"
 ---
 
 # User authentication setup
@@ -99,28 +99,30 @@ The template is in English as reference only. The `Phase N:` prefix and the five
 
 ### Frontmatter
 
-Frontmatter starts on line 1, no leading blank lines. All fields present; `""` if not applicable.
+Frontmatter starts on line 1, no leading blank lines. All fields present, in the order below; scalar fields empty to `""`.
+
+The field order tells one story: what it is, who, where it stands. `format` goes first — it is the discriminator that says which schema governs the rest of the file.
 
 | Field | Description |
 |-------|-------------|
-| `id` | Timestamp ID matching the filename (`YYDDDsssss`). First field, immutable |
+| `format` | Format the plan follows. At creation, equals `version` in RULES.md. Mutable only on explicit migration. Read-alias: `format_version` (the pre-0.4.0 name; parsers accept both, new plans write `format`) |
+| `id` | Timestamp ID matching the filename (`YYDDDsssss`). Immutable |
 | `title` | Short descriptive title |
-| `state` | Must match the folder: `backlog`, `doing`, `done` |
 | `author` | Human creator. Immutable. Comma-separated if multiple (e.g. `"Alice,Bob"`) |
 | `author_model` | AI model ID(s) that created the plan. See AI model attribution |
 | `assignee` | Person implementing |
 | `assignee_model` | AI model ID(s) that executed the plan |
+| `state` | Must match the folder: `backlog`, `doing`, `done` |
 | `backlog_date` | Datetime created (`YYYY-MM-DDThh:mm`) |
 | `doing_date` | Datetime work started |
 | `done_date` | Datetime completed |
-| `format_version` | Format the plan currently follows. At creation, equals `version` in RULES.md. Mutable only on explicit migration |
 
 ### Sections
 
-Five H2 sections, Title Case. Order depends on `format_version`:
+Five H2 sections, Title Case. Order depends on the plan's declared format:
 
-| `format_version` | Order |
-|------------------|-------|
+| `format` | Order |
+|----------|-------|
 | `0.3.0` or higher (new layout) | `Objective` → `Progress` → `Context` → `Implementation` → `Closing Summary` |
 | `0.2.x` or lower (legacy layout) | `Progress` → `Objective` → `Context` → `Implementation` → `Closing Summary` |
 
@@ -179,8 +181,8 @@ All 27 rules are mandatory. Ordered by criticality: **Structure** (framework int
 | 5 | Structure | README files and RULES.md are system files. Do not remove or edit manually |
 | 6 | Structure | Do not add custom frontmatter fields or markdown sections beyond the defined format |
 | 7 | Template | H1 must match the `title` field |
-| 8 | Template | H2 sections must use Title Case. Only 5 valid sections. Section order depends on `format_version` |
-| 9 | Template | Progress phases mirror Implementation phases. Legacy layout (`format_version < 0.3.0`) puts Progress first; new layout (`>= 0.3.0`) puts Objective first |
+| 8 | Template | H2 sections must use Title Case. Only 5 valid sections. Section order depends on the plan's declared format |
+| 9 | Template | Progress phases mirror Implementation phases. Legacy layout (format `< 0.3.0`) puts Progress first; new layout (`>= 0.3.0`) puts Objective first |
 | 10 | Template | Phase 1: Definition is mandatory with three fixed steps. Must not be modified |
 | 11 | Template | Closing phase is mandatory as the last phase with two fixed steps. Must not be modified |
 | 12 | Template | Steps grouped by phase (`### Phase N: Name`), each concrete and verifiable. Use "Phase" and "Step" only (never "Stage") |
@@ -194,7 +196,7 @@ All 27 rules are mandatory. Ordered by criticality: **Structure** (framework int
 | 20 | Data | Datetimes must come from the system clock. Hardcoded, estimated, or placeholder values are forbidden |
 | 21 | Data | `author` is immutable once assigned; multiple authors are comma-separated |
 | 22 | Data | `_` separates timestamp ID from description; uniqueness = timestamp + description |
-| 23 | Data | `format_version` reflects the current format. At creation, equals RULES.md `version`. Mutable only on explicit migration; signals which rule set validators apply |
+| 23 | Data | `format` reflects the current format. At creation, equals RULES.md `version`. Mutable only on explicit migration; signals which rule set validators apply. Parsers accept `format_version` as read-alias |
 | 24 | Template | Plan files must not contain emojis. Use plain descriptive text instead |
 | 25 | Template | Steps that cannot be executed by an AI agent (browser checks, external dashboard configuration, manual UI testing, credential rotation) must be prefixed with `[manual]`. The agent skips them and reports to the user; Implementation describes what the user needs to do |
 | 26 | Structure | When the workplans folder is inside a Git repository (or any VCS with branch semantics), the branch for a new plan is decided explicitly before commit: declared policy in agent file → current non-main branch → ask the user. Never default silently to `main`. Outside a VCS, this rule does not apply |
