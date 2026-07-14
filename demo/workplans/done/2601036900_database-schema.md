@@ -1,15 +1,20 @@
 ---
+format: "0.4.0"
 id: 2601036900
 title: "Database schema design"
-state: "done"
+priority: "high"
+estimate: 5
 author: "sebastianserna"
 author_model: "gpt-4o"
 assignee: "alexgarcia"
 assignee_model: "gpt-4o"
+state: "done"
 backlog_date: "2026-01-10T10:15"
 doing_date: "2026-01-20T09:00"
 done_date: "2026-02-08T11:10"
-format_version: "0.3.0"
+tracked_in: ""
+relations:
+  blocked_by: "2600532400"
 ---
 
 # Database schema design
@@ -49,7 +54,10 @@ PostgreSQL with UUIDs as primary keys. All tables include `created_at` and `upda
 Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.
 
 ## Closing Summary
-- Schema finalized and deployed to staging
-- All migrations run cleanly on fresh databases
-- Seed data populates correctly for development
-- Foreign key constraints and query performance verified
+The database schema is finalized and deployed to staging. Migrations run cleanly on fresh databases and seed data populates correctly for development. Foreign key constraints and query performance are verified.
+
+### Delivered
+- Normalized schema with migrations and seed data
+
+### Verification
+- Fresh-database migration runs, constraint checks, and query benchmarks

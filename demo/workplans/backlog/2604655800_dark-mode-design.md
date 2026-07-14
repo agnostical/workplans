@@ -1,15 +1,19 @@
 ---
+format: "0.4.0"
 id: 2604655800
 title: "Dark mode design system"
-state: "backlog"
+priority: ""
+estimate: 2
 author: "sebastianserna"
 author_model: "gpt-4o"
 assignee: ""
 assignee_model: ""
+state: "backlog"
 backlog_date: "2026-02-15T15:30"
 doing_date: ""
 done_date: ""
-format_version: "0.3.0"
+tracked_in: ""
+relations:
 ---
 
 # Dark mode design system

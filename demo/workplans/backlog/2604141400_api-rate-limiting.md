@@ -1,15 +1,19 @@
 ---
+format: "0.4.0"
 id: 2604141400
 title: "API rate limiting strategy"
-state: "backlog"
+priority: "low"
+estimate: 3
 author: "sebastianserna"
 author_model: ""
 assignee: ""
 assignee_model: ""
+state: "backlog"
 backlog_date: "2026-02-10T11:30"
 doing_date: ""
 done_date: ""
-format_version: "0.3.0"
+tracked_in: ""
+relations:
 ---
 
 # API rate limiting strategy

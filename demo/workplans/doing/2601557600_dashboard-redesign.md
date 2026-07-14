@@ -1,15 +1,19 @@
 ---
+format: "0.4.0"
 id: 2601557600
 title: "Dashboard redesign"
-state: "doing"
+priority: "high"
+estimate: 8
 author: "sebastianserna"
 author_model: "claude-opus-4, gemini-pro"
 assignee: "alexgarcia"
 assignee_model: "claude-sonnet-4"
+state: "doing"
 backlog_date: "2026-01-20T10:00"
 doing_date: "2026-02-10T09:30"
 done_date: ""
-format_version: "0.3.0"
+tracked_in: ""
+relations:
 ---
 
 # Dashboard redesign

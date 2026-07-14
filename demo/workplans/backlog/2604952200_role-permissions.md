@@ -1,15 +1,20 @@
 ---
+format: "0.4.0"
 id: 2604952200
 title: "Role-based permissions"
-state: "backlog"
+priority: "medium"
+estimate: 5
 author: "sebastianserna"
 author_model: "gemini-2.5-pro"
 assignee: "alexgarcia"
 assignee_model: "gpt-4o"
+state: "backlog"
 backlog_date: "2026-02-22T09:25"
 doing_date: ""
 done_date: ""
-format_version: "0.3.0"
+tracked_in: ""
+relations:
+  relates_to: "2601551600"
 ---
 
 # Role-based permissions

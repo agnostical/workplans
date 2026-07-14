@@ -1,15 +1,19 @@
 ---
+format: "0.4.0"
 id: 2605639600
 title: "File upload system"
-state: "backlog"
+priority: ""
+estimate: 5
 author: "sebastianserna"
 author_model: "grok-3"
 assignee: ""
 assignee_model: ""
+state: "backlog"
 backlog_date: "2026-02-25T11:00"
 doing_date: ""
 done_date: ""
-format_version: "0.3.0"
+tracked_in: ""
+relations:
 ---
 
 # File upload system

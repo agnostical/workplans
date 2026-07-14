@@ -1,15 +1,20 @@
 ---
+format: "0.4.0"
 id: 2601551600
 title: "User authentication setup"
-state: "backlog"
+priority: "high"
+estimate: 5
 author: "sebastianserna"
 author_model: "claude-opus-4"
 assignee: ""
 assignee_model: ""
+state: "backlog"
 backlog_date: "2026-01-15T14:20"
 doing_date: ""
 done_date: ""
-format_version: "0.3.0"
+tracked_in: ""
+relations:
+  blocked_by: "2602836000"
 ---
 
 # User authentication setup
