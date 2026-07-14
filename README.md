@@ -1,6 +1,6 @@
 # Workplans
 
-![version](https://img.shields.io/github/v/release/agnostical/workplans)
+![version](https://img.shields.io/github/v/release/agnostical/workplans?filter=v*)
 
 An open framework for managing AI-driven work plans using structured Markdown files, with YAML frontmatter metadata that guides AI agents through task execution. Plans flow through a defined lifecycle:
 
@@ -107,7 +107,7 @@ npx workplans migrate
 #### Option B: From GitHub
 Download the `.zip`, extract it, and copy the `workplans` folder (inside `init/`) into your project.
 
-[![Download latest release](https://img.shields.io/github/v/release/agnostical/workplans?label=Download&style=for-the-badge&logo=github)](https://github.com/agnostical/workplans/releases/latest)
+[![Download latest release](https://img.shields.io/github/v/release/agnostical/workplans?filter=v*&label=Download&style=for-the-badge&logo=github)](https://github.com/agnostical/workplans/releases)
 
 #### Option C: Using giget directly
 If you prefer not to install the CLI, you can use `giget`:
