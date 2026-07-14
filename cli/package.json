@@ -1,7 +1,7 @@
 {
   "name": "workplans",
-  "version": "0.2.0",
-  "description": "CLI for the Workplans framework \u2014 install and update markdown plan structures for AI agents.",
+  "version": "0.3.0",
+  "description": "CLI for the Workplans framework — install and update markdown plan structures for AI agents.",
   "type": "module",
   "bin": {
     "workplans": "./bin/cli.mjs"

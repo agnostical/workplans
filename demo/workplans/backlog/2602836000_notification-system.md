@@ -1,15 +1,19 @@
 ---
+format: "0.4.0"
 id: 2602836000
 title: "Email notification system"
-state: "backlog"
+priority: "high"
+estimate: 3
 author: "sebastianserna"
 author_model: "mistral-large"
 assignee: ""
 assignee_model: ""
+state: "backlog"
 backlog_date: "2026-02-01T09:15"
 doing_date: ""
 done_date: ""
-format_version: "0.3.0"
+tracked_in: ""
+relations:
 ---
 
 # Email notification system

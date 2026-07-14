@@ -1,8 +1,9 @@
 import { existsSync } from "node:fs";
-import { copyFile, mkdir, mkdtemp, readFile, rm } from "node:fs/promises";
+import { copyFile, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { compareVersions } from "../lib/semver.mjs";
+import { parseFrontmatter, getField, upsertReadmeWorkOn } from "../lib/frontmatter.mjs";
 import {
   downloadInit,
   fetchRemoteVersion,
@@ -11,8 +12,33 @@ import {
   unregisterTempDir,
 } from "../lib/download.mjs";
 
-const SYSTEM_FILES = ["RULES.md", "README.md"];
+// The root README is user-owned after init and is never overwritten here;
+// update creates it from the template only when missing (#69).
+const SYSTEM_FILES = ["RULES.md"];
 const STATE_FOLDERS = ["backlog", "doing", "done"];
+
+/**
+ * One-time migration (#69): `work_on` used to live in the RULES.md
+ * frontmatter, which update replaces. Move it to the root README
+ * frontmatter — its home since 0.4.0 — before RULES.md is overwritten.
+ * The default "." is not migrated: absent means "this same repo".
+ */
+async function migrateWorkOn(workplansDir) {
+  const rulesPath = join(workplansDir, "RULES.md");
+  if (!existsSync(rulesPath)) return;
+  const parsed = parseFrontmatter(await readFile(rulesPath, "utf8"));
+  if (!parsed) return;
+  const workOn = getField(parsed, "work_on");
+  if (!workOn || workOn === ".") return;
+
+  const readmePath = join(workplansDir, "README.md");
+  const readme = existsSync(readmePath) ? await readFile(readmePath, "utf8") : "";
+  const updated = upsertReadmeWorkOn(readme, workOn);
+  if (updated !== null) {
+    await writeFile(readmePath, updated);
+    console.log(`  Moved work_on to workplans/README.md frontmatter (${workOn})`);
+  }
+}
 
 async function readLocalVersion(rulesPath) {
   if (!existsSync(rulesPath)) return null;
@@ -78,9 +104,16 @@ export async function runUpdate() {
     }
 
     try {
+      await migrateWorkOn(workplansDir);
+
       for (const file of SYSTEM_FILES) {
         await copyFile(join(sourceDir, file), join(workplansDir, file));
         console.log(`  Updated workplans/${file}`);
+      }
+
+      if (!existsSync(join(workplansDir, "README.md"))) {
+        await copyFile(join(sourceDir, "README.md"), join(workplansDir, "README.md"));
+        console.log("  Created workplans/README.md");
       }
 
       for (const folder of STATE_FOLDERS) {

@@ -2,7 +2,7 @@
 # ─────────────────────────────────────────────────────────────────
 # build-demo.sh
 # Regenerates demo/workplans from init/workplans and creates
-# example plan files for all three states (v0.3.0 format).
+# example plan files for all three states (v0.4.0 format).
 #
 # Usage: ./scripts/build-demo.sh
 # ─────────────────────────────────────────────────────────────────
@@ -25,17 +25,22 @@ echo "==> Creating backlog plans..."
 
 cat <<'EOF' > "$DEMO/backlog/2601551600_user-auth-setup.md"
 ---
+format: "0.4.0"
 id: 2601551600
 title: "User authentication setup"
-state: "backlog"
+priority: "high"
+estimate: 5
 author: "sebastianserna"
 author_model: "claude-opus-4"
 assignee: ""
 assignee_model: ""
+state: "backlog"
 backlog_date: "2026-01-15T14:20"
 doing_date: ""
 done_date: ""
-format_version: "0.3.0"
+tracked_in: ""
+relations:
+  blocked_by: "2602836000"
 ---
 
 # User authentication setup
@@ -87,17 +92,21 @@ EOF
 
 cat <<'EOF' > "$DEMO/backlog/2602836000_notification-system.md"
 ---
+format: "0.4.0"
 id: 2602836000
 title: "Email notification system"
-state: "backlog"
+priority: "high"
+estimate: 3
 author: "sebastianserna"
 author_model: "mistral-large"
 assignee: ""
 assignee_model: ""
+state: "backlog"
 backlog_date: "2026-02-01T09:15"
 doing_date: ""
 done_date: ""
-format_version: "0.3.0"
+tracked_in: ""
+relations:
 ---
 
 # Email notification system
@@ -141,17 +150,21 @@ EOF
 
 cat <<'EOF' > "$DEMO/backlog/2604739600_search-functionality.md"
 ---
+format: "0.4.0"
 id: 2604739600
 title: "Full-text search functionality"
-state: "backlog"
+priority: "medium"
+estimate: 8
 author: "sebastianserna"
 author_model: ""
 assignee: ""
 assignee_model: ""
+state: "backlog"
 backlog_date: "2026-02-20T15:45"
 doing_date: ""
 done_date: ""
-format_version: "0.3.0"
+tracked_in: ""
+relations:
 ---
 
 # Full-text search functionality
@@ -194,17 +207,22 @@ EOF
 
 cat <<'EOF' > "$DEMO/backlog/2604952200_role-permissions.md"
 ---
+format: "0.4.0"
 id: 2604952200
 title: "Role-based permissions"
-state: "backlog"
+priority: "medium"
+estimate: 5
 author: "sebastianserna"
 author_model: "gemini-2.5-pro"
 assignee: "alexgarcia"
 assignee_model: "gpt-4o"
+state: "backlog"
 backlog_date: "2026-02-22T09:25"
 doing_date: ""
 done_date: ""
-format_version: "0.3.0"
+tracked_in: ""
+relations:
+  relates_to: "2601551600"
 ---
 
 # Role-based permissions
@@ -260,17 +278,21 @@ echo "==> Creating doing plans..."
 
 cat <<'EOF' > "$DEMO/doing/2601557600_dashboard-redesign.md"
 ---
+format: "0.4.0"
 id: 2601557600
 title: "Dashboard redesign"
-state: "doing"
+priority: "high"
+estimate: 8
 author: "sebastianserna"
 author_model: "claude-opus-4, gemini-pro"
 assignee: "alexgarcia"
 assignee_model: "claude-sonnet-4"
+state: "doing"
 backlog_date: "2026-01-20T10:00"
 doing_date: "2026-02-10T09:30"
 done_date: ""
-format_version: "0.3.0"
+tracked_in: ""
+relations:
 ---
 
 # Dashboard redesign
@@ -323,17 +345,21 @@ EOF
 
 cat <<'EOF' > "$DEMO/doing/2603334200_api-v2-endpoints.md"
 ---
+format: "0.4.0"
 id: 2603334200
 title: "API v2 endpoints"
-state: "doing"
+priority: "high"
+estimate: 8
 author: "sebastianserna"
 author_model: "claude-opus-4"
 assignee: "alexgarcia"
 assignee_model: "claude-opus-4"
+state: "doing"
 backlog_date: "2026-02-05T11:00"
 doing_date: "2026-02-18T09:00"
 done_date: ""
-format_version: "0.3.0"
+tracked_in: ""
+relations:
 ---
 
 # API v2 endpoints
@@ -377,17 +403,22 @@ EOF
 
 cat <<'EOF' > "$DEMO/doing/2603440500_websocket-realtime.md"
 ---
+format: "0.4.0"
 id: 2603440500
 title: "WebSocket real-time updates"
-state: "doing"
+priority: "medium"
+estimate: 5
 author: "sebastianserna"
 author_model: "deepseek-v3"
 assignee: "alexgarcia"
 assignee_model: "grok-3"
+state: "doing"
 backlog_date: "2026-02-05T14:00"
 doing_date: "2026-02-20T10:30"
 done_date: ""
-format_version: "0.3.0"
+tracked_in: ""
+relations:
+  relates_to: "2603334200"
 ---
 
 # WebSocket real-time updates
@@ -444,17 +475,21 @@ echo "==> Creating done plans..."
 
 cat <<'EOF' > "$DEMO/done/2600532400_project-setup.md"
 ---
+format: "0.4.0"
 id: 2600532400
 title: "Initial project setup"
-state: "done"
+priority: ""
+estimate: 3
 author: "sebastianserna"
 author_model: "claude-opus-4"
 assignee: "alexgarcia"
 assignee_model: "claude-sonnet-4"
+state: "done"
 backlog_date: "2026-01-05T09:00"
 doing_date: "2026-01-10T10:00"
 done_date: "2026-01-30T14:10"
-format_version: "0.3.0"
+tracked_in: ""
+relations:
 ---
 
 # Initial project setup
@@ -494,24 +529,35 @@ Node.js 20 with TypeScript strict mode. ESLint with Airbnb config. PostgreSQL 16
 Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.
 
 ## Closing Summary
-- All tooling and CI pipeline set up and verified
-- CI pipeline is green, team can start building features
-- Docker Compose environment works for all team members
+The project now has a complete development foundation. The repository ships its tooling, a Docker Compose environment that runs identically for every team member, and a CI pipeline that verifies every push. New features can be built and verified from day one without additional setup.
+
+### Delivered
+- Repository tooling and linting configuration
+- Docker Compose development environment
+- CI pipeline running on every push
+
+### Verification
+- CI green; environment verified by every team member
 EOF
 
 cat <<'EOF' > "$DEMO/done/2601036900_database-schema.md"
 ---
+format: "0.4.0"
 id: 2601036900
 title: "Database schema design"
-state: "done"
+priority: "high"
+estimate: 5
 author: "sebastianserna"
 author_model: "gpt-4o"
 assignee: "alexgarcia"
 assignee_model: "gpt-4o"
+state: "done"
 backlog_date: "2026-01-10T10:15"
 doing_date: "2026-01-20T09:00"
 done_date: "2026-02-08T11:10"
-format_version: "0.3.0"
+tracked_in: ""
+relations:
+  blocked_by: "2600532400"
 ---
 
 # Database schema design
@@ -551,25 +597,32 @@ PostgreSQL with UUIDs as primary keys. All tables include `created_at` and `upda
 Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.
 
 ## Closing Summary
-- Schema finalized and deployed to staging
-- All migrations run cleanly on fresh databases
-- Seed data populates correctly for development
-- Foreign key constraints and query performance verified
+The database schema is finalized and deployed to staging. Migrations run cleanly on fresh databases and seed data populates correctly for development. Foreign key constraints and query performance are verified.
+
+### Delivered
+- Normalized schema with migrations and seed data
+
+### Verification
+- Fresh-database migration runs, constraint checks, and query benchmarks
 EOF
 
 cat <<'EOF' > "$DEMO/done/2601632400_logging-monitoring.md"
 ---
+format: "0.4.0"
 id: 2601632400
 title: "Logging and monitoring setup"
-state: "done"
+priority: "medium"
+estimate: 5
 author: "sebastianserna"
 author_model: "claude-opus-4"
 assignee: "alexgarcia"
 assignee_model: "claude-sonnet-4"
+state: "done"
 backlog_date: "2026-01-20T11:00"
 doing_date: "2026-02-01T10:00"
 done_date: "2026-02-15T15:10"
-format_version: "0.3.0"
+tracked_in: ""
+relations:
 ---
 
 # Logging and monitoring setup
@@ -618,25 +671,33 @@ Health check at `/health` reports database, Redis, and external service status. 
 Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.
 
 ## Closing Summary
-- Winston logging with request ID correlation deployed across all services
-- Health check correctly reports degraded state when dependencies are slow
-- Grafana dashboards show p50, p95, p99 latency with alert thresholds
-- Alerts fire when error rate exceeds 5% over 5 minutes
+All services now emit structured logs with request ID correlation. The health check reports a degraded state when dependencies are slow. Dashboards expose p50, p95, and p99 latency with alert thresholds, and alerts fire when the error rate exceeds 5% over 5 minutes.
+
+### Delivered
+- Winston logging with request ID correlation across all services
+- Grafana dashboards and alerting rules
+
+### Verification
+- Degraded-state reporting and alert firing tested end to end
 EOF
 
 cat <<'EOF' > "$DEMO/done/2602250400_ci-pipeline.md"
 ---
+format: "0.4.0"
 id: 2602250400
 title: "CI/CD pipeline improvements"
-state: "done"
+priority: "medium"
+estimate: 3
 author: "sebastianserna"
 author_model: "mistral-large"
 assignee: "alexgarcia"
 assignee_model: "claude-sonnet-4"
+state: "done"
 backlog_date: "2026-01-25T09:30"
 doing_date: "2026-02-10T08:30"
 done_date: "2026-02-20T10:10"
-format_version: "0.3.0"
+tracked_in: ""
+relations:
 ---
 
 # CI/CD pipeline improvements
@@ -683,10 +744,14 @@ Staging auto-deploys on merge to main via GitHub Actions. Production deploys req
 Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.
 
 ## Closing Summary
-- CI pipeline reduced from 12 min to 3.5 min with caching and parallel jobs
-- Staging auto-deploy verified and working on merge to main
-- Production deploy with approval gate tested successfully
-- Rollback mechanism documented and tested
+The CI pipeline now completes in 3.5 minutes, down from 12, through caching and parallel jobs. Merges to main deploy to staging automatically, while production deploys sit behind an approval gate. A documented rollback mechanism is in place.
+
+### Delivered
+- Cached, parallelized CI pipeline
+- Staging auto-deploy and gated production deploy
+
+### Verification
+- Staging auto-deploy, production approval gate, and rollback tested
 EOF
 
 # ─── Backlog plans (defined, pending user validation) ───
@@ -694,17 +759,21 @@ echo "==> Creating backlog plans (pending user validation)..."
 
 cat <<'EOF' > "$DEMO/backlog/2604141400_api-rate-limiting.md"
 ---
+format: "0.4.0"
 id: 2604141400
 title: "API rate limiting strategy"
-state: "backlog"
+priority: "low"
+estimate: 3
 author: "sebastianserna"
 author_model: ""
 assignee: ""
 assignee_model: ""
+state: "backlog"
 backlog_date: "2026-02-10T11:30"
 doing_date: ""
 done_date: ""
-format_version: "0.3.0"
+tracked_in: ""
+relations:
 ---
 
 # API rate limiting strategy
@@ -748,17 +817,21 @@ EOF
 
 cat <<'EOF' > "$DEMO/backlog/2604655800_dark-mode-design.md"
 ---
+format: "0.4.0"
 id: 2604655800
 title: "Dark mode design system"
-state: "backlog"
+priority: ""
+estimate: 2
 author: "sebastianserna"
 author_model: "gpt-4o"
 assignee: ""
 assignee_model: ""
+state: "backlog"
 backlog_date: "2026-02-15T15:30"
 doing_date: ""
 done_date: ""
-format_version: "0.3.0"
+tracked_in: ""
+relations:
 ---
 
 # Dark mode design system
@@ -809,17 +882,21 @@ EOF
 
 cat <<'EOF' > "$DEMO/backlog/2605639600_file-upload-system.md"
 ---
+format: "0.4.0"
 id: 2605639600
 title: "File upload system"
-state: "backlog"
+priority: ""
+estimate: 5
 author: "sebastianserna"
 author_model: "grok-3"
 assignee: ""
 assignee_model: ""
+state: "backlog"
 backlog_date: "2026-02-25T11:00"
 doing_date: ""
 done_date: ""
-format_version: "0.3.0"
+tracked_in: ""
+relations:
 ---
 
 # File upload system

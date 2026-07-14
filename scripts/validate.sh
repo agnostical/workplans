@@ -2,18 +2,24 @@
 # ─────────────────────────────────────────────────────────────────
 # validate.sh
 # Validates a workplans directory. Format-aware: applies the rule set
-# matching each plan's format_version (0.2.x legacy layout, with
-# Progress above Objective, vs 0.3.0+ new layout, with Objective
-# above Progress).
+# matching each plan's declared format (`format`, or its pre-0.4.0
+# alias `format_version`): 0.2.x legacy layout (Progress above
+# Objective), 0.3.x new layout (Objective above Progress), 0.4.0
+# frontmatter (format first, triage fields, tracked_in, relations).
 #
 # Usage: ./scripts/validate.sh <workplans-dir>
 #
 # Checks:
-#   1. Frontmatter: id first field, required fields, state matches folder
+#   1. Frontmatter: first field, required fields and order per format,
+#      state matches folder, triage/relations value sets
 #   2. Template: allowed sections only, no deprecated sections,
-#      section order matches the format_version layout
+#      section order matches the format layout, Closing Summary
+#      leader paragraph on 0.4.0+ done plans
 #   3. File naming: YYDDDsssss_description.md pattern
-#   4. Structure: RULES.md exists with version/work_on fields, READMEs exist
+#   4. Structure: RULES.md exists with version field, READMEs exist,
+#      no foreign subfolders
+#   5. Encoding: valid UTF-8, heuristic orthography warnings (accent
+#      dropping in Spanish content)
 # ─────────────────────────────────────────────────────────────────
 
 set -e
@@ -66,9 +72,37 @@ version_ge() {
   [[ "$(printf '%s\n%s\n' "$1" "$2" | sort -V | head -n 1)" == "$2" ]]
 }
 
+# Declared plan format: `format` (0.4.0+) with `format_version` as read-alias
+get_format() {
+  local f
+  f=$(get_field "$1" "format")
+  [[ -z "$f" ]] && f=$(get_field "$1" "format_version")
+  echo "$f"
+}
+
 get_first_field() {
   # Get the first field name after the opening ---
   sed -n '2p' "$1" | sed 's/:.*//'
+}
+
+# Top-level frontmatter field names in file order (indented sub-keys excluded)
+get_fm_fields() {
+  awk '
+    NR == 1 && /^---$/ { in_fm = 1; next }
+    in_fm && /^---$/ { exit }
+    in_fm && /^[a-z_]+:/ { sub(/:.*/, ""); print }
+  ' "$1" 2>/dev/null
+}
+
+# Indented sub-keys of relations
+get_relations_keys() {
+  awk '
+    NR == 1 && /^---$/ { in_fm = 1; next }
+    in_fm && /^---$/ { exit }
+    in_fm && /^relations:/ { in_rel = 1; next }
+    in_rel && /^[a-z_]+:/ { exit }
+    in_rel && /^[ ]+[a-z_]+:/ { gsub(/^[ ]+/, ""); sub(/:.*/, ""); print }
+  ' "$1" 2>/dev/null
 }
 
 get_h1() {
@@ -96,14 +130,32 @@ if [[ -f "$WORKPLANS_DIR/RULES.md" ]]; then
   fi
 
   rules_work_on=$(get_field "$WORKPLANS_DIR/RULES.md" "work_on")
-  if [[ -n "$rules_work_on" ]]; then
-    pass "RULES.md — work_on field present ($rules_work_on)"
+  if [[ -n "$rules_version" ]] && version_ge "$rules_version" "0.4.0"; then
+    if [[ -n "$rules_work_on" ]]; then
+      warn "RULES.md — work_on moved to the root README frontmatter in 0.4.0"
+    else
+      pass "RULES.md — no work_on (project constants live in the root README)"
+    fi
   else
-    warn "RULES.md — missing work_on field (defaults to \".\")"
+    if [[ -n "$rules_work_on" ]]; then
+      pass "RULES.md — work_on field present ($rules_work_on)"
+    else
+      warn "RULES.md — missing work_on field (defaults to \".\")"
+    fi
   fi
 else
   fail "RULES.md not found"
 fi
+
+# Check for foreign subfolders (rule 34: single-project layout)
+for entry in "$WORKPLANS_DIR"/*/; do
+  [[ ! -d "$entry" ]] && continue
+  dname=$(basename "$entry")
+  case "$dname" in
+    backlog|doing|done|extend) ;;
+    *) fail "Foreign subfolder in workplans/: $dname/ (rule 34: single-project layout)" ;;
+  esac
+done
 
 # Check state folders
 for folder in backlog doing done; do
@@ -186,12 +238,18 @@ for folder in backlog doing done; do
       continue
     fi
 
-    # Check id is first field
+    # Check first field per format: `format` in 0.4.0+, `id` before
+    plan_format=$(get_format "$file")
     first_field=$(get_first_field "$file")
-    if [[ "$first_field" == "id" ]]; then
-      pass "$folder/$bn — id is first field"
+    if [[ -n "$plan_format" ]] && version_ge "$plan_format" "0.4.0"; then
+      expected_first="format"
     else
-      fail "$folder/$bn — id is not first field (found: $first_field)"
+      expected_first="id"
+    fi
+    if [[ "$first_field" == "$expected_first" ]]; then
+      pass "$folder/$bn — $expected_first is first field"
+    else
+      fail "$folder/$bn — $expected_first is not first field (found: $first_field)"
     fi
 
     # Check id matches filename
@@ -213,12 +271,60 @@ for folder in backlog doing done; do
       fail "$folder/$bn — state mismatch: frontmatter=$fm_state folder=$folder"
     fi
 
-    # Check required fields exist
-    for field in title state author author_model assignee assignee_model backlog_date doing_date done_date format_version; do
+    # Check required fields exist (set depends on format)
+    if [[ -n "$plan_format" ]] && version_ge "$plan_format" "0.4.0"; then
+      required_fields="format title priority estimate state author author_model assignee assignee_model backlog_date doing_date done_date tracked_in relations"
+    else
+      required_fields="format_version title state author author_model assignee assignee_model backlog_date doing_date done_date"
+    fi
+    for field in $required_fields; do
       if ! grep -q "^${field}:" "$file"; then
         fail "$folder/$bn — missing field: $field"
       fi
     done
+
+    # 0.4.0 rule set: field order, triage values, relations types
+    if [[ -n "$plan_format" ]] && version_ge "$plan_format" "0.4.0"; then
+      expected_fields="format id title priority estimate author author_model assignee assignee_model state backlog_date doing_date done_date tracked_in relations"
+      actual_fields=$(get_fm_fields "$file" | tr '\n' ' ' | sed 's/ *$//')
+      if [[ "$actual_fields" == "$expected_fields" ]]; then
+        pass "$folder/$bn — frontmatter fields in 0.4.0 order"
+      else
+        fail "$folder/$bn — frontmatter fields out of 0.4.0 order: [$actual_fields]"
+      fi
+
+      prio=$(get_field "$file" "priority")
+      case "$prio" in
+        urgent|high|medium|low|"") pass "$folder/$bn — priority value OK ('${prio}')" ;;
+        *) fail "$folder/$bn — invalid priority: '$prio'" ;;
+      esac
+
+      est=$(get_field "$file" "estimate")
+      scale=$(get_field "$WORKPLANS_DIR/README.md" "estimate_scale")
+      [[ -z "$scale" ]] && scale="fibonacci"
+      if [[ -n "$est" ]]; then
+        case "$scale" in
+          fibonacci) scale_tokens=" 1 2 3 5 8 13 21 " ;;
+          tshirt)    scale_tokens=" xs s m l xl " ;;
+          *)         scale_tokens="" ;;
+        esac
+        if [[ -z "$scale_tokens" ]]; then
+          warn "$folder/$bn — unknown estimate_scale '$scale'; estimate not validated"
+        elif [[ "$scale_tokens" == *" $est "* ]]; then
+          pass "$folder/$bn — estimate '$est' valid in $scale scale"
+        else
+          fail "$folder/$bn — estimate '$est' not in $scale scale"
+        fi
+      fi
+
+      while IFS= read -r rk; do
+        [[ -z "$rk" ]] && continue
+        case "$rk" in
+          blocked_by|relates_to|supersedes|parent) pass "$folder/$bn — relations type '$rk' OK" ;;
+          *) fail "$folder/$bn — invalid relations type: $rk" ;;
+        esac
+      done <<< "$(get_relations_keys "$file")"
+    fi
 
     # Check H1 matches title field
     plan_title=$(get_field "$file" "title")
@@ -259,14 +365,14 @@ for folder in backlog doing done; do
       done
     done <<< "$sections"
 
-    # Select expected section order based on format_version
-    plan_fv=$(get_field "$file" "format_version")
+    # Select expected section order based on the declared format
+    plan_fv=$(get_format "$file")
     if [[ -n "$plan_fv" ]] && version_ge "$plan_fv" "0.3.0"; then
       expected_order=("Objective" "Progress" "Context" "Implementation" "Closing Summary")
-      layout_label="new (format_version $plan_fv >= 0.3.0)"
+      layout_label="new (format $plan_fv >= 0.3.0)"
     else
       expected_order=("Progress" "Objective" "Context" "Implementation" "Closing Summary")
-      layout_label="legacy (format_version ${plan_fv:-unset} < 0.3.0)"
+      layout_label="legacy (format ${plan_fv:-unset} < 0.3.0)"
     fi
     section_array=()
     while IFS= read -r s; do
@@ -327,11 +433,82 @@ for folder in backlog doing done; do
 
     # Check Closing phase exists (last phase, title follows user's language)
     # Get the last ### Phase N: heading and check it's the closing phase
-    last_phase=$(grep "### Phase [0-9]*:" "$file" | tail -1)
+    last_phase=$(grep "### Phase [0-9][0-9]*:" "$file" | tail -1)
     if [[ -n "$last_phase" ]]; then
       pass "$folder/$bn — Closing phase present"
     else
       fail "$folder/$bn — missing mandatory Closing phase"
+    fi
+
+    # Phase headings must carry a number: a literal "Phase N:" is template
+    # imitation, not a valid heading
+    if grep -qE "^#+ Phase [^0-9:]+:" "$file"; then
+      fail "$folder/$bn — phase heading without a number (literal 'Phase N:'?)"
+    fi
+
+    # 0.4.0+ done plans: Closing Summary opens with the leader paragraph
+    if [[ "$folder" == "done" ]] && [[ -n "$plan_fv" ]] && version_ge "$plan_fv" "0.4.0"; then
+      cs_first=$(awk '/^## Closing Summary/{f=1;next} /^## /{f=0} f' "$file" | grep -v '^[[:space:]]*$' | head -1)
+      if [[ -z "$cs_first" ]]; then
+        fail "$folder/$bn — Closing Summary is empty in a done plan"
+      elif [[ "$cs_first" == _* ]]; then
+        fail "$folder/$bn — Closing Summary still has the placeholder in a done plan"
+      elif [[ "$cs_first" == "#"* || "$cs_first" == "-"* || "$cs_first" == "*"* ]]; then
+        fail "$folder/$bn — Closing Summary must open with the leader paragraph (found heading or bullet first)"
+      else
+        pass "$folder/$bn — Closing Summary leader paragraph present"
+
+        # Leader length: 3-6 sentences (heuristic count, warning only)
+        cs_leader=$(awk '/^## Closing Summary/{f=1;next} f && /^#/{exit} f && NF==0 && started{exit} f && NF>0{print; started=1}' "$file")
+        n_sent=$(printf '%s' "$cs_leader" | perl -0777 -ne 'my $n = () = /[.!?](?=\s|$)/g; print $n' 2>/dev/null)
+        if [[ -n "$n_sent" ]] && (( n_sent < 3 || n_sent > 6 )); then
+          warn "$folder/$bn — leader paragraph has $n_sent sentence(s); the rule says 3-6"
+        fi
+
+        # Leader language: if the plan's own prose carries accented characters
+        # but the leader has none and reads as English, flag it (warning only)
+        title_accented=$(get_field "$file" "title" | perl -CSD -Mutf8 -ne 'print /[áéíóúñÁÉÍÓÚÑüÜ]/ ? 1 : 0')
+        leader_accents=$(printf '%s' "$cs_leader" | perl -CSD -Mutf8 -ne '$n += () = /[áéíóúñÁÉÍÓÚÑüÜ]/g; END{print $n+0}')
+        leader_en=$(printf '%s' "$cs_leader" | perl -0777 -ne 'my %s; $s{lc $1}++ while /\b(the|and|with|from|was|were|is|are)\b/gi; print scalar keys %s')
+        if [[ "$title_accented" == "1" ]] && (( leader_accents == 0 )) && (( leader_en >= 3 )); then
+          warn "$folder/$bn — leader paragraph may not be in the plan's language (title is accented, leader reads as English)"
+        fi
+      fi
+
+      # Subsection labels must be H3 headings, not plain-text lines
+      if awk '/^## Closing Summary/{f=1;next} /^## /{f=0} f' "$file" \
+        | grep -qE '^(Delivered|Decisions|Verification|Deferred|References):?[[:space:]]*$'; then
+        fail "$folder/$bn — Closing Summary label written as plain text; use an H3 heading (### Label)"
+      fi
+    fi
+  done
+done
+
+# ─── Encoding and orthography validation ─────────────────────────
+echo ""
+echo "=== Encoding and orthography validation ==="
+
+# Curated accent-dropped Spanish forms seen in real corpora (warnings only)
+ORTHO_RE='\b([Dd]efinicion|[Ee]jecucion|[Vv]alidacion|[Ii]mplementacion|[Dd]escripcion|[Cc]onfiguracion|[Mm]igracion|[Cc]reacion|[Ii]ntegracion|[Dd]ocumentacion|[Ee]specificacion|[Ss]incronizacion|[Pp]arrafo|[Cc]ompactacion|[Rr]efinacion)\b'
+
+for folder in backlog doing done; do
+  dir="$WORKPLANS_DIR/$folder"
+  [[ ! -d "$dir" ]] && continue
+
+  for file in "$dir"/*.md; do
+    [[ ! -f "$file" ]] && continue
+    bn=$(basename "$file")
+    [[ "$bn" == "README.md" ]] && continue
+
+    if perl -e 'use Encode; local $/; open my $fh, "<:raw", $ARGV[0] or exit 1; my $d = <$fh>; eval { Encode::decode("UTF-8", $d, Encode::FB_CROAK) }; exit($@ ? 1 : 0)' "$file"; then
+      pass "$folder/$bn — valid UTF-8"
+    else
+      fail "$folder/$bn — invalid UTF-8 encoding"
+    fi
+
+    ortho_hits=$(perl -CSD -ne "while (/$ORTHO_RE/g) { print \"\$1 \" }" "$file" 2>/dev/null | tr ' ' '\n' | sort -u | grep -v '^$' | tr '\n' ' ')
+    if [[ -n "$ortho_hits" ]]; then
+      warn "$folder/$bn — possible missing accents: ${ortho_hits% }"
     fi
   done
 done

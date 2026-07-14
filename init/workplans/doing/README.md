@@ -14,17 +14,21 @@ The same plan now in progress. Phase 1 is complete, assignee is set, and Phase 2
 
 ```markdown
 ---
+format: "0.4.0"
 id: 2606455842
 title: "User authentication setup"
-state: "doing"
+priority: "high"
+estimate: 5
 author: "Sebastian Serna"
 author_model: "claude-opus-4-6"
 assignee: "Sebastian Serna"
 assignee_model: "claude-sonnet-4-6"
+state: "doing"
 backlog_date: "2026-03-05T09:30"
 doing_date: "2026-03-06T14:00"
 done_date: ""
-format_version: "0.3.0"
+tracked_in: ""
+relations:
 ---
 
 # User authentication setup

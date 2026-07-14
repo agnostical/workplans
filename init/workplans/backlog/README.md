@@ -14,17 +14,21 @@ A newly created plan. The agent has defined the objective, context, and phases â
 
 ```markdown
 ---
+format: "0.4.0"
 id: 2606455842
 title: "User authentication setup"
-state: "backlog"
+priority: ""
+estimate: ""
 author: "Sebastian Serna"
 author_model: "claude-opus-4-6"
 assignee: ""
 assignee_model: ""
+state: "backlog"
 backlog_date: "2026-03-05T09:30"
 doing_date: ""
 done_date: ""
-format_version: "0.3.0"
+tracked_in: ""
+relations:
 ---
 
 # User authentication setup

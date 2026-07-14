@@ -1,15 +1,19 @@
 ---
+format: "0.4.0"
 id: 2604739600
 title: "Full-text search functionality"
-state: "backlog"
+priority: "medium"
+estimate: 8
 author: "sebastianserna"
 author_model: ""
 assignee: ""
 assignee_model: ""
+state: "backlog"
 backlog_date: "2026-02-20T15:45"
 doing_date: ""
 done_date: ""
-format_version: "0.3.0"
+tracked_in: ""
+relations:
 ---
 
 # Full-text search functionality

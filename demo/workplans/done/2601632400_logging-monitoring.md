@@ -1,15 +1,19 @@
 ---
+format: "0.4.0"
 id: 2601632400
 title: "Logging and monitoring setup"
-state: "done"
+priority: "medium"
+estimate: 5
 author: "sebastianserna"
 author_model: "claude-opus-4"
 assignee: "alexgarcia"
 assignee_model: "claude-sonnet-4"
+state: "done"
 backlog_date: "2026-01-20T11:00"
 doing_date: "2026-02-01T10:00"
 done_date: "2026-02-15T15:10"
-format_version: "0.3.0"
+tracked_in: ""
+relations:
 ---
 
 # Logging and monitoring setup
@@ -58,7 +62,11 @@ Health check at `/health` reports database, Redis, and external service status. 
 Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.
 
 ## Closing Summary
-- Winston logging with request ID correlation deployed across all services
-- Health check correctly reports degraded state when dependencies are slow
-- Grafana dashboards show p50, p95, p99 latency with alert thresholds
-- Alerts fire when error rate exceeds 5% over 5 minutes
+All services now emit structured logs with request ID correlation. The health check reports a degraded state when dependencies are slow. Dashboards expose p50, p95, and p99 latency with alert thresholds, and alerts fire when the error rate exceeds 5% over 5 minutes.
+
+### Delivered
+- Winston logging with request ID correlation across all services
+- Grafana dashboards and alerting rules
+
+### Verification
+- Degraded-state reporting and alert firing tested end to end

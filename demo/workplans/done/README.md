@@ -10,21 +10,25 @@ Done plans should generally not be modified. If a completed plan needs rework, c
 
 ## Example plan in done
 
-The same plan fully completed. All steps are checked, done_date is set, and the Closing Summary is written.
+The same plan fully completed. All steps are checked, done_date is set, and the Closing Summary is written: a leader paragraph (exported verbatim to changelogs and tracker comments) followed by labeled subsections.
 
 ```markdown
 ---
+format: "0.4.0"
 id: 2606455842
 title: "User authentication setup"
-state: "done"
+priority: "high"
+estimate: 5
 author: "Sebastian Serna"
 author_model: "claude-opus-4-6"
 assignee: "Sebastian Serna"
 assignee_model: "claude-sonnet-4-6"
+state: "done"
 backlog_date: "2026-03-05T09:30"
 doing_date: "2026-03-06T14:00"
 done_date: "2026-03-07T18:45"
-format_version: "0.3.0"
+tracked_in: ""
+relations:
 ---
 
 # User authentication setup
@@ -69,8 +73,23 @@ Added Express middleware in `src/middleware/auth.ts` that validates JWT on all `
 Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.
 
 ## Closing Summary
-- Implemented JWT authentication with RS256, refresh token rotation, and Google OAuth (PKCE)
-- Added three auth endpoints and middleware for protected routes
-- No deviations from the original plan
-- Future work: add rate limiting on auth endpoints and support additional OAuth providers
+The web application now authenticates users with JWT sessions, email/password
+registration, and Google OAuth sign-in. Access is renewed through single-use
+refresh tokens, and every protected API route validates the session through
+shared middleware. Passwords are hashed with bcrypt and tokens are stored in
+httpOnly secure cookies.
+
+### Delivered
+- Authentication middleware protecting all API routes
+- Registration, login, and Google OAuth endpoints with integration tests
+
+### Decisions
+- RS256 signing over HS256, for key rotation support
+- Tokens in httpOnly cookies instead of localStorage
+
+### Deferred
+- Rate limiting on auth endpoints, registered in plan 2606980112
+
+### References
+- PR: https://github.com/acme/backend/pull/87
 ```
