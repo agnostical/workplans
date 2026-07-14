@@ -34,7 +34,7 @@ npx workplans add <template>   # Add a template to workplans/backlog/ with a fre
 
 ### Templates
 
-`add` copies a ready-made plan from the [template catalog](https://github.com/agnostical/workplans/tree/main/templates) into your backlog, rewriting its frontmatter: a fresh timestamp id (collision-safe), `state: "backlog"`, `backlog_date` now, and `format_version` matching your local RULES.md. Phase 1: Definition arrives unchecked on purpose — refine the plan against your real project before executing it. Adding the same template twice is refused (non-destructive). See the [catalog README](https://github.com/agnostical/workplans/tree/main/templates#contributing-a-template) to contribute new templates.
+`add` copies a ready-made plan from the [template catalog](https://github.com/agnostical/workplans/tree/main/templates) into your backlog, rewriting its frontmatter: a fresh timestamp id (collision-safe), `state: "backlog"`, `backlog_date` now, and the format matching your local RULES.md (on a 0.4.0+ framework the template is migrated to the current contract as it lands). Phase 1: Definition arrives unchecked on purpose — refine the plan against your real project before executing it. Adding the same template twice is refused (non-destructive). See the [catalog README](https://github.com/agnostical/workplans/tree/main/templates#contributing-a-template) to contribute new templates.
 
 ### Flags
 

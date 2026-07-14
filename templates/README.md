@@ -7,7 +7,7 @@ npx workplans list             # see this catalog
 npx workplans add <template>   # copy one into workplans/backlog/ with a fresh id
 ```
 
-`add` rewrites the frontmatter on the way in: new timestamp `id`, `state: "backlog"`, `backlog_date` now, and `format_version` matching the user's local RULES.md. Phase 1: Definition arrives unchecked on purpose — every template must be refined against the real project before execution (that is the entry gate).
+`add` rewrites the frontmatter on the way in: new timestamp `id`, `state: "backlog"`, `backlog_date` now, and the format matching the user's local RULES.md — on a 0.4.0+ framework the template is migrated to the current contract (field order, `format` first, triage and sync fields) as it lands. Phase 1: Definition arrives unchecked on purpose — every template must be refined against the real project before execution (that is the entry gate).
 
 ## Contributing a template
 
