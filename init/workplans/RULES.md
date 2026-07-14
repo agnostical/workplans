@@ -307,7 +307,7 @@ All 34 rules are mandatory. Ordered by criticality: **Structure** (framework int
 | 24 | Template | Plan files must not contain emojis. Use plain descriptive text instead |
 | 25 | Template | Steps that cannot be executed by an AI agent (browser checks, external dashboard configuration, manual UI testing, credential rotation) must be prefixed with `[manual]`. The agent skips them and reports to the user; Implementation describes what the user needs to do |
 | 26 | Structure | When the workplans folder is inside a Git repository (or any VCS with branch semantics), the branch for a new plan is decided explicitly before commit: declared policy in agent file → current non-main branch → ask the user. Never default silently to `main`. Outside a VCS, this rule does not apply |
-| 27 | Template | Phase 1 (Definition) and the Closing phase translate their phase name and step text to the user's active conversation language. Only the `Phase N:` prefix, H2 headings, and `Closing Summary` (when referenced in steps) stay in English. The English template in this document is reference, not literal output |
+| 27 | Template | Phase 1 (Definition) and the Closing phase translate their phase name and step text to the user's active conversation language, preserving full orthography (accents, diacritics). Only the `Phase N:` prefix, H2 headings, and `Closing Summary` (when referenced in steps) stay in English. The English template in this document is reference, not literal output |
 | 28 | Data | `relations` sub-keys are limited to `blocked_by`, `relates_to`, `supersedes`, `parent`. Targets are immutable plan `id`s, comma-separated; no titles or slugs |
 | 29 | Template | A plan with a non-empty `blocked_by` must not move to `doing/` until every referenced plan is `done`. Cycles in `blocked_by` are invalid |
 | 30 | Data | `estimate` is set when Phase 1: Definition completes, must belong to the declared `estimate_scale` token set, and is immutable once the plan is in `doing/` |
@@ -384,7 +384,7 @@ The client suffix is omitted when the agent runs directly (API, Claude Code, web
 - **Template structure** (H2 headings, `Phase` keyword) and **filenames** are always in English.
 - **Frontmatter field names** are always in English — part of the schema.
 - **User-authored content** (title, descriptions, steps, summary) follows the user's active conversation language.
-- **Orthography** must be preserved: accents, ñ, and other special characters of the user's language. UTF-8 is the encoding for Markdown files.
+- **Orthography** carries the full spelling of the user's language — accents, ñ, and any diacritics — in every content position: phase titles, step text, and body prose alike ("Definición", never "Definicion"). ASCII-only applies solely to filenames (kebab-case), never to content. UTF-8 is the encoding for Markdown files.
 
 ## Project constants
 
