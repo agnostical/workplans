@@ -57,6 +57,7 @@ state: "backlog"
 backlog_date: "YYYY-MM-DDThh:mm"
 doing_date: ""
 done_date: ""
+relations:
 ---
 
 # User authentication setup
@@ -116,6 +117,30 @@ The field order tells one story: what it is, who, where it stands. `format` goes
 | `backlog_date` | Datetime created (`YYYY-MM-DDThh:mm`) |
 | `doing_date` | Datetime work started |
 | `done_date` | Datetime completed |
+| `relations` | Typed relations to other plans. Nested map; empties to the bare key (`relations:` with no value). See Relations |
+
+### Relations
+
+`relations` is a nested map: keys are relation types, values are comma-separated plan `id`s.
+
+```yaml
+relations:
+  blocked_by: "2606455842,2606123456"
+  relates_to: "2606123456"
+```
+
+| Type | Meaning |
+|------|---------|
+| `blocked_by` | Hard dependency: every referenced plan must be `done` before this plan moves to `doing` |
+| `relates_to` | Soft, non-blocking association |
+| `supersedes` | This plan replaces the referenced plan(s) |
+| `parent` | Hierarchy: the `id` of the parent/epic plan |
+
+- References are id-pure: the immutable plan `id` only, never titles or filename slugs. Tooling resolves ids to titles at display time.
+- Only the types in use appear as sub-keys. With no relations, the field is the bare key: `relations:` with no value (parses to null).
+- Inverse relations (`blocks`, `superseded_by`, `children`) are derived by tooling, never stored. Each edge is written on the actionable side only.
+- Cycles in `blocked_by` are invalid.
+- `relations` is the only nested frontmatter field: nesting is reserved for open-ended membership; all other fields stay flat scalars.
 
 ### Sections
 
@@ -170,7 +195,7 @@ The Implementation entries for Phase 1 and Closing use fixed plain-text descript
 
 ## Rules
 
-All 27 rules are mandatory. Ordered by criticality: **Structure** (framework integrity) → **Template** (plan validity) → **Data** (field correctness).
+All 29 rules are mandatory. Ordered by criticality: **Structure** (framework integrity) → **Template** (plan validity) → **Data** (field correctness).
 
 | # | Category | Rule |
 |---|----------|------|
@@ -201,6 +226,8 @@ All 27 rules are mandatory. Ordered by criticality: **Structure** (framework int
 | 25 | Template | Steps that cannot be executed by an AI agent (browser checks, external dashboard configuration, manual UI testing, credential rotation) must be prefixed with `[manual]`. The agent skips them and reports to the user; Implementation describes what the user needs to do |
 | 26 | Structure | When the workplans folder is inside a Git repository (or any VCS with branch semantics), the branch for a new plan is decided explicitly before commit: declared policy in agent file → current non-main branch → ask the user. Never default silently to `main`. Outside a VCS, this rule does not apply |
 | 27 | Template | Phase 1 (Definition) and the Closing phase translate their phase name and step text to the user's active conversation language. Only the `Phase N:` prefix, H2 headings, and `Closing Summary` (when referenced in steps) stay in English. The English template in this document is reference, not literal output |
+| 28 | Data | `relations` sub-keys are limited to `blocked_by`, `relates_to`, `supersedes`, `parent`. Targets are immutable plan `id`s, comma-separated; no titles or slugs |
+| 29 | Template | A plan with a non-empty `blocked_by` must not move to `doing/` until every referenced plan is `done`. Cycles in `blocked_by` are invalid |
 
 ## File naming
 
