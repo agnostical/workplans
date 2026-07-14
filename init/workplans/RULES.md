@@ -59,6 +59,7 @@ state: "backlog"
 backlog_date: "YYYY-MM-DDThh:mm"
 doing_date: ""
 done_date: ""
+tracked_in: ""
 relations:
 ---
 
@@ -121,6 +122,7 @@ The field order tells one story: what it is, who, where it stands. `format` goes
 | `backlog_date` | Datetime created (`YYYY-MM-DDThh:mm`) |
 | `doing_date` | Datetime work started |
 | `done_date` | Datetime completed |
+| `tracked_in` | URL(s) of the plan's mirror artifact in external tracker(s). Written by sync tooling; `""` = not tracked. See Tracker sync |
 | `relations` | Typed relations to other plans. Nested map; empties to the bare key (`relations:` with no value). See Relations |
 
 ### Relations
@@ -166,6 +168,21 @@ relations:
 
 - Mutable through the plan's whole life.
 - Soft selection signal: among plans not blocked by relations, pick the highest priority first. It complements, never overrides, `blocked_by` gating — a blocked plan is not selectable regardless of priority.
+
+### Tracker sync
+
+`tracked_in` links a plan to its mirror artifact in an external tracker (issue, task, card, epic — the URL is self-describing: the domain identifies the provider, the path the artifact kind).
+
+```yaml
+tracked_in: "https://linear.app/acme/issue/ENG-135"
+```
+
+- Written by sync tooling on local runs after creating the mirror. `""` means not tracked.
+- Multiple trackers: comma-separated URLs, **one mirror per tracker**. Two mirrors in the same tracker is a signal the plan should be split, not a supported case.
+- The sync idempotency key is the marker **`plan:<id>`** in the mirror's description, not this field. Sync tooling must tolerate an empty `tracked_in` and resolve by marker (read-alias: `workplan:<id>`; new mirrors write `plan:<id>` only).
+- `tracked_in` is self-healing: if a stored URL goes stale, the next sync run re-resolves by marker and rewrites it.
+- Source-of-truth split: plan content, state, and dates are owned by the markdown. The tracker's visual organization (projects/initiatives, milestones, tracker-side assignment) is owned by the tracker and never overwritten by sync. A child plan's epic/project derives from the `tracked_in` of its `parent` relation target.
+- Rule 18 is unchanged: inline issue links in prose remain valid; `tracked_in` covers only the plan-level mirror.
 
 ### Sections
 
@@ -220,7 +237,7 @@ The Implementation entries for Phase 1 and Closing use fixed plain-text descript
 
 ## Rules
 
-All 31 rules are mandatory. Ordered by criticality: **Structure** (framework integrity) → **Template** (plan validity) → **Data** (field correctness).
+All 32 rules are mandatory. Ordered by criticality: **Structure** (framework integrity) → **Template** (plan validity) → **Data** (field correctness).
 
 | # | Category | Rule |
 |---|----------|------|
@@ -255,6 +272,7 @@ All 31 rules are mandatory. Ordered by criticality: **Structure** (framework int
 | 29 | Template | A plan with a non-empty `blocked_by` must not move to `doing/` until every referenced plan is `done`. Cycles in `blocked_by` are invalid |
 | 30 | Data | `estimate` is set when Phase 1: Definition completes, must belong to the declared `estimate_scale` token set, and is immutable once the plan is in `doing/` |
 | 31 | Data | `priority` is one of `urgent`, `high`, `medium`, `low`, `""`. Mutable; a plan blocked by relations is not selectable regardless of priority |
+| 32 | Data | `tracked_in` holds the mirror URL(s), one mirror per tracker, comma-separated. Written by sync tooling; agents do not edit it manually |
 
 ## File naming
 
