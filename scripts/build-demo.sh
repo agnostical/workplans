@@ -529,7 +529,7 @@ Node.js 20 with TypeScript strict mode. ESLint with Airbnb config. PostgreSQL 16
 Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.
 
 ## Closing Summary
-The project now has a complete development foundation: repository tooling, a Docker Compose environment that runs identically for every team member, and a green CI pipeline. New features can be built and verified from day one without additional setup.
+The project now has a complete development foundation. The repository ships its tooling, a Docker Compose environment that runs identically for every team member, and a CI pipeline that verifies every push. New features can be built and verified from day one without additional setup.
 
 ### Delivered
 - Repository tooling and linting configuration
@@ -671,7 +671,7 @@ Health check at `/health` reports database, Redis, and external service status. 
 Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.
 
 ## Closing Summary
-All services now emit structured logs with request ID correlation, and the health check reports a degraded state when dependencies are slow. Dashboards expose p50, p95, and p99 latency with alert thresholds, and alerts fire when the error rate exceeds 5% over 5 minutes.
+All services now emit structured logs with request ID correlation. The health check reports a degraded state when dependencies are slow. Dashboards expose p50, p95, and p99 latency with alert thresholds, and alerts fire when the error rate exceeds 5% over 5 minutes.
 
 ### Delivered
 - Winston logging with request ID correlation across all services
@@ -744,7 +744,7 @@ Staging auto-deploys on merge to main via GitHub Actions. Production deploys req
 Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.
 
 ## Closing Summary
-The CI pipeline now completes in 3.5 minutes, down from 12, through caching and parallel jobs. Merges to main deploy to staging automatically, production deploys sit behind an approval gate, and a documented rollback mechanism is in place.
+The CI pipeline now completes in 3.5 minutes, down from 12, through caching and parallel jobs. Merges to main deploy to staging automatically, while production deploys sit behind an approval gate. A documented rollback mechanism is in place.
 
 ### Delivered
 - Cached, parallelized CI pipeline

@@ -62,7 +62,7 @@ Health check at `/health` reports database, Redis, and external service status. 
 Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.
 
 ## Closing Summary
-All services now emit structured logs with request ID correlation, and the health check reports a degraded state when dependencies are slow. Dashboards expose p50, p95, and p99 latency with alert thresholds, and alerts fire when the error rate exceeds 5% over 5 minutes.
+All services now emit structured logs with request ID correlation. The health check reports a degraded state when dependencies are slow. Dashboards expose p50, p95, and p99 latency with alert thresholds, and alerts fire when the error rate exceeds 5% over 5 minutes.
 
 ### Delivered
 - Winston logging with request ID correlation across all services

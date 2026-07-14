@@ -204,6 +204,8 @@ Every plan must start with **Phase 1: Definition** (entry gate) and end with a *
 - [ ] Validate implementation with the user
 ```
 
+`Phase N` stands for the plan's actual last phase number — never the literal letter `N`.
+
 The same template applied in Spanish (`Closing Summary` stays in English inside step text because it references the exact H2 section name, which is always English):
 
 ```markdown
@@ -217,7 +219,7 @@ The same template applied in Spanish (`Closing Summary` stays in English inside 
 - [ ] Validar implementación con el usuario
 ```
 
-A plan in `backlog/` with Phase 1 unchecked is still being defined. A plan cannot move to `doing/` until all three steps are checked. A plan cannot move to `done/` until both Closing steps are checked and the user has explicitly approved.
+A plan in `backlog/` with Phase 1 unchecked is still being defined. When the agent defines the objective, context, and phases at creation, it checks the first two Definition steps; `Refine with the user` is checked only after the user validates. A plan cannot move to `doing/` until all three steps are checked. A plan cannot move to `done/` until both Closing steps are checked and the user has explicitly approved.
 
 The Implementation entries for Phase 1 and Closing use fixed plain-text descriptions that also translate to the user's language. English canonical: `Define the Objective, Context, and subsequent phases. Once complete, the plan is ready for execution.` and `Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.` The same entries in Spanish: `Define el Objective, el Context y las fases subsiguientes. Una vez completas, el plan queda listo para ejecución.` and `Valida la implementación con el usuario y escribe el Closing Summary. Una vez completa, el plan queda listo para moverse a done.` Italic in plan files is reserved for temporary placeholders (e.g. `_To be written when the last phase is completed._`).
 
@@ -233,7 +235,7 @@ The Closing Summary opens with a mandatory **leader paragraph** — the literal 
 6. 3-6 sentences, hard cap.
 7. Litmus test: it must read correctly on a release page with zero context.
 
-After the leader paragraph, optional subsections group detail under fixed English H3 labels, one item per bullet. If you group, use these names:
+The paragraph and all prose follow the user's language; only the labels below are always English. After the leader paragraph, optional subsections group detail under fixed English H3 labels, one item per bullet. If you group, use these names:
 
 | Label | Content |
 |-------|---------|

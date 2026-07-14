@@ -156,7 +156,7 @@ References are id-pure — the immutable `id` only, never titles or slugs; tooli
 
 `tracked_in` links a plan to its mirror artifact in an external tracker — issue, task, card, epic: the URL is self-describing (e.g. `"https://linear.app/acme/issue/ENG-135"`). Written by sync tooling on local runs; `""` means not tracked. Multiple trackers: comma-separated URLs, **one mirror per tracker** — two mirrors in the same tracker signals the plan should be split, not a supported case.
 
-The sync idempotency key is the marker **`plan:<id>`** in the mirror's description, not this field: sync tooling must tolerate an empty `tracked_in` and resolve by marker (read-alias `workplan:<id>`; new mirrors write `plan:<id>` only). The field is self-healing — a stale URL is re-resolved by marker and rewritten on the next run.
+The sync idempotency key is the marker **`plan:<id>`** in the mirror's description, not this field: sync tooling must tolerate an empty `tracked_in` and resolve by marker. Write canonical, read liberal: the marker is written as the description's last line, and readers accept it on any line. The field is self-healing — a stale URL is re-resolved by marker and rewritten on the next run.
 
 Source-of-truth split: the markdown owns plan content, state, and dates; the tracker owns its visual organization (projects, milestones, tracker-side assignment), which sync never overwrites. A child plan's epic/project derives from the `tracked_in` of its `parent` target. Rule 18 is unchanged: `tracked_in` covers only the plan-level mirror; inline issue links stay in prose.
 
@@ -204,6 +204,8 @@ Every plan must start with **Phase 1: Definition** (entry gate) and end with a *
 - [ ] Validate implementation with the user
 ```
 
+`Phase N` stands for the plan's actual last phase number — never the literal letter `N`.
+
 The same template applied in Spanish (`Closing Summary` stays in English inside step text because it references the exact H2 section name, which is always English):
 
 ```markdown
@@ -217,7 +219,7 @@ The same template applied in Spanish (`Closing Summary` stays in English inside 
 - [ ] Validar implementación con el usuario
 ```
 
-A plan in `backlog/` with Phase 1 unchecked is still being defined. A plan cannot move to `doing/` until all three steps are checked. A plan cannot move to `done/` until both Closing steps are checked and the user has explicitly approved.
+A plan in `backlog/` with Phase 1 unchecked is still being defined. When the agent defines the objective, context, and phases at creation, it checks the first two Definition steps; `Refine with the user` is checked only after the user validates. A plan cannot move to `doing/` until all three steps are checked. A plan cannot move to `done/` until both Closing steps are checked and the user has explicitly approved.
 
 The Implementation entries for Phase 1 and Closing use fixed plain-text descriptions that also translate to the user's language. English canonical: `Define the Objective, Context, and subsequent phases. Once complete, the plan is ready for execution.` and `Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.` The same entries in Spanish: `Define el Objective, el Context y las fases subsiguientes. Una vez completas, el plan queda listo para ejecución.` and `Valida la implementación con el usuario y escribe el Closing Summary. Una vez completa, el plan queda listo para moverse a done.` Italic in plan files is reserved for temporary placeholders (e.g. `_To be written when the last phase is completed._`).
 
@@ -233,7 +235,7 @@ The Closing Summary opens with a mandatory **leader paragraph** — the literal 
 6. 3-6 sentences, hard cap.
 7. Litmus test: it must read correctly on a release page with zero context.
 
-After the leader paragraph, optional subsections group detail under fixed English H3 labels, one item per bullet. If you group, use these names:
+The paragraph and all prose follow the user's language; only the labels below are always English. After the leader paragraph, optional subsections group detail under fixed English H3 labels, one item per bullet. If you group, use these names:
 
 | Label | Content |
 |-------|---------|

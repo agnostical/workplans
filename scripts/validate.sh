@@ -457,6 +457,13 @@ for folder in backlog doing done; do
         fail "$folder/$bn — Closing Summary must open with the leader paragraph (found heading or bullet first)"
       else
         pass "$folder/$bn — Closing Summary leader paragraph present"
+
+        # Leader length: 3-6 sentences (heuristic count, warning only)
+        cs_leader=$(awk '/^## Closing Summary/{f=1;next} f && /^#/{exit} f && NF==0 && started{exit} f && NF>0{print; started=1}' "$file")
+        n_sent=$(printf '%s' "$cs_leader" | perl -0777 -ne 'my $n = () = /[.!?](?=\s|$)/g; print $n' 2>/dev/null)
+        if [[ -n "$n_sent" ]] && (( n_sent < 3 || n_sent > 6 )); then
+          warn "$folder/$bn — leader paragraph has $n_sent sentence(s); the rule says 3-6"
+        fi
       fi
 
       # Subsection labels must be H3 headings, not plain-text lines

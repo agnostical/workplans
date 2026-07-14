@@ -53,7 +53,7 @@ Node.js 20 with TypeScript strict mode. ESLint with Airbnb config. PostgreSQL 16
 Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.
 
 ## Closing Summary
-The project now has a complete development foundation: repository tooling, a Docker Compose environment that runs identically for every team member, and a green CI pipeline. New features can be built and verified from day one without additional setup.
+The project now has a complete development foundation. The repository ships its tooling, a Docker Compose environment that runs identically for every team member, and a CI pipeline that verifies every push. New features can be built and verified from day one without additional setup.
 
 ### Delivered
 - Repository tooling and linting configuration
