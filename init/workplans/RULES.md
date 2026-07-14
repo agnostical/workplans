@@ -49,6 +49,8 @@ This rule applies to the plan file itself. Execution changes follow their own br
 format: "0.4.0"
 id: 2606455842
 title: "User authentication setup"
+priority: ""
+estimate: ""
 author: ""
 author_model: ""
 assignee: ""
@@ -109,6 +111,8 @@ The field order tells one story: what it is, who, where it stands. `format` goes
 | `format` | Format the plan follows. At creation, equals `version` in RULES.md. Mutable only on explicit migration. Read-alias: `format_version` (the pre-0.4.0 name; parsers accept both, new plans write `format`) |
 | `id` | Timestamp ID matching the filename (`YYDDDsssss`). Immutable |
 | `title` | Short descriptive title |
+| `priority` | Urgency signal: `urgent`, `high`, `medium`, `low`, or `""` (no priority). Mutable through the plan's whole life. See Triage |
+| `estimate` | Complexity in the project's declared estimate scale. Set when Phase 1: Definition completes; immutable once the plan is in `doing/`. See Triage |
 | `author` | Human creator. Immutable. Comma-separated if multiple (e.g. `"Alice,Bob"`) |
 | `author_model` | AI model ID(s) that created the plan. See AI model attribution |
 | `assignee` | Person implementing |
@@ -141,6 +145,27 @@ relations:
 - Inverse relations (`blocks`, `superseded_by`, `children`) are derived by tooling, never stored. Each edge is written on the actionable side only.
 - Cycles in `blocked_by` are invalid.
 - `relations` is the only nested frontmatter field: nesting is reserved for open-ended membership; all other fields stay flat scalars.
+
+### Triage
+
+`estimate` and `priority` dimension and order plans.
+
+**`estimate`** — complexity in the scale declared by the project's `estimate_scale` constant (see Project constants). Presets:
+
+| Scale | Tokens | Split signal (top band) |
+|-------|--------|-------------------------|
+| `fibonacci` (default) | 1, 2, 3, 5, 8, 13, 21 | 13, 21 |
+| `tshirt` | xs, s, m, l, xl | xl |
+
+- Set or confirmed when Phase 1: Definition completes — the moment scope exists. Empty (`""`) before that.
+- Immutable once the plan moves to `doing/` — preserves estimated-vs-actual analysis.
+- A value in the scale's top band signals the plan should be split before execution.
+- The value must belong to the declared scale's token set. Comparability is intra-project.
+
+**`priority`** — `urgent`, `high`, `medium`, `low`, or `""` (no priority).
+
+- Mutable through the plan's whole life.
+- Soft selection signal: among plans not blocked by relations, pick the highest priority first. It complements, never overrides, `blocked_by` gating — a blocked plan is not selectable regardless of priority.
 
 ### Sections
 
@@ -195,7 +220,7 @@ The Implementation entries for Phase 1 and Closing use fixed plain-text descript
 
 ## Rules
 
-All 29 rules are mandatory. Ordered by criticality: **Structure** (framework integrity) → **Template** (plan validity) → **Data** (field correctness).
+All 31 rules are mandatory. Ordered by criticality: **Structure** (framework integrity) → **Template** (plan validity) → **Data** (field correctness).
 
 | # | Category | Rule |
 |---|----------|------|
@@ -228,6 +253,8 @@ All 29 rules are mandatory. Ordered by criticality: **Structure** (framework int
 | 27 | Template | Phase 1 (Definition) and the Closing phase translate their phase name and step text to the user's active conversation language. Only the `Phase N:` prefix, H2 headings, and `Closing Summary` (when referenced in steps) stay in English. The English template in this document is reference, not literal output |
 | 28 | Data | `relations` sub-keys are limited to `blocked_by`, `relates_to`, `supersedes`, `parent`. Targets are immutable plan `id`s, comma-separated; no titles or slugs |
 | 29 | Template | A plan with a non-empty `blocked_by` must not move to `doing/` until every referenced plan is `done`. Cycles in `blocked_by` are invalid |
+| 30 | Data | `estimate` is set when Phase 1: Definition completes, must belong to the declared `estimate_scale` token set, and is immutable once the plan is in `doing/` |
+| 31 | Data | `priority` is one of `urgent`, `high`, `medium`, `low`, `""`. Mutable; a plan blocked by relations is not selectable regardless of priority |
 
 ## File naming
 
