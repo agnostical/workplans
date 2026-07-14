@@ -156,7 +156,7 @@ References are id-pure — the immutable `id` only, never titles or slugs; tooli
 
 `tracked_in` links a plan to its mirror artifact in an external tracker — issue, task, card, epic: the URL is self-describing (e.g. `"https://linear.app/acme/issue/ENG-135"`). Written by sync tooling on local runs; `""` means not tracked. Multiple trackers: comma-separated URLs, **one mirror per tracker** — two mirrors in the same tracker signals the plan should be split, not a supported case.
 
-The sync idempotency key is the marker **`plan:<id>`** in the mirror's description, not this field: sync tooling must tolerate an empty `tracked_in` and resolve by marker (read-alias `workplan:<id>`; new mirrors write `plan:<id>` only). Write canonical, read liberal: the marker is written as the description's last line, and readers accept it on any line. The field is self-healing — a stale URL is re-resolved by marker and rewritten on the next run.
+The sync idempotency key is the marker **`plan:<id>`** in the mirror's description, not this field: sync tooling must tolerate an empty `tracked_in` and resolve by marker. Write canonical, read liberal: the marker is written as the description's last line, and readers accept it on any line. The field is self-healing — a stale URL is re-resolved by marker and rewritten on the next run.
 
 Source-of-truth split: the markdown owns plan content, state, and dates; the tracker owns its visual organization (projects, milestones, tracker-side assignment), which sync never overwrites. A child plan's epic/project derives from the `tracked_in` of its `parent` target. Rule 18 is unchanged: `tracked_in` covers only the plan-level mirror; inline issue links stay in prose.
 
