@@ -68,7 +68,7 @@ State transitions (`backlog/` → `doing/` → `done/`) never rename. They only 
 The `version` field in [RULES.md](RULES.md) declares the active framework version. Each plan declares its own `format` at creation (named `format_version` before 0.4.0 — parsers accept both), and validators apply the rule set matching that value. This means:
 
 - Plans created under different framework versions can coexist in the same repository.
-- Migrating a plan to a new format is opt-in per plan; legacy plans keep working. Agents offer migration for `backlog/` plans, migrate `doing/` plans only on request, and never touch `done/`.
+- Migrating a plan to a new format is opt-in per plan; legacy plans keep working. Agents offer migration for `backlog/` plans, migrate `doing/` plans only on request, and never touch `done/`. The same operation is reproducible via `npx workplans migrate`.
 - Historical plans in `done/` retain their original layout — they are artifacts, not living documents.
 
 Plans without a format field are treated as pre-0.2.1 legacy.

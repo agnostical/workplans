@@ -43,7 +43,7 @@ npx workplans add <template>   # Add a template to workplans/backlog/ with a fre
 
 ## Versioning
 
-This CLI tool versions independently from the Workplans framework format spec. `workplans@0.1.x` is a CLI release; the framework format is versioned in [`RULES.md`](https://github.com/agnostical/workplans/blob/main/init/workplans/RULES.md) and bumped separately when the plan format changes.
+This CLI tool versions independently from the Workplans framework format spec. `workplans@0.3.x` is a CLI release; the framework format is versioned in [`RULES.md`](https://github.com/agnostical/workplans/blob/main/init/workplans/RULES.md) and bumped separately when the plan format changes.
 
 ## Links
 

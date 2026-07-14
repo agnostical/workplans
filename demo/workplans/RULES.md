@@ -233,9 +233,10 @@ The Closing Summary opens with a mandatory **leader paragraph** — the literal 
 4. No temporal deictics ("today", "this week").
 5. No links — pointers live in `References`.
 6. 3-6 sentences, hard cap.
-7. Litmus test: it must read correctly on a release page with zero context.
+7. In the user's language, like all plan prose — only the subsection labels are English.
+8. Litmus test: it must read correctly, in the user's language, on a release page with zero context.
 
-The paragraph and all prose follow the user's language; only the labels below are always English. After the leader paragraph, optional subsections group detail under fixed English H3 labels, one item per bullet. If you group, use these names:
+After the leader paragraph, optional subsections group detail under fixed English H3 labels, one item per bullet. If you group, use these names:
 
 | Label | Content |
 |-------|---------|

@@ -96,7 +96,13 @@ This is non-destructive — it fails with a clear error if a `workplans/` folder
 npx workplans update
 ```
 
-`update` refreshes only the framework system files. Your plans inside `backlog/`, `doing/`, and `done/` are never touched.
+`update` refreshes only the framework system files. Your plans inside `backlog/`, `doing/`, and `done/` are never touched, and neither is the root `workplans/README.md` — it is yours after init and carries the project constants. After updating across a format release, bring your plans up to the new format with:
+
+```bash
+npx workplans migrate
+```
+
+`migrate` covers `backlog/` by default (`--doing` opts in work-in-progress plans; `done/` is never migrated) and supports `--dry-run`.
 
 #### Option B: From GitHub
 Download the `.zip`, extract it, and copy the `workplans` folder (inside `init/`) into your project.
