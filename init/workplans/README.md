@@ -65,17 +65,63 @@ State transitions (`backlog/` → `doing/` → `done/`) never rename. They only 
 
 ## Versioning and compatibility
 
-The `version` field in [RULES.md](RULES.md) declares the active framework version. Each plan declares its own `format_version` at creation, and validators apply the rule set matching that value. This means:
+The `version` field in [RULES.md](RULES.md) declares the active framework version. Each plan declares its own `format` at creation (named `format_version` before 0.4.0 — parsers accept both), and validators apply the rule set matching that value. This means:
 
 - Plans created under different framework versions can coexist in the same repository.
-- Migrating a plan to a new format is opt-in per plan; legacy plans keep working.
+- Migrating a plan to a new format is opt-in per plan; legacy plans keep working. Agents offer migration for `backlog/` plans, migrate `doing/` plans only on request, and never touch `done/`.
 - Historical plans in `done/` retain their original layout — they are artifacts, not living documents.
 
-Plans without `format_version` are treated as pre-0.2.1 legacy.
+Plans without a format field are treated as pre-0.2.1 legacy.
+
+## Closing Summary: voice and example
+
+The Closing Summary's leader paragraph is exported verbatim to changelogs and tracker closing comments, so it is written for a reader with zero context. The craft is in what it avoids:
+
+- **Open with the result, never the process.** "The sync command now mirrors plans into Linear" — not "During this plan we worked on sync".
+- **No actor.** Impersonal constructions or the deliverable as subject; people and models already live in the frontmatter.
+- **Nothing that doesn't travel.** Phase numbers, plan ids, and internal paths mean nothing on a release page. Time references ("today", "this week") go stale. Links belong in `References`.
+
+The labels (`Delivered`, `Decisions`, `Verification`, `Deferred`, `References`) are always English; the prose follows the user's language — the voice criteria are language-independent. Canonical example:
+
+```markdown
+## Closing Summary
+The sync command now mirrors plans into Linear with idempotent re-runs: every
+mirror issue carries a plan marker, so interrupted or repeated syncs never
+duplicate issues. Closed plans post their summary as a closing comment
+automatically. Setup requires a single tracker URL in the project constants.
+
+### Delivered
+- Sync command with create and update modes
+- Linear adapter with marker-based idempotency
+
+### Decisions
+- Backdating applies only at creation; updates never rewrite tracker history
+
+### Deferred
+- GitHub adapter, registered in plan 2619460001
+
+### References
+- PR: https://github.com/acme/backend/pull/142
+- Docs: https://acme.dev/docs/sync
+```
+
+## Project constants
+
+This README's own frontmatter is the home of project-level configuration — markdown-with-frontmatter is the framework's native idiom, and this file is user-owned after init, so updates never overwrite what you declare here. Three constants, all optional:
+
+```yaml
+---
+work_on: "https://github.com/acme/backend"
+tracker: "https://linear.app/acme/team/ENG"
+estimate_scale: "fibonacci"
+---
+```
+
+Absent `work_on` means plans target this same repo; absent `tracker` means no sync; absent `estimate_scale` means Fibonacci. A new project needs none of them — the frontmatter appears the first time there is something to declare.
 
 ## Work destination
 
-The `work_on` field in RULES.md frontmatter tells agents where plan execution applies. Two scenarios:
+The `work_on` project constant tells agents where plan execution applies. Two scenarios:
 
 **Same repo (`work_on: "."`)** — plans and code live in the same project. The agent reads plans from `workplans/` and applies code changes in the parent directory.
 
@@ -104,10 +150,12 @@ work_on: "/Users/me/repos/org/project"
 
 When `work_on` is a remote URL, both repos need to be configured:
 
-- **Planning repo** — `work_on` in RULES.md points to the target project.
+- **Planning repo** — the `work_on` constant in this README's frontmatter points to the target project.
 - **Target repo** — its agent file (AGENTS.md / CLAUDE.md) declares where plans are managed.
 
 Without the target-side instruction, an agent working in the target repo will not know plans exist elsewhere and may try to create them locally.
+
+The target repo's agent file is also the source of truth for execution conventions — branching, commit and PR format, language. The planning repo's conventions govern only the plan files.
 
 ## Extensions
 
