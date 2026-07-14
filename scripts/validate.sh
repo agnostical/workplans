@@ -464,6 +464,15 @@ for folder in backlog doing done; do
         if [[ -n "$n_sent" ]] && (( n_sent < 3 || n_sent > 6 )); then
           warn "$folder/$bn — leader paragraph has $n_sent sentence(s); the rule says 3-6"
         fi
+
+        # Leader language: if the plan's own prose carries accented characters
+        # but the leader has none and reads as English, flag it (warning only)
+        title_accented=$(get_field "$file" "title" | perl -CSD -Mutf8 -ne 'print /[áéíóúñÁÉÍÓÚÑüÜ]/ ? 1 : 0')
+        leader_accents=$(printf '%s' "$cs_leader" | perl -CSD -Mutf8 -ne '$n += () = /[áéíóúñÁÉÍÓÚÑüÜ]/g; END{print $n+0}')
+        leader_en=$(printf '%s' "$cs_leader" | perl -0777 -ne 'my %s; $s{lc $1}++ while /\b(the|and|with|from|was|were|is|are)\b/gi; print scalar keys %s')
+        if [[ "$title_accented" == "1" ]] && (( leader_accents == 0 )) && (( leader_en >= 3 )); then
+          warn "$folder/$bn — leader paragraph may not be in the plan's language (title is accented, leader reads as English)"
+        fi
       fi
 
       # Subsection labels must be H3 headings, not plain-text lines
