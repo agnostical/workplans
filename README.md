@@ -128,7 +128,6 @@ workplans/
 ├── backlog/       # Pending plans
 ├── doing/         # Work in progress
 ├── done/          # Completed plans
-├── extend/        # Optional extensions (created on demand)
 ├── README.md      # General info
 └── RULES.md       # Framework rules (source of truth)
 ```
