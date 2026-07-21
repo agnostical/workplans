@@ -3,7 +3,14 @@ import { readdir, readFile, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { compareVersions } from "../lib/semver.mjs";
 import { parseFrontmatter, getField } from "../lib/frontmatter.mjs";
-import { planFormat, reorderSections030, frontmatter040, validate040 } from "../lib/transitions.mjs";
+import {
+  planFormat,
+  reorderSections030,
+  frontmatter040,
+  validate040,
+  frontmatter050,
+  validate050,
+} from "../lib/transitions.mjs";
 
 /**
  * `workplans migrate` — bring plans up to the installed framework version.
@@ -28,11 +35,15 @@ async function migratePlan(path, currentVersion, scale, dryRun) {
   if (cmp030 === null || cmp030 < 0) {
     body = reorderSections030(body);
   }
-  const migrated = `${frontmatter040(parsed)}\n${body}`;
-  validate040(migrated, scale);
+  // The installed framework version selects the target contract.
+  const to050 = (compareVersions(currentVersion, "0.5.0") ?? -1) >= 0;
+  const migrated = to050
+    ? `${frontmatter050(parsed)}\n${body}`
+    : `${frontmatter040(parsed)}\n${body}`;
+  (to050 ? validate050 : validate040)(migrated, scale);
 
   if (!dryRun) await writeFile(path, migrated);
-  return { from, to: "0.4.0" };
+  return { from, to: to050 ? "0.5.0" : "0.4.0" };
 }
 
 export async function runMigrate(flags = new Set()) {

@@ -174,6 +174,54 @@ test("migrate rewrites a 0.3.0 backlog plan to the 0.4.0 contract, body untouche
   assert.ok(out.endsWith(PLAN_BODY_030), "content sections preserved byte for byte");
 });
 
+test("migrate targets 0.5.0 when the installed framework declares it", () => {
+  const cwd = scaffold();
+  const wp = join(cwd, "workplans");
+  writeFileSync(join(wp, "RULES.md"), `---\nname: workplans\nversion: 0.5.0\n---\n\n# Rules\n`);
+  writeFileSync(
+    join(wp, "backlog", "2601000004_renamed-plan.md"),
+    `---
+format: "0.4.0"
+id: 2601000004
+title: "Renamed plan"
+priority: "high"
+estimate: "5"
+author: "Alice,Bob"
+author_model: "claude-opus-4-6,"
+assignee: "Alice"
+assignee_model: "claude-opus-4-6"
+state: "backlog"
+backlog_date: "2026-03-05T09:30"
+doing_date: ""
+done_date: ""
+tracked_in: ""
+relations:
+---${PLAN_BODY_030}`
+  );
+
+  const r = run(["migrate"], cwd);
+  assert.equal(r.status, 0);
+  assert.match(r.stdout, /Migrated backlog\/2601000001_sample-plan\.md: 0\.3\.0 -> 0\.5\.0/);
+  assert.match(r.stdout, /Migrated backlog\/2601000004_renamed-plan\.md: 0\.4\.0 -> 0\.5\.0/);
+
+  const out = readFileSync(join(wp, "backlog", "2601000004_renamed-plan.md"), "utf8");
+  const fm = out.split("---")[1];
+  const keys = fm.trim().split("\n").map((l) => l.split(":")[0]);
+  assert.deepEqual(keys, [
+    "format", "id", "title", "planner", "planner_model", "executor",
+    "executor_model", "state", "backlog_date", "doing_date", "done_date",
+    "priority", "estimate", "tracked_in", "relations",
+  ]);
+  assert.match(fm, /format: "0\.5\.0"/);
+  assert.match(fm, /planner: "Alice,Bob"/);
+  assert.match(fm, /planner_model: "claude-opus-4-6,"/);
+  assert.match(fm, /executor: "Alice"/);
+  assert.match(fm, /priority: "high"/);
+  assert.ok(!fm.includes("author"), "author renamed to planner");
+  assert.ok(!fm.includes("assignee"), "assignee renamed to executor");
+  assert.ok(out.endsWith(PLAN_BODY_030), "content sections preserved byte for byte");
+});
+
 test("migrate reorders 0.2.x sections to Objective-first", () => {
   const cwd = scaffold();
   writeFileSync(
