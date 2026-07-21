@@ -40,6 +40,74 @@ async function migrateWorkOn(workplansDir) {
   }
 }
 
+/**
+ * One-time migration (#91): project settings used to live in the root README
+ * frontmatter, with the machine-local `work_on` path in LOCAL.yml. Move both
+ * into `settings.yml`/`settings.local.yml` — their home since 0.5.0 — and
+ * return the README to its informative role. Nothing to declare, no file:
+ * settings.yml appears only when a constant or local path exists.
+ */
+async function migrateToSettings(workplansDir) {
+  if (existsSync(join(workplansDir, "settings.yml"))) return;
+
+  const readmePath = join(workplansDir, "README.md");
+  const readme = existsSync(readmePath) ? await readFile(readmePath, "utf8") : null;
+  const parsed = readme ? parseFrontmatter(readme) : null;
+  const constant = (key) => (parsed ? getField(parsed, key) : null);
+  const workOn = constant("work_on");
+  const tracker = constant("tracker");
+  const estimateScale = constant("estimate_scale");
+
+  const localPath = join(workplansDir, "LOCAL.yml");
+  const localWorkOn = existsSync(localPath)
+    ? (await readFile(localPath, "utf8")).match(/^work_on:\s*"?([^"\n]*)"?\s*$/m)?.[1] ?? null
+    : null;
+
+  if (!tracker && !estimateScale && (!workOn || workOn === ".") && !localWorkOn) return;
+
+  const lines = [];
+  if (tracker) lines.push(`tracker: "${tracker}"`);
+  if (estimateScale) lines.push(`estimate_scale: "${estimateScale}"`);
+  if (lines.length > 0) lines.push("");
+  lines.push("projects:", "  main:");
+  if (workOn && workOn !== ".") lines.push(`    work_on: "${workOn}"`);
+  await writeFile(join(workplansDir, "settings.yml"), lines.join("\n") + "\n");
+  console.log("  Moved project settings to workplans/settings.yml");
+
+  if (localWorkOn) {
+    await writeFile(
+      join(workplansDir, "settings.local.yml"),
+      `# Machine-local overrides. Do not commit.\nprojects:\n  main:\n    work_on: "${localWorkOn}"\n`
+    );
+    await rm(localPath);
+    console.log("  Migrated workplans/LOCAL.yml to workplans/settings.local.yml");
+
+    const gitignorePath = resolve(workplansDir, "..", ".gitignore");
+    const gitignore = existsSync(gitignorePath) ? await readFile(gitignorePath, "utf8") : "";
+    if (!gitignore.split("\n").includes("workplans/settings.local.yml")) {
+      const sep = gitignore === "" || gitignore.endsWith("\n") ? "" : "\n";
+      await writeFile(gitignorePath, `${gitignore}${sep}workplans/settings.local.yml\n`);
+      console.log("  Added workplans/settings.local.yml to .gitignore");
+    }
+  }
+
+  // Return the README to informative: drop the migrated constants from its
+  // frontmatter, removing the block entirely when nothing else remains.
+  if (parsed && (workOn || tracker || estimateScale)) {
+    const content = readme.split("\n");
+    const end = content.indexOf("---", 1);
+    const kept = content
+      .slice(1, end)
+      .filter((line) => !/^(work_on|tracker|estimate_scale):/.test(line));
+    const body = content.slice(end + 1);
+    const rebuilt =
+      kept.some((line) => line.trim() !== "")
+        ? ["---", ...kept, "---", ...body]
+        : body.slice(body[0] === "" ? 1 : 0);
+    await writeFile(readmePath, rebuilt.join("\n"));
+  }
+}
+
 async function readLocalVersion(rulesPath) {
   if (!existsSync(rulesPath)) return null;
   return readVersionFromRules(await readFile(rulesPath, "utf8"));
@@ -105,6 +173,9 @@ export async function runUpdate() {
 
     try {
       await migrateWorkOn(workplansDir);
+      if (remoteVersion && (compareVersions(remoteVersion, "0.5.0") ?? -1) >= 0) {
+        await migrateToSettings(workplansDir);
+      }
 
       for (const file of SYSTEM_FILES) {
         await copyFile(join(sourceDir, file), join(workplansDir, file));
