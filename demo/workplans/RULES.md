@@ -64,6 +64,9 @@ relations:
 
 # User authentication setup
 
+## Brief
+Two to four plain-language sentences: what was asked and what for, in the requester's intent.
+
 ## Objective
 One short paragraph: what this plan aims to achieve and why.
 
@@ -98,7 +101,7 @@ Validate the implementation with the user and write the Closing Summary. Once co
 _To be written when the last phase is completed._
 ```
 
-The template is in English as reference only. The `Phase N:` prefix and the five H2 headings (`## Progress`, `## Objective`, `## Context`, `## Implementation`, `## Closing Summary`) are always in English. Everything else — phase title after the colon, step descriptions, Implementation text — follows the user's active conversation language. Orthography (accents, ñ, etc.) is preserved.
+The template is in English as reference only. The `Phase N:` prefix and the six H2 headings (`## Brief`, `## Objective`, `## Progress`, `## Context`, `## Implementation`, `## Closing Summary`) are always in English. Everything else — phase title after the colon, step descriptions, Implementation text — follows the user's active conversation language. Orthography (accents, ñ, etc.) is preserved.
 
 ### Frontmatter
 
@@ -154,23 +157,37 @@ References are id-pure — the immutable `id` only, never titles or slugs; tooli
 
 ### Tracker sync
 
-`tracked_in` links a plan to its mirror artifact in an external tracker — issue, task, card, epic: the URL is self-describing (e.g. `"https://linear.app/acme/issue/ENG-135"`). Written by sync tooling on local runs; `""` means not tracked. Multiple trackers: comma-separated URLs, **one mirror per tracker** — two mirrors in the same tracker signals the plan should be split, not a supported case.
+`tracked_in` links a plan to its mirror artifact in an external tracker — issue, task, card, epic: the URL is self-describing (e.g. `"https://github.com/acme/project-a/issues/57"`). Written by sync tooling on local runs; `""` means not tracked. Multiple trackers: comma-separated URLs, **one mirror per tracker** — two mirrors in the same tracker signals the plan should be split, not a supported case.
 
-The sync idempotency key is the marker **`plan:<id>`** in the mirror's description, not this field: sync tooling must tolerate an empty `tracked_in` and resolve by marker. Write canonical, read liberal: the marker is written as the description's last line, and readers accept it on any line. The field is self-healing — a stale URL is re-resolved by marker and rewritten on the next run.
+The sync idempotency key is the marker **`Plan: <id>`** in the mirror's description, not this field: sync tooling must tolerate an empty `tracked_in` and resolve by marker. Write canonical, read liberal: the marker is written as the description's last line, and readers accept it on any line, in any case, and with or without a space after the colon (pre-0.5.0 mirrors wrote `plan:<id>`). The field is self-healing — a stale URL is re-resolved by marker and rewritten on the next run.
 
 Source-of-truth split: the markdown owns plan content, state, and dates; the tracker owns its visual organization (projects, milestones, tracker-side assignment), which sync never overwrites. A child plan's epic/project derives from the `tracked_in` of its `parent` target. Rule 18 is unchanged: `tracked_in` covers only the plan-level mirror; inline issue links stay in prose.
 
+**Mirror timeline.** The plan's lifecycle replays on three universal tracker primitives (description, comment, link) — executable by hand by an agent without tooling:
+
+| Plan event | Mirror action |
+|------------|---------------|
+| Created | Description = Brief + `Plan: <id>` marker, create-only: written once, never overwritten. `tracked_in` = mirror URL |
+| Moves to `doing/` | Start comment: the Objective and a phase-level Progress checklist — one item per phase, no step detail, no counters — each under its plain bold label (`**Objective**`, `**Progress**`). Marker: `Plan: <id> started` |
+| Moves to `done/` | First refresh the start comment to the plan's final state, then post the closing comment: the leader paragraph verbatim + the `References` links under their label. Marker: `Plan: <id> closed` |
+
+Comments carry no framing prose ("work started", "closed"): the marker plus the payload above is the entire body — the tracker's own UI communicates status. Each comment opens with its marker as the first line, a sequence header (`Plan: <id> started`, `Plan: <id> closed`); the description keeps its marker as the last line, after the content it annotates. Write canonical, read liberal covers both positions. Sync must not post a comment whose marker already exists. Mirror mutability follows plan mutability: the description is create-only like the Brief it carries; the start comment may be refreshed to the plan's current Objective and phase state — optional mid-flight, mandatory at close (a closed mirror never shows open boxes or a stale Objective), always a projection of the plan, never edited on its own; the closing comment is final like the leader paragraph it quotes. Mirror language follows the plan: the labels (`Objective`, `Progress`, `References`) and the `Phase N:` prefix stay English like the section names they reference; all projected content travels verbatim in the plan's language. When the Brief is a migration placeholder, projections fall back to the Objective.
+
+**Issue-first intake.** Issue authoring is free — the tracker is not bound to plan canons; the Brief is born only with the plan. When a plan is created from an existing issue: the agent reads the issue, synthesizes the Brief (fidelity measured against the requester's original text), validates it in Phase 1 refinement, writes the plan, then appends the Brief once at the foot of the issue description — separator line, a plain **Brief** label, the synthesis, marker — leaving the original text untouched. Invariant: the description always opens with the requester's intent and always contains the Brief; in plan-first flow both coincide trivially.
+
 ### Sections
 
-Five H2 sections, Title Case. Order depends on the plan's declared format:
+Six H2 sections, Title Case. Order depends on the plan's declared format:
 
 | `format` | Order |
 |----------|-------|
-| `0.3.0` or higher (new layout) | `Objective` → `Progress` → `Context` → `Implementation` → `Closing Summary` |
+| `0.5.0` or higher | `Brief` → `Objective` → `Progress` → `Context` → `Implementation` → `Closing Summary` |
+| `0.3.0` – `0.4.x` (new layout) | `Objective` → `Progress` → `Context` → `Implementation` → `Closing Summary` |
 | `0.2.x` or lower (legacy layout) | `Progress` → `Objective` → `Context` → `Implementation` → `Closing Summary` |
 
 | Section | Purpose |
 |---------|---------|
+| `## Brief` | The requester's intent, faithfully synthesized. See Brief |
 | `## Objective` | What this plan aims to achieve and why. Single short paragraph; extended background goes in `Context` |
 | `## Progress` | Checklist mirror of Implementation phases |
 | `## Context` | Background, constraints, or references |
@@ -178,6 +195,12 @@ Five H2 sections, Title Case. Order depends on the plan's declared format:
 | `## Closing Summary` | Leader paragraph plus optional labeled subsections (see Closing Summary structure). Until then: `_To be written when the last phase is completed._` |
 
 H1 is the first line after the frontmatter and must match `title` exactly. One H1 per file.
+
+### Brief
+
+The plan's seed: what was asked and what for, in the requester's own intent, synthesized by the agent in plain language and in the user's conversation language — never a literal quote, never solution detail, never delivery claims. 2-4 sentences, one paragraph. Litmus test: the requester reads it and says "yes, that is what I asked for".
+
+The synthesis is validated at the `Refine with the user` step of Phase 1 and is write-once from then on — immutable like `id`; the seed is never replanted. A request that is really several distinct asks gets sibling plans, never a longer Brief. The canon is enforced by validator warning, not error. Plans migrated from pre-0.5.0 formats carry the placeholder `_No brief: this plan predates the Brief section._` — never fabricate a seed for existing plans.
 
 ### Execution sequence
 
@@ -248,11 +271,11 @@ After the leader paragraph, optional subsections group detail under fixed Englis
 
 Only the leader paragraph is unconditionally mandatory. `References` is conditionally mandatory — present if the work produced verifiable artifacts, omitted when there is no linkable evidence, never left empty. The other four are purely optional. Custom labels only when no recommended label fits — never a synonym of an existing one — in English, under the same rules. Total budget: ~40 lines. Banned: signatures, model attribution in prose, evaluative blocks.
 
-**Extraction contract.** A closed plan guarantees: `id`, `title`, `done_date`, the leader paragraph, and parseable subsections. Derived changelog entries and mirror closing comments copy the leader paragraph verbatim and append the `References` links. The framework ships no CHANGELOG.md — generation is tooling. Pre-existing manual changelogs freeze as legacy for older-format plans; derivation applies going forward only.
+**Extraction contract.** A closed plan guarantees: `id`, `title`, `done_date`, the Brief (or its placeholder), the leader paragraph, and parseable subsections. The plan carries two portable units, one at each end: the Brief opens it (mirror description), the leader paragraph closes it. Derived changelog entries and mirror closing comments copy the leader paragraph verbatim and append the `References` links; both may also append an attribution footer taken from frontmatter — never from prose, which stays free of signatures. Footer shape, echoing the intake footer: a `---` separator, then `Planner:` and `Executor:` each on its own line, listing its people with their model in parentheses, comma-separated when several. In comments it closes the body, after the `References` links. The framework ships no CHANGELOG.md — generation is tooling, and derived artifacts live outside `workplans/`: rule 3 admits no generated files inside it. Pre-existing manual changelogs freeze as legacy for older-format plans; derivation applies going forward only.
 
 ## Rules
 
-All 35 rules are mandatory. Ordered by criticality: **Structure** (framework integrity) → **Template** (plan validity) → **Data** (field correctness).
+All 36 rules are mandatory. Ordered by criticality: **Structure** (framework integrity) → **Template** (plan validity) → **Data** (field correctness).
 
 | # | Category | Rule |
 |---|----------|------|
@@ -263,8 +286,8 @@ All 35 rules are mandatory. Ordered by criticality: **Structure** (framework int
 | 5 | Structure | RULES.md and the state-folder READMEs are system files: do not remove or edit manually. The root README.md is user-owned after init and carries the project constants |
 | 6 | Structure | Do not add custom frontmatter fields or markdown sections beyond the defined format |
 | 7 | Template | H1 must match the `title` field |
-| 8 | Template | H2 sections must use Title Case. Only 5 valid sections. Section order depends on the plan's declared format |
-| 9 | Template | Progress phases mirror Implementation phases. Legacy layout (format `< 0.3.0`) puts Progress first; new layout (`>= 0.3.0`) puts Objective first |
+| 8 | Template | H2 sections must use Title Case. Only 6 valid sections. Section order depends on the plan's declared format |
+| 9 | Template | Progress phases mirror Implementation phases. Legacy layout (format `< 0.3.0`) puts Progress first; new layout (`>= 0.3.0`) puts Objective first; `0.5.0` and higher opens with Brief |
 | 10 | Template | Phase 1: Definition is mandatory with three fixed steps. Must not be modified |
 | 11 | Template | Closing phase is mandatory as the last phase with two fixed steps. Must not be modified |
 | 12 | Template | Steps grouped by phase (`### Phase N: Name`), each concrete and verifiable. Use "Phase" and "Step" only (never "Stage") |
@@ -290,7 +313,8 @@ All 35 rules are mandatory. Ordered by criticality: **Structure** (framework int
 | 32 | Data | `tracked_in` holds the mirror URL(s), one per tracker, comma-separated. Written by sync tooling, not edited manually |
 | 33 | Template | A done plan's Closing Summary opens with the leader paragraph and groups detail only under the recommended vocabulary — see Closing Summary structure |
 | 34 | Structure | Subfolders inside `workplans/` beyond the state folders and `extend/` are invalid — single-project layout only in this version |
-| 35 | Data | `executor`/`executor_model` are written when the plan moves to `doing/`; both `""` while in `backlog/` |
+| 35 | Template | `## Brief` is a faithful synthesis of the requester's intent — see Brief. Validated at `Refine with the user`, write-once thereafter |
+| 36 | Data | `executor`/`executor_model` are written when the plan moves to `doing/`; both `""` while in `backlog/` |
 
 ## File naming
 
@@ -426,4 +450,4 @@ Migration alters frontmatter and section order only — checkboxes, dates, and u
 |------|----|----------------|
 | pre-0.2.1, 0.2.x | 0.3.0 | Reorder the five H2 sections to the new layout (Objective first); set `format_version: "0.3.0"` |
 | 0.3.x | 0.4.0 | Rename `format_version` → `format`, reorder fields to the 0.4.0 order, add `priority`/`estimate`/`tracked_in` as `""` and the bare `relations:` key |
-| 0.4.x | 0.5.0 | Rename `author` → `planner`, `author_model` → `planner_model`, `assignee` → `executor`, `assignee_model` → `executor_model`; move `priority`/`estimate` below `done_date`; set `format: "0.5.0"` |
+| 0.4.x | 0.5.0 | Rename `author` → `planner`, `author_model` → `planner_model`, `assignee` → `executor`, `assignee_model` → `executor_model`; move `priority`/`estimate` below `done_date`; insert `## Brief` with the migration placeholder before `## Objective`; set `format: "0.5.0"` |
