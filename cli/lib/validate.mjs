@@ -213,7 +213,9 @@ export function validatePlan({ folder, name, content, scale, roster, staleDays, 
   if (!dates.backlog) err("backlog_date is empty");
   if (folder === "backlog" && (dates.doing || dates.done)) err("backlog plan carries doing_date or done_date");
   if (folder === "doing" && (!dates.doing || dates.done)) err("doing plan needs doing_date set and done_date empty");
-  if (folder === "done" && (!dates.doing || !dates.done)) err("done plan needs doing_date and done_date set");
+  // A supersession closure moves backlog → done directly, so doing_date may
+  // legally stay empty on a done plan; done_date never may.
+  if (folder === "done" && !dates.done) err("done plan needs done_date set");
 
   // H1 and sections
   const body = parsed.body;
