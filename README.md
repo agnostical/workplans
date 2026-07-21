@@ -9,7 +9,7 @@ An open framework for managing AI-driven work plans using structured Markdown fi
 ## Features
 
 - **Open source:** Fully open source under the MIT license. Free to use, modify, and distribute.
-- **Zero setup:** Just a folder of Markdown files. No dependencies, no build steps, no accounts. Drop it into any project and start planning.
+- **Zero setup:** Just a folder of Markdown files. No dependencies, no build steps, no accounts. Drop it into any project and start planning — zero config to start, one optional settings file when the team or the portfolio grows.
 - **AI-agnostic:** Works with any AI agent or model; no vendor lock-in, no proprietary config files.
 - **Plan lifecycle:** Structured workflow with three states: backlog, doing, done. Every plan starts with a mandatory definition phase, making progress visible from day one.
 - **Unique IDs:** Each plan gets an immutable ID derived from the system clock (including ordinal day of the year + exact second of the day), preventing duplicates across teams and enabling conflict-free collaboration in shared repositories.
@@ -96,7 +96,7 @@ This is non-destructive — it fails with a clear error if a `workplans/` folder
 npx workplans update
 ```
 
-`update` refreshes only the framework system files. Your plans inside `backlog/`, `doing/`, and `done/` are never touched, and neither is the root `workplans/README.md` — it is yours after init and carries the project constants. After updating across a format release, bring your plans up to the new format with:
+`update` refreshes only the framework system files. Your plans inside `backlog/`, `doing/`, and `done/` are never touched, and neither is the root `workplans/README.md` — it is yours after init; project configuration lives in `workplans/settings.yml`. After updating across a format release, bring your plans up to the new format with:
 
 ```bash
 npx workplans migrate

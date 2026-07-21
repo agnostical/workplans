@@ -11,19 +11,21 @@ A plan is a structured Markdown file with states `backlog` → `doing` → `done
 
 ```
 workplans/
-├── backlog/       # Pending plans
-├── doing/         # Work in progress
-├── done/          # Completed plans
-├── extend/        # Optional extensions (created on demand)
+├── backlog/             # Pending plans
+├── doing/               # Work in progress
+├── done/                # Completed plans
+├── extend/              # Optional extensions (created on demand)
 ├── README.md
-└── RULES.md       # This file
+├── RULES.md             # This file
+├── settings.yml         # Optional workspace settings (see Project settings)
+└── settings.local.yml   # Optional machine-local overrides (gitignored)
 ```
 
 ## Workflow
 
 | Action | Move to | Update frontmatter |
 |--------|---------|-------------------|
-| **Create** | `backlog/` | `state: "backlog"`, `backlog_date` = now, `planner`/`planner_model` = who plans |
+| **Create** | `backlog/` | `state: "backlog"`, `backlog_date` = now, `planner`/`planner_model` = who plans — canonical name from the `people` roster in `settings.yml` when declared |
 | **Start work** | `backlog/` → `doing/` | `state: "doing"`, `doing_date` = now, `executor`/`executor_model` = who executes |
 | **Complete** | `doing/` → `done/` | `state: "done"`, `done_date` = now |
 | **Pause** | `backlog/` | `state: "backlog"`, clear `doing_date`, `executor`, `executor_model` |
@@ -112,7 +114,7 @@ Frontmatter starts on line 1, no leading blank lines. All fields present, in the
 | `format` | The schema discriminator, hence first. At creation, equals `version` in RULES.md. Read-alias: `format_version` (pre-0.4.0 name) |
 | `id` | Timestamp ID matching the filename (`YYDDDsssss`). Immutable |
 | `title` | Short descriptive title, in the user's active conversation language (like all plan content — see Language) |
-| `planner` | Human who defined the plan. Written at creation, immutable. Comma-separated if multiple (e.g. `"Alice,Bob"`). Read-alias: `author` (pre-0.5.0) |
+| `planner` | Human who defined the plan. Written at creation, immutable. Value: the canonical name from the `people` roster in `settings.yml` when declared (look the git identity up there first — never write the raw git name). Comma-separated if multiple (e.g. `"Alice,Bob"`). Read-alias: `author` (pre-0.5.0) |
 | `planner_model` | AI model ID(s) that defined the plan. See AI model attribution. Read-alias: `author_model` (pre-0.5.0) |
 | `executor` | Person executing. `""` in `backlog/`; written on the move to `doing/` — pre-assignment of future work lives in the tracker. Read-alias: `assignee` (pre-0.5.0) |
 | `executor_model` | AI model ID(s) that executed the plan. Read-alias: `assignee_model` (pre-0.5.0) |
@@ -146,7 +148,7 @@ References are id-pure — the immutable `id` only, never titles or slugs; tooli
 
 ### Triage
 
-**`estimate`** — complexity in the scale declared by the project's `estimate_scale` constant (see Project constants); the value must belong to the scale's token set. Set or confirmed when Phase 1: Definition completes (`""` before that); immutable once the plan is in `doing/`. A top-band value signals the plan should be split before execution. Comparability is intra-project. Presets:
+**`estimate`** — complexity in the scale declared by the `estimate_scale` setting (see Project settings); the value must belong to the scale's token set. Set or confirmed when Phase 1: Definition completes (`""` before that); immutable once the plan is in `doing/`. A top-band value signals the plan should be split before execution. Comparability is intra-project. Presets:
 
 | Scale | Tokens | Split signal (top band) |
 |-------|--------|-------------------------|
@@ -280,15 +282,15 @@ Only the leader paragraph is unconditionally mandatory. `References` is conditio
 
 ## Rules
 
-All 39 rules are mandatory. Ordered by criticality: **Structure** (framework integrity) → **Template** (plan validity) → **Data** (field correctness).
+All 40 rules are mandatory. Ordered by criticality: **Structure** (framework integrity) → **Template** (plan validity) → **Data** (field correctness).
 
 | # | Category | Rule |
 |---|----------|------|
 | 1 | Structure | `state` must match the folder the file lives in |
 | 2 | Structure | The timestamp portion of the filename and the matching `id` are immutable. The description portion of the filename is mutable when `title` changes substantially — see File naming |
-| 3 | Structure | `workplans/` only contains structured plan files. No notes, docs, or unstructured content |
+| 3 | Structure | `workplans/` only contains structured plan files plus `settings.yml`/`settings.local.yml` at the root. No notes, docs, or unstructured content |
 | 4 | Structure | Do not create files or folders that alter the `workplans/` structure |
-| 5 | Structure | RULES.md and the state-folder READMEs are system files: do not remove or edit manually. The root README.md is user-owned after init and carries the project constants |
+| 5 | Structure | RULES.md and the state-folder READMEs are system files: do not remove or edit manually. The root README.md is user-owned after init and informative; project configuration lives in `settings.yml` |
 | 6 | Structure | Do not add custom frontmatter fields or markdown sections beyond the defined format |
 | 7 | Template | H1 must match the `title` field |
 | 8 | Template | H2 sections must use Title Case. Only 6 valid sections. Section order depends on the plan's declared format |
@@ -304,7 +306,7 @@ All 39 rules are mandatory. Ordered by criticality: **Structure** (framework int
 | 18 | Template | Issue references go inline as Markdown links in the relevant step or section, not in frontmatter. Link text is the tracker's human key (e.g. `[#42](url)`, `[ENG-135](url)`) |
 | 19 | Data | Multi-value fields use comma-separated strings without spaces around the comma (e.g. `"alice,bob"`, `"claude-sonnet-4-6,claude-opus-4-6"`). Datetimes use ISO 8601 `YYYY-MM-DDThh:mm`, `""` if not reached |
 | 20 | Data | Datetimes must come from the system clock. Hardcoded, estimated, or placeholder values are forbidden |
-| 21 | Data | `planner` is written at creation and immutable; multiple planners are comma-separated |
+| 21 | Data | `planner` is written at creation and immutable; multiple planners are comma-separated. With a `people` roster, the value is the roster's canonical name — see Planner detection |
 | 22 | Data | `_` separates timestamp ID from description; uniqueness = timestamp + description |
 | 23 | Data | `format` reflects the current format. At creation, equals RULES.md `version`. Mutable only on explicit migration; signals which rule set validators apply |
 | 24 | Template | Plan files must not contain emojis. Use plain descriptive text instead |
@@ -323,6 +325,7 @@ All 39 rules are mandatory. Ordered by criticality: **Structure** (framework int
 | 37 | Template | The Objective and the Closing Summary leader paragraph follow Portable prose: no em dashes, no rhetorical flourishes |
 | 38 | Data | `executor`/`executor_model` are written when the plan moves to `doing/`; both `""` while in `backlog/` |
 | 39 | Data | A plan in `done/` accepts only the additive edits listed in Migration; everything else is immutable |
+| 40 | Structure | When `settings.yml` exists it is binding, never informational: read it before writing any plan, and honor its declarations — attribution values come from the `people` roster, never raw git values |
 
 ## File naming
 
@@ -360,13 +363,16 @@ If the command fails, report it to the user before continuing. Datetimes carry t
 
 Resolve the identity in order, stop at the first valid result:
 
-1. `git config user.name`
+1. `git config user.name` (keep `user.email` at hand for the roster step below)
 2. OS username: `echo $USER` (macOS / Linux / Git Bash / WSL) or `$env:USERNAME` (PowerShell)
 3. Ask the user
 
 Generic usernames (`admin`, `root`, `guest`, `user`, `default`, `ubuntu`, `ec2-user`) are invalid; skip to the next step. Detection must succeed before a plan is created — no plan is created without a known planner.
 
-**Normalize** before writing: collapse consecutive whitespace into a single space, trim leading and trailing whitespace. Example: `"Alice  Example"` (double space) → `"Alice Example"`.
+**Normalize** before writing — both steps are mandatory on every detected identity, never skipped:
+
+1. **Canonicalize via roster.** When `settings.yml` declares `people`, look the detected identity up (email first, then name) and write the roster's canonical name, never the raw git value. Example: git reports `A. Example` / `alice@acme.example` and the roster has `Alice: "alice@acme.example"` → `planner: "Alice"`. An identity absent from the roster: ask the user instead of writing variants.
+2. **Whitespace.** Collapse consecutive whitespace into a single space, trim leading and trailing whitespace. Example: `"Alice  Example"` (double space) → `"Alice Example"`.
 
 ## AI model attribution
 
@@ -388,29 +394,44 @@ The client suffix is omitted when the agent runs directly (API, Claude Code, web
 - **User-authored content** (title, descriptions, steps, summary) follows the user's active conversation language.
 - **Orthography** carries the full spelling of the user's language — accents, ñ, and any diacritics — in every content position: phase titles, step text, and body prose alike ("Definición", never "Definicion"). ASCII-only applies solely to filenames (kebab-case), never to content. UTF-8 is the encoding for Markdown files.
 
-## Project constants
+## Project settings
 
-The frontmatter of the root `workplans/README.md` is the only project-level config location; RULES.md frontmatter carries framework metadata only (`name`, `version`). All constants are optional with defaults — in the common case the frontmatter does not exist at all, appearing the first time there is something to declare:
+`workplans/settings.yml` (versioned) and `workplans/settings.local.yml` (machine-local, gitignored, never committed) are the workspace configuration. Both optional: `init` creates neither; the file appears the first time there is something to declare. Once present, the file is binding — agents read it before writing plans and honor its declarations (rule 40). Precedence: built-in defaults < `settings.yml` < `settings.local.yml`. Secrets never live in settings — tracker credentials go in environment variables. The root README.md is user-owned after init, informative only, and carries no configuration; framework updates never modify an existing root README (state-folder READMEs remain system files). There is no provider key — the `tracker` URL's domain selects the sync adapter.
 
 ```yaml
----
-work_on: "https://github.com/acme/backend"
-tracker: "https://linear.app/acme/team/ENG"
+# Top-level keys are defaults inherited by every project.
+# The tracker domain selects the sync adapter (linear.app, Jira, Asana, ...).
+tracker: "https://github.com/acme/project-a"
 estimate_scale: "fibonacci"
----
+
+projects:
+  # The key is the project's declared name — main if none declared.
+  project-a:
+    work_on: "https://github.com/acme/project-a"
+
+people:
+  # Short form: canonical name → email.
+  Alice: "alice@acme.example"
+  # Extended form; github is the username override per provider.
+  Bob:
+    email: "bob@acme.example"
+    github: "bob-acme"
 ```
 
-| Constant | Absent means |
-|----------|--------------|
+| Key | Absent means |
+|-----|--------------|
 | `work_on` | Plans target this same repo (equivalent to `"."`) |
 | `tracker` | No tracker sync |
 | `estimate_scale` | `fibonacci` |
+| `people` | No roster; identity detection uses git/OS values as-is |
 
-The root `README.md` is user-owned after init: framework updates never modify an existing root README (state-folder READMEs remain system files). There is no `name` constant (machine name = folder/repo; display name = the README's H1) and no provider constant (the `tracker` URL's domain selects the sync adapter).
+Every write that creates `settings.yml` includes the `projects:` block, whatever was declared — single entry in a single-project workspace; the parser has one schema. The key is the project's name constant — `main` when the user has not declared a name, never an invented one. Renaming a project subfolder is a governed operation: folder and key change in the same justified commit, never individual preference. Extracting a project into its own workspace = RULES.md + its plans + a settings.yml trimmed to its entry.
+
+**People and identity.** Three roles: the canonical name is what plans record (human, readable); the email is the triangulation key (git holds it, trackers resolve members by it) and lives only in `people`; provider usernames are per-tracker overrides for trackers that do not resolve by email. Sync triangulates name → email → member for the create-only mirror assignment, and in reverse on intake, degrading gracefully when an entry is missing. PII warning: in a public repo, `people` emails become public — declare them only with consent, or keep the roster in `settings.local.yml`.
 
 ## Work destination
 
-The `work_on` constant declares where plan execution applies. Valid values:
+The `work_on` key declares where plan execution applies. Valid values:
 
 | Value | Meaning |
 |-------|---------|
@@ -426,7 +447,7 @@ Two destinations for changes:
 
 Only `"."` or a remote URL are valid — never local paths (they differ across machines).
 
-When `work_on` is a remote URL, the local path is resolved into `workplans/LOCAL.yml` (auto-generated, gitignored, never committed). When both repos must be configured (plans live in one, code in another), the target repo's agent file (AGENTS.md / CLAUDE.md) must point back to where the plans live. See [README.md](README.md#work-destination) for the full resolution flow.
+When `work_on` is a remote URL, the local path is resolved into `workplans/settings.local.yml` (gitignored, never committed). When both repos must be configured (plans live in one, code in another), the target repo's agent file (AGENTS.md / CLAUDE.md) must point back to where the plans live. See [README.md](README.md#work-destination) for the full resolution flow.
 
 **Execution conventions.** When the planning and execution repos are separate, the target repo's agent file (AGENTS.md, CLAUDE.md, or equivalent) is the source of truth for execution: git workflow, branching, commit and PR format, language. The planning repo's agent file governs only the plan files; on conflict, the target's prevails for everything execution-related. Read it before committing there; if the target repo has none, report it and ask the user instead of assuming the planning repo's conventions.
 
