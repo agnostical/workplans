@@ -14,6 +14,9 @@ format_version: "0.0.0"
 
 # Legacy module refactor
 
+## Brief
+A legacy module has become hard to maintain and risky to touch. A refactor was asked for that improves its internals without changing its observable behavior, protected by tests that capture how it works today.
+
 ## Objective
 Refactor a legacy module to a maintainable state without changing its observable behavior: same inputs, same outputs, better internals. The safety net comes first — no restructuring happens until the current behavior is captured by tests.
 

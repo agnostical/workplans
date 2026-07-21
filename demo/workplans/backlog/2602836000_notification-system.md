@@ -1,22 +1,25 @@
 ---
-format: "0.4.0"
+format: "0.5.0"
 id: 2602836000
 title: "Email notification system"
-priority: "high"
-estimate: 3
-author: "sebastianserna"
-author_model: "mistral-large"
-assignee: ""
-assignee_model: ""
+planner: "sebastianserna"
+planner_model: "mistral-large"
+executor: ""
+executor_model: ""
 state: "backlog"
 backlog_date: "2026-02-01T09:15"
 doing_date: ""
 done_date: ""
+priority: "high"
+estimate: 3
 tracked_in: ""
 relations:
 ---
 
 # Email notification system
+
+## Brief
+_No brief: this plan predates the Brief section._
 
 ## Objective
 Build an email notification system so users receive transactional emails (welcome, password reset, activity alerts). This unblocks the authentication flow which needs password reset emails.

@@ -39,6 +39,30 @@ export function getField(parsed, key) {
   return f.raw.replace(/^["']|["']$/g, "");
 }
 
+// Deprecated read-aliases (Compatibility section): read as fallback, never
+// written, removed in 1.0.0.
+const READ_ALIASES = {
+  format: ["format_version"],
+  planner: ["author"],
+  planner_model: ["author_model"],
+  executor: ["assignee"],
+  executor_model: ["assignee_model"],
+};
+
+/**
+ * Like getField, falling back through the pre-0.5.0 read-aliases so callers
+ * read attribution uniformly across mixed-format corpora.
+ */
+export function getFieldAliased(parsed, key) {
+  const value = getField(parsed, key);
+  if (value !== null) return value;
+  for (const alias of READ_ALIASES[key] ?? []) {
+    const aliased = getField(parsed, alias);
+    if (aliased !== null) return aliased;
+  }
+  return null;
+}
+
 /**
  * Ensures `work_on` is declared in a README's frontmatter, creating the
  * block when the file has none. Existing declarations are left untouched.

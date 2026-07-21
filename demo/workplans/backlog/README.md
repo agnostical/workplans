@@ -14,27 +14,30 @@ A newly created plan. The agent has defined the objective, context, and phases â
 
 ```markdown
 ---
-format: "0.4.0"
+format: "0.5.0"
 id: 2606455842
 title: "User authentication setup"
-priority: ""
-estimate: ""
-author: "Sebastian Serna"
-author_model: "claude-opus-4-6"
-assignee: ""
-assignee_model: ""
+planner: "Alice"
+planner_model: "claude-opus-4-6"
+executor: ""
+executor_model: ""
 state: "backlog"
 backlog_date: "2026-03-05T09:30"
 doing_date: ""
 done_date: ""
+priority: ""
+estimate: ""
 tracked_in: ""
 relations:
 ---
 
 # User authentication setup
 
+## Brief
+Users currently share one admin account, and the team asked for individual sign-in so access can be granted and revoked per person. Registration, login, and session handling should work with the existing web app.
+
 ## Objective
-Set up user authentication for the web application using JWT tokens, covering registration, login, and session management.
+Set up user authentication for the web application using JWT tokens, covering registration, login, and session management. In scope: email/password registration, login endpoints, and session middleware; OAuth providers stay out of scope.
 
 ## Progress
 ### Phase 1: Definition
@@ -55,19 +58,17 @@ Set up user authentication for the web application using JWT tokens, covering re
 - [ ] Validate implementation with the user
 
 ## Context
-The project currently has no authentication. The team agreed on JWT-based auth to keep the backend stateless. Must support email/password registration and OAuth via Google.
+The project currently has no authentication. The team agreed on JWT-based auth to keep the backend stateless. Must support email/password registration.
 
 ## Implementation
 ### Phase 1: Definition
 Define the Objective, Context, and subsequent phases. Once complete, the plan is ready for execution.
 
 ### Phase 2: Define auth strategy
-Evaluate JWT vs session-based auth. The backend should remain stateless, so JWT is the likely choice. Need to decide on signing algorithm (RS256 vs HS256), token expiration policy, and refresh token strategy. For OAuth, Google is the first provider â€” evaluate Authorization Code flow with PKCE.
-
-Document security requirements: password hashing algorithm and cost factor, token storage on the client (httpOnly cookies vs localStorage), and rate limiting on auth endpoints.
+Evaluate JWT vs session-based auth. The backend should remain stateless, so JWT is the likely choice. Need to decide on signing algorithm, token expiration policy, and refresh token strategy. Document security requirements: password hashing algorithm and cost factor, token storage on the client, and rate limiting on auth endpoints.
 
 ### Phase 3: Implement auth flow
-Create Express middleware that validates JWT on protected routes. Implement three endpoints: `/auth/register` (email + password), `/auth/login` (returns access + refresh tokens), and `/auth/google` (OAuth callback). Use bcrypt for password hashing. Implement refresh token rotation to prevent token reuse attacks.
+Create middleware that validates JWT on protected routes. Implement endpoints for registration and login. Use a standard hashing library for passwords. Implement refresh token rotation.
 
 ### Phase 4: Closing
 Validate the implementation with the user and write the Closing Summary. Once complete, the plan is ready to move to done.

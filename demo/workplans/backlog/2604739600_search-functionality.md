@@ -1,22 +1,25 @@
 ---
-format: "0.4.0"
+format: "0.5.0"
 id: 2604739600
 title: "Full-text search functionality"
-priority: "medium"
-estimate: 8
-author: "sebastianserna"
-author_model: ""
-assignee: ""
-assignee_model: ""
+planner: "sebastianserna"
+planner_model: ""
+executor: ""
+executor_model: ""
 state: "backlog"
 backlog_date: "2026-02-20T15:45"
 doing_date: ""
 done_date: ""
+priority: "medium"
+estimate: 8
 tracked_in: ""
 relations:
 ---
 
 # Full-text search functionality
+
+## Brief
+_No brief: this plan predates the Brief section._
 
 ## Objective
 Allow users to search across all content in the application using full-text search powered by PostgreSQL's built-in tsvector capabilities.

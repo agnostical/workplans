@@ -9,14 +9,14 @@ An open framework for managing AI-driven work plans using structured Markdown fi
 ## Features
 
 - **Open source:** Fully open source under the MIT license. Free to use, modify, and distribute.
-- **Zero setup:** Just a folder of Markdown files. No dependencies, no build steps, no accounts. Drop it into any project and start planning.
+- **Zero setup:** Just a folder of Markdown files. No dependencies, no build steps, no accounts. Drop it into any project and start planning — zero config to start, one optional settings file when the team or the portfolio grows.
 - **AI-agnostic:** Works with any AI agent or model; no vendor lock-in, no proprietary config files.
 - **Plan lifecycle:** Structured workflow with three states: backlog, doing, done. Every plan starts with a mandatory definition phase, making progress visible from day one.
 - **Unique IDs:** Each plan gets an immutable ID derived from the system clock (including ordinal day of the year + exact second of the day), preventing duplicates across teams and enabling conflict-free collaboration in shared repositories.
 - **Context-efficient structure:** Compact Markdown + YAML frontmatter keeps plans parseable and self-contained, reducing noise in the AI agent's context window.
-- **Built for collaboration:** Plans track authors, assignees, and AI models involved, keeping a clear record of who created and executed each plan.
-- **Tracker-ready:** Typed relations, priority, estimates with a declarable scale, and a sync contract (`tracked_in` + plan marker) that lets plans mirror into Linear, Jira, or GitHub without giving up the markdown as the source of truth.
-- **Extensible:** Optional extensions (like the [visual board](https://github.com/agnostical/board)) can be installed in the `extend/` folder.
+- **Built for collaboration:** Plans track planners, executors, and the AI models involved, keeping a clear record of who defined and executed each plan. There is deliberately no requester field: the requester's identity lives in the tracker, and their words live in the plan itself.
+- **Tracker-ready:** Typed relations, priority, estimates with a declarable scale, and a sync contract that lets plans mirror into Linear, Jira, or GitHub without giving up the markdown as the source of truth.
+- **Extensible:** Optional extensions can be installed inside the workplans folder.
 
 ## What is a plan?
 
@@ -26,27 +26,30 @@ The example below shows the required sections and field order. AI agents fill in
 
 ```markdown
 ---
-format: "0.4.0"
+format: "0.5.0"
 id: 2606455842
 title: "User authentication setup"
-priority: ""
-estimate: ""
-author: ""
-author_model: ""
-assignee: ""
-assignee_model: ""
+planner: ""
+planner_model: ""
+executor: ""
+executor_model: ""
 state: "backlog"
 backlog_date: "YYYY-MM-DDThh:mm"
 doing_date: ""
 done_date: ""
+priority: ""
+estimate: ""
 tracked_in: ""
 relations:
 ---
 
 # User authentication setup
 
+## Brief
+Two to four plain-language sentences: what was asked and what for, in the requester's intent.
+
 ## Objective
-Brief description of what this plan aims to achieve and why.
+One focused paragraph: what this plan delivers, what for, and its scope boundary.
 
 ## Progress
 ### Phase 1: Definition
@@ -96,7 +99,7 @@ This is non-destructive — it fails with a clear error if a `workplans/` folder
 npx workplans update
 ```
 
-`update` refreshes only the framework system files. Your plans inside `backlog/`, `doing/`, and `done/` are never touched, and neither is the root `workplans/README.md` — it is yours after init and carries the project constants. After updating across a format release, bring your plans up to the new format with:
+`update` refreshes only the framework system files. Your plans inside `backlog/`, `doing/`, and `done/` are never touched, and neither is the root `workplans/README.md` — it is yours after init; project configuration lives in `workplans/settings.yml`. After updating across a format release, bring your plans up to the new format with:
 
 ```bash
 npx workplans migrate
@@ -125,7 +128,6 @@ workplans/
 ├── backlog/       # Pending plans
 ├── doing/         # Work in progress
 ├── done/          # Completed plans
-├── extend/        # Optional extensions (created on demand)
 ├── README.md      # General info
 └── RULES.md       # Framework rules (source of truth)
 ```
@@ -179,10 +181,10 @@ The agent will create plans, move them between states, and update progress as it
 
 ## Extensions
 
-Optional extensions can be installed in `workplans/extend/`. For example, the [visual board](https://github.com/agnostical/board) provides a Kanban-style dashboard:
+Optional extensions can be installed in `workplans/extend/`, one subfolder per extension, via giget:
 
 ```bash
-npx giget gh:agnostical/board workplans/extend/board
+npx giget gh:<org>/<extension> workplans/extend/<extension>
 ```
 
 ## License

@@ -1,23 +1,26 @@
 ---
-format: "0.4.0"
+format: "0.5.0"
 id: 2603440500
 title: "WebSocket real-time updates"
-priority: "medium"
-estimate: 5
-author: "sebastianserna"
-author_model: "deepseek-v3"
-assignee: "alexgarcia"
-assignee_model: "grok-3"
+planner: "sebastianserna"
+planner_model: "deepseek-v3"
+executor: "alexgarcia"
+executor_model: "grok-3"
 state: "doing"
 backlog_date: "2026-02-05T14:00"
 doing_date: "2026-02-20T10:30"
 done_date: ""
+priority: "medium"
+estimate: 5
 tracked_in: ""
 relations:
   relates_to: "2603334200"
 ---
 
 # WebSocket real-time updates
+
+## Brief
+_No brief: this plan predates the Brief section._
 
 ## Objective
 Add real-time capabilities to the application so that multiple users working on the same project can see changes instantly without refreshing the page.

@@ -14,6 +14,9 @@ format_version: "0.0.0"
 
 # User authentication setup
 
+## Brief
+Users need accounts to access the application: sign up, log in, log out, and recover access when credentials are lost. Authentication was asked for with secure credential handling as the baseline, leaving the concrete provider open to what fits the project.
+
 ## Objective
 Add user authentication to the application: users can sign up, log in, log out, and recover access, with credentials stored and transmitted securely. The provider (self-hosted, OAuth, or a managed service) is decided in Phase 2 based on the project's constraints.
 

@@ -1,23 +1,26 @@
 ---
-format: "0.4.0"
+format: "0.5.0"
 id: 2604952200
 title: "Role-based permissions"
-priority: "medium"
-estimate: 5
-author: "sebastianserna"
-author_model: "gemini-2.5-pro"
-assignee: "alexgarcia"
-assignee_model: "gpt-4o"
+planner: "sebastianserna"
+planner_model: "gemini-2.5-pro"
+executor: ""
+executor_model: "gpt-4o"
 state: "backlog"
 backlog_date: "2026-02-22T09:25"
 doing_date: ""
 done_date: ""
+priority: "medium"
+estimate: 5
 tracked_in: ""
 relations:
   relates_to: "2601551600"
 ---
 
 # Role-based permissions
+
+## Brief
+_No brief: this plan predates the Brief section._
 
 ## Objective
 Implement role-based access control (RBAC) to restrict actions based on user roles. Currently all authenticated users have the same permissions, which is a security concern.

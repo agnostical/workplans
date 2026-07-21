@@ -1,22 +1,25 @@
 ---
-format: "0.4.0"
+format: "0.5.0"
 id: 2603334200
 title: "API v2 endpoints"
-priority: "high"
-estimate: 8
-author: "sebastianserna"
-author_model: "claude-opus-4"
-assignee: "alexgarcia"
-assignee_model: "claude-opus-4"
+planner: "sebastianserna"
+planner_model: "claude-opus-4"
+executor: "alexgarcia"
+executor_model: "claude-opus-4"
 state: "doing"
 backlog_date: "2026-02-05T11:00"
 doing_date: "2026-02-18T09:00"
 done_date: ""
+priority: "high"
+estimate: 8
 tracked_in: ""
 relations:
 ---
 
 # API v2 endpoints
+
+## Brief
+_No brief: this plan predates the Brief section._
 
 ## Objective
 Create v2 of the API with improved pagination, filtering, and consistent error responses. The v1 endpoints will be maintained in parallel during the migration period.
