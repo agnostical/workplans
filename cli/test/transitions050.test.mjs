@@ -79,7 +79,7 @@ test("transitionTo050 renames attribution and reorders triage fields", () => {
   const order = parsed.fields.filter((f) => f.indent === 0).map((f) => f.key);
   assert.deepEqual(order, FIELDS_050);
   assert.match(migrated, /^  relates_to: "2606123456"$/m);
-  assert.match(migrated, /## Objective\nDo the thing\./);
+  assert.match(migrated, /## Brief\n_No brief: this plan predates the Brief section\._\n\n## Objective\nDo the thing\./);
 });
 
 test("transitionTo050 leaves a 0.5.0 plan unchanged", () => {
@@ -95,6 +95,10 @@ test("transitionTo050 chains the legacy section reorder", () => {
   assert.ok(
     migrated.indexOf("## Objective") < migrated.indexOf("## Progress"),
     "sections should follow the new layout (Objective first)"
+  );
+  assert.ok(
+    migrated.indexOf("## Brief") < migrated.indexOf("## Objective"),
+    "migration placeholder Brief should open the plan"
   );
 });
 
@@ -153,6 +157,11 @@ test("every catalog template instantiates as a valid 0.5.0 plan", () => {
       assert.equal(getField(parsed, "state"), "backlog");
       assert.equal(getField(parsed, "planner"), "");
       assert.equal(getField(parsed, "executor"), "");
+      assert.match(content, /^## Brief$/m, `${name} should carry its Brief seed`);
+      assert.ok(
+        !content.includes("_No brief:"),
+        `${name} should not inherit the migration placeholder`
+      );
     }
   } finally {
     rmSync(src, { recursive: true, force: true });

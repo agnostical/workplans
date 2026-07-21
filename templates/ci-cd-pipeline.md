@@ -14,6 +14,9 @@ format_version: "0.0.0"
 
 # CI/CD pipeline setup
 
+## Brief
+Changes should be built, tested, and released automatically instead of through manual steps. A CI/CD pipeline was asked for so every change is verified and deployments become repeatable and observable, with the platform left open.
+
 ## Objective
 Set up a continuous integration and deployment pipeline: every change is built and tested automatically, and releases reach the target environment through a repeatable, observable process instead of manual steps. The platform (GitHub Actions, GitLab CI, or other) is decided in Phase 2.
 

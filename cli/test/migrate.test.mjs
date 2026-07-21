@@ -219,7 +219,9 @@ relations:
   assert.match(fm, /priority: "high"/);
   assert.ok(!fm.includes("author"), "author renamed to planner");
   assert.ok(!fm.includes("assignee"), "assignee renamed to executor");
-  assert.ok(out.endsWith(PLAN_BODY_030), "content sections preserved byte for byte");
+  assert.match(out, /## Brief\n_No brief: this plan predates the Brief section\._\n\n## Objective/);
+  const tail = PLAN_BODY_030.slice(PLAN_BODY_030.indexOf("## Objective"));
+  assert.ok(out.endsWith(tail), "content sections preserved byte for byte after the inserted Brief");
 });
 
 test("migrate reorders 0.2.x sections to Objective-first", () => {

@@ -206,6 +206,22 @@ export function transitionTo040(content, scale = "fibonacci") {
   return migrated;
 }
 
+const BRIEF_PLACEHOLDER = "_No brief: this plan predates the Brief section._";
+
+/**
+ * Inserts `## Brief` with the migration placeholder before `## Objective`
+ * (0.4.x → 0.5.0 transition row). Never fabricates a seed: a plan that
+ * already carries a Brief passes through untouched.
+ */
+export function insertBriefPlaceholder(body) {
+  if (/^## Brief$/m.test(body)) return body;
+  const lines = body.split("\n");
+  const at = lines.findIndex((line) => line === "## Objective");
+  if (at === -1) return body;
+  lines.splice(at, 0, "## Brief", BRIEF_PLACEHOLDER, "");
+  return lines.join("\n");
+}
+
 /**
  * Applies the documented transitions to bring a plan to 0.5.0. Returns the
  * content unchanged when the plan already declares 0.5.0 or newer.
@@ -223,6 +239,7 @@ export function transitionTo050(content, scale = "fibonacci") {
   if (cmp030 === null || cmp030 < 0) {
     body = reorderSections030(body);
   }
+  body = insertBriefPlaceholder(body);
   const migrated = `${frontmatter050(parsed)}\n${body}`;
   validate050(migrated, scale);
   return migrated;

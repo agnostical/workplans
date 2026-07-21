@@ -6,6 +6,7 @@ import { parseFrontmatter, getField } from "../lib/frontmatter.mjs";
 import {
   planFormat,
   reorderSections030,
+  insertBriefPlaceholder,
   frontmatter040,
   validate040,
   frontmatter050,
@@ -37,6 +38,7 @@ async function migratePlan(path, currentVersion, scale, dryRun) {
   }
   // The installed framework version selects the target contract.
   const to050 = (compareVersions(currentVersion, "0.5.0") ?? -1) >= 0;
+  if (to050) body = insertBriefPlaceholder(body);
   const migrated = to050
     ? `${frontmatter050(parsed)}\n${body}`
     : `${frontmatter040(parsed)}\n${body}`;
