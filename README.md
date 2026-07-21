@@ -15,8 +15,8 @@ An open framework for managing AI-driven work plans using structured Markdown fi
 - **Unique IDs:** Each plan gets an immutable ID derived from the system clock (including ordinal day of the year + exact second of the day), preventing duplicates across teams and enabling conflict-free collaboration in shared repositories.
 - **Context-efficient structure:** Compact Markdown + YAML frontmatter keeps plans parseable and self-contained, reducing noise in the AI agent's context window.
 - **Built for collaboration:** Plans track planners, executors, and the AI models involved, keeping a clear record of who defined and executed each plan. There is deliberately no requester field: the requester's identity lives in the tracker, and their words live in the plan itself.
-- **Tracker-ready:** Typed relations, priority, estimates with a declarable scale, and a sync contract (`tracked_in` + plan marker) that lets plans mirror into Linear, Jira, or GitHub without giving up the markdown as the source of truth.
-- **Extensible:** Optional extensions (like the [visual board](https://github.com/agnostical/board)) can be installed in the `extend/` folder.
+- **Tracker-ready:** Typed relations, priority, estimates with a declarable scale, and a sync contract that lets plans mirror into Linear, Jira, or GitHub without giving up the markdown as the source of truth.
+- **Extensible:** Optional extensions, like the [visual board](https://github.com/agnostical/board), can be installed inside the workplans folder.
 
 ## What is a plan?
 
