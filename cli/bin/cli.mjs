@@ -50,6 +50,17 @@ const registry = new Map([
     },
   ],
   [
+    "validate",
+    {
+      load: () => import("../commands/validate.mjs"),
+      fn: "runValidate",
+      positionals: 0,
+      flags: ["--stale-days="],
+      usage: "validate [--stale-days=N]",
+      summary: "Validate the corpus: contract errors (exit 1) and style lints (exit 0)",
+    },
+  ],
+  [
     "list",
     {
       load: () => import("../commands/list.mjs"),
@@ -115,8 +126,13 @@ async function main() {
   const flagArgs = rest.filter((a) => a.startsWith("-"));
   const positionals = rest.filter((a) => !a.startsWith("-"));
 
+  // A declared flag ending in "=" is a value flag: it matches by prefix.
+  const flagAllowed = (flag) =>
+    allowedFlags.has(flag) ||
+    [...allowedFlags].some((a) => a.endsWith("=") && flag.startsWith(a));
+
   for (const flag of flagArgs) {
-    if (!allowedFlags.has(flag)) {
+    if (!flagAllowed(flag)) {
       console.error(`Unknown flag for '${arg}': ${flag}\n`);
       console.error(buildHelp());
       process.exit(1);
