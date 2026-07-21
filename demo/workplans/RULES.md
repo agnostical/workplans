@@ -23,10 +23,10 @@ workplans/
 
 | Action | Move to | Update frontmatter |
 |--------|---------|-------------------|
-| **Create** | `backlog/` | `state: "backlog"`, `backlog_date` = now |
-| **Start work** | `backlog/` → `doing/` | `state: "doing"`, `doing_date` = now |
+| **Create** | `backlog/` | `state: "backlog"`, `backlog_date` = now, `planner`/`planner_model` = who plans |
+| **Start work** | `backlog/` → `doing/` | `state: "doing"`, `doing_date` = now, `executor`/`executor_model` = who executes |
 | **Complete** | `doing/` → `done/` | `state: "done"`, `done_date` = now |
-| **Pause** | `backlog/` | `state: "backlog"`, clear `doing_date` |
+| **Pause** | `backlog/` | `state: "backlog"`, clear `doing_date`, `executor`, `executor_model` |
 
 State transitions move the file and update frontmatter; they never rename. The filename description segment is mutable on `title` change (see File naming). The agent always asks the user before moving a plan between folders.
 
@@ -45,19 +45,19 @@ This rule applies to the plan file itself. Execution changes follow their own br
 
 ```markdown
 ---
-format: "0.4.0"
+format: "0.5.0"
 id: 2606455842
 title: "User authentication setup"
-priority: ""
-estimate: ""
-author: ""
-author_model: ""
-assignee: ""
-assignee_model: ""
+planner: ""
+planner_model: ""
+executor: ""
+executor_model: ""
 state: "backlog"
 backlog_date: "YYYY-MM-DDThh:mm"
 doing_date: ""
 done_date: ""
+priority: ""
+estimate: ""
 tracked_in: ""
 relations:
 ---
@@ -102,23 +102,23 @@ The template is in English as reference only. The `Phase N:` prefix and the five
 
 ### Frontmatter
 
-Frontmatter starts on line 1, no leading blank lines. All fields present, in the order below; scalar fields empty to `""`.
+Frontmatter starts on line 1, no leading blank lines. All fields present, in the order below; scalar fields empty to `""`. Two blocks: the upper fields fill during the plan's life (identity, attribution, state, dates); the trailing fields are optional triage and tracker data.
 
 | Field | Description |
 |-------|-------------|
 | `format` | The schema discriminator, hence first. At creation, equals `version` in RULES.md. Read-alias: `format_version` (pre-0.4.0 name) |
 | `id` | Timestamp ID matching the filename (`YYDDDsssss`). Immutable |
 | `title` | Short descriptive title |
-| `priority` | Urgency signal; mutable. See Triage |
-| `estimate` | Complexity in the project's declared scale; immutable in `doing/`. See Triage |
-| `author` | Human creator. Immutable. Comma-separated if multiple (e.g. `"Alice,Bob"`) |
-| `author_model` | AI model ID(s) that created the plan. See AI model attribution |
-| `assignee` | Person implementing |
-| `assignee_model` | AI model ID(s) that executed the plan |
+| `planner` | Human who defined the plan. Written at creation, immutable. Comma-separated if multiple (e.g. `"Alice,Bob"`). Read-alias: `author` (pre-0.5.0) |
+| `planner_model` | AI model ID(s) that defined the plan. See AI model attribution. Read-alias: `author_model` (pre-0.5.0) |
+| `executor` | Person executing. `""` in `backlog/`; written on the move to `doing/` — pre-assignment of future work lives in the tracker. Read-alias: `assignee` (pre-0.5.0) |
+| `executor_model` | AI model ID(s) that executed the plan. Read-alias: `assignee_model` (pre-0.5.0) |
 | `state` | Must match the folder: `backlog`, `doing`, `done` |
 | `backlog_date` | Datetime created (`YYYY-MM-DDThh:mm`) |
 | `doing_date` | Datetime work started |
 | `done_date` | Datetime completed |
+| `priority` | Urgency signal; mutable. See Triage |
+| `estimate` | Complexity in the project's declared scale; immutable in `doing/`. See Triage |
 | `tracked_in` | Mirror URL(s) in external tracker(s); `""` = not tracked. See Tracker sync |
 | `relations` | Typed relations to other plans; bare key when empty. See Relations |
 
@@ -252,7 +252,7 @@ Only the leader paragraph is unconditionally mandatory. `References` is conditio
 
 ## Rules
 
-All 34 rules are mandatory. Ordered by criticality: **Structure** (framework integrity) → **Template** (plan validity) → **Data** (field correctness).
+All 35 rules are mandatory. Ordered by criticality: **Structure** (framework integrity) → **Template** (plan validity) → **Data** (field correctness).
 
 | # | Category | Rule |
 |---|----------|------|
@@ -276,7 +276,7 @@ All 34 rules are mandatory. Ordered by criticality: **Structure** (framework int
 | 18 | Template | Issue references go inline as Markdown links in the relevant step or section, not in frontmatter. Use `[#N](url)` format |
 | 19 | Data | Multi-value fields use comma-separated strings without spaces around the comma (e.g. `"alice,bob"`, `"claude-sonnet-4-6,claude-opus-4-6"`). Datetimes use ISO 8601 `YYYY-MM-DDThh:mm`, `""` if not reached |
 | 20 | Data | Datetimes must come from the system clock. Hardcoded, estimated, or placeholder values are forbidden |
-| 21 | Data | `author` is immutable once assigned; multiple authors are comma-separated |
+| 21 | Data | `planner` is written at creation and immutable; multiple planners are comma-separated |
 | 22 | Data | `_` separates timestamp ID from description; uniqueness = timestamp + description |
 | 23 | Data | `format` reflects the current format. At creation, equals RULES.md `version`. Mutable only on explicit migration; signals which rule set validators apply |
 | 24 | Template | Plan files must not contain emojis. Use plain descriptive text instead |
@@ -290,6 +290,7 @@ All 34 rules are mandatory. Ordered by criticality: **Structure** (framework int
 | 32 | Data | `tracked_in` holds the mirror URL(s), one per tracker, comma-separated. Written by sync tooling, not edited manually |
 | 33 | Template | A done plan's Closing Summary opens with the leader paragraph and groups detail only under the recommended vocabulary — see Closing Summary structure |
 | 34 | Structure | Subfolders inside `workplans/` beyond the state folders and `extend/` are invalid — single-project layout only in this version |
+| 35 | Data | `executor`/`executor_model` are written when the plan moves to `doing/`; both `""` while in `backlog/` |
 
 ## File naming
 
@@ -323,21 +324,21 @@ Before writing any datetime field, query the system clock:
 
 If the command fails, report it to the user before continuing.
 
-## Author detection
+## Planner detection
 
-Resolve `author` in order, stop at the first valid result:
+Resolve the identity in order, stop at the first valid result:
 
 1. `git config user.name`
 2. OS username: `echo $USER` (macOS / Linux / Git Bash / WSL) or `$env:USERNAME` (PowerShell)
 3. Ask the user
 
-Generic usernames (`admin`, `root`, `guest`, `user`, `default`, `ubuntu`, `ec2-user`) are invalid; skip to the next step. Detection must succeed before a plan is created — no plan is created without a known author.
+Generic usernames (`admin`, `root`, `guest`, `user`, `default`, `ubuntu`, `ec2-user`) are invalid; skip to the next step. Detection must succeed before a plan is created — no plan is created without a known planner.
 
-**Normalize** before writing: collapse consecutive whitespace into a single space, trim leading and trailing whitespace. Example: `"Sebastian  Serna"` (double space) → `"Sebastian Serna"`.
+**Normalize** before writing: collapse consecutive whitespace into a single space, trim leading and trailing whitespace. Example: `"Alice  Example"` (double space) → `"Alice Example"`.
 
 ## AI model attribution
 
-`author_model` and `assignee_model` must never be empty if an AI agent participated.
+`planner_model` and `executor_model` must never be empty if an AI agent participated. The agent writing the plan is itself a participant: it records its own model id in `planner_model` at creation.
 
 | Case | Format | Example |
 |------|--------|---------|
@@ -346,7 +347,7 @@ Generic usernames (`admin`, `root`, `guest`, `user`, `default`, `ubuntu`, `ec2-u
 | Model unknown | `{client}/auto` | `cursor/auto` |
 | Multiple models | `{m1},{m2}` | `claude-sonnet-4-6,claude-opus-4-6` |
 
-The client suffix is omitted when the agent runs directly (API, Claude Code, web chat).
+The client suffix is omitted when the agent runs directly (API, Claude Code, web chat). Values are lowercase (`claude-opus-4-6`, never `Claude-Opus-4-6`). When a role lists several people, its `_model` value reads positionally: the n-th model id belongs to the n-th person, and a person who worked without AI leaves their position empty (`planner: "Alice,Bob"` + `planner_model: "claude-opus-4-6,"` — Alice planned with AI, Bob without).
 
 ## Language
 
@@ -405,6 +406,8 @@ Optional extensions live in `workplans/extend/`, one subfolder per extension. Th
 
 The `version` field declares the active framework version. Plans declare their own `format` (read-alias `format_version`); validators apply the rule set matching that value, so plans from different framework versions coexist. Plans without either field are implicitly pre-0.2.1 (legacy layout, Progress first).
 
+Read-aliases (`format_version`; `author`, `author_model`, `assignee`, `assignee_model`) are deprecated: tooling reads them as fallback, never writes them, and they are removed in 1.0.0. Plans in `done/` keep their original field names with their original format.
+
 ### Migration
 
 When a plan's declared format is older than the framework `version`, the agent asks the user whether to migrate it — never silently. If the user declines, record the decision for the session and do not ask again.
@@ -423,3 +426,4 @@ Migration alters frontmatter and section order only — checkboxes, dates, and u
 |------|----|----------------|
 | pre-0.2.1, 0.2.x | 0.3.0 | Reorder the five H2 sections to the new layout (Objective first); set `format_version: "0.3.0"` |
 | 0.3.x | 0.4.0 | Rename `format_version` → `format`, reorder fields to the 0.4.0 order, add `priority`/`estimate`/`tracked_in` as `""` and the bare `relations:` key |
+| 0.4.x | 0.5.0 | Rename `author` → `planner`, `author_model` → `planner_model`, `assignee` → `executor`, `assignee_model` → `executor_model`; move `priority`/`estimate` below `done_date`; set `format: "0.5.0"` |
