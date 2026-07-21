@@ -1,22 +1,25 @@
 ---
-format: "0.4.0"
+format: "0.5.0"
 id: 2604655800
 title: "Dark mode design system"
-priority: ""
-estimate: 2
-author: "sebastianserna"
-author_model: "gpt-4o"
-assignee: ""
-assignee_model: ""
+planner: "sebastianserna"
+planner_model: "gpt-4o"
+executor: ""
+executor_model: ""
 state: "backlog"
 backlog_date: "2026-02-15T15:30"
 doing_date: ""
 done_date: ""
+priority: ""
+estimate: ""
 tracked_in: ""
 relations:
 ---
 
 # Dark mode design system
+
+## Brief
+_No brief: this plan predates the Brief section._
 
 ## Objective
 Add dark mode support to the application. Users have requested it and it improves accessibility and reduces eye strain in low-light environments.

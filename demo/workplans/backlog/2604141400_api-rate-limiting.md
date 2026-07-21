@@ -1,22 +1,25 @@
 ---
-format: "0.4.0"
+format: "0.5.0"
 id: 2604141400
 title: "API rate limiting strategy"
-priority: "low"
-estimate: 3
-author: "sebastianserna"
-author_model: ""
-assignee: ""
-assignee_model: ""
+planner: "sebastianserna"
+planner_model: ""
+executor: ""
+executor_model: ""
 state: "backlog"
 backlog_date: "2026-02-10T11:30"
 doing_date: ""
 done_date: ""
+priority: "low"
+estimate: ""
 tracked_in: ""
 relations:
 ---
 
 # API rate limiting strategy
+
+## Brief
+_No brief: this plan predates the Brief section._
 
 ## Objective
 Add rate limiting to the API to prevent abuse and prepare for external consumers. After deploying authentication, we observed automated login attempts from multiple IPs.

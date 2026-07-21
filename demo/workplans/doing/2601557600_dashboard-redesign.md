@@ -1,22 +1,25 @@
 ---
-format: "0.4.0"
+format: "0.5.0"
 id: 2601557600
 title: "Dashboard redesign"
-priority: "high"
-estimate: 8
-author: "sebastianserna"
-author_model: "claude-opus-4, gemini-pro"
-assignee: "alexgarcia"
-assignee_model: "claude-sonnet-4"
+planner: "sebastianserna"
+planner_model: "claude-opus-4, gemini-pro"
+executor: "alexgarcia"
+executor_model: "claude-sonnet-4"
 state: "doing"
 backlog_date: "2026-01-20T10:00"
 doing_date: "2026-02-10T09:30"
 done_date: ""
+priority: "high"
+estimate: 8
 tracked_in: ""
 relations:
 ---
 
 # Dashboard redesign
+
+## Brief
+_No brief: this plan predates the Brief section._
 
 ## Objective
 Redesign the main dashboard to improve usability and information density. The current layout wastes screen space and the navigation is confusing for new users.

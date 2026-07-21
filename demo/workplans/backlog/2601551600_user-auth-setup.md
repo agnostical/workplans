@@ -1,23 +1,26 @@
 ---
-format: "0.4.0"
+format: "0.5.0"
 id: 2601551600
 title: "User authentication setup"
-priority: "high"
-estimate: 5
-author: "sebastianserna"
-author_model: "claude-opus-4"
-assignee: ""
-assignee_model: ""
+planner: "sebastianserna"
+planner_model: "claude-opus-4"
+executor: ""
+executor_model: ""
 state: "backlog"
 backlog_date: "2026-01-15T14:20"
 doing_date: ""
 done_date: ""
+priority: "high"
+estimate: 5
 tracked_in: ""
 relations:
   blocked_by: "2602836000"
 ---
 
 # User authentication setup
+
+## Brief
+_No brief: this plan predates the Brief section._
 
 ## Objective
 Implement user authentication for the application using JWT tokens. This is required before any user-facing feature can be deployed, as all API endpoints need to verify user identity.

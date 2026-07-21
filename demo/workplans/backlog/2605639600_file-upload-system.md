@@ -1,22 +1,25 @@
 ---
-format: "0.4.0"
+format: "0.5.0"
 id: 2605639600
 title: "File upload system"
-priority: ""
-estimate: 5
-author: "sebastianserna"
-author_model: "grok-3"
-assignee: ""
-assignee_model: ""
+planner: "sebastianserna"
+planner_model: "grok-3"
+executor: ""
+executor_model: ""
 state: "backlog"
 backlog_date: "2026-02-25T11:00"
 doing_date: ""
 done_date: ""
+priority: ""
+estimate: ""
 tracked_in: ""
 relations:
 ---
 
 # File upload system
+
+## Brief
+_No brief: this plan predates the Brief section._
 
 ## Objective
 Allow users to upload files (images, documents) associated with projects and tasks. Users have requested the ability to attach screenshots to tasks and upload project assets.
