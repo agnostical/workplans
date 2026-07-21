@@ -170,14 +170,14 @@ Optional functionality lives in `workplans/extend/`, one subfolder per extension
 ```
 workplans/
 ├── extend/
-│   ├── board/    # → from agnostical/board
-│   └── notes/    # → from agnostical/notes
+│   ├── one-extension/
+│   └── another-extension/
 ```
 
 Install via giget:
 
 ```bash
-npx giget gh:agnostical/board workplans/extend/board
+npx giget gh:<org>/<extension> workplans/extend/<extension>
 ```
 
 Contents under `extend/` are not plan files and are excluded from validation.

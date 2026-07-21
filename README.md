@@ -182,10 +182,10 @@ The agent will create plans, move them between states, and update progress as it
 
 ## Extensions
 
-Optional extensions can be installed in `workplans/extend/`. For example, the [visual board](https://github.com/agnostical/board) provides a Kanban-style dashboard:
+Optional extensions can be installed in `workplans/extend/`, one subfolder per extension, via giget:
 
 ```bash
-npx giget gh:agnostical/board workplans/extend/board
+npx giget gh:<org>/<extension> workplans/extend/<extension>
 ```
 
 ## License
