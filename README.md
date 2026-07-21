@@ -26,27 +26,30 @@ The example below shows the required sections and field order. AI agents fill in
 
 ```markdown
 ---
-format: "0.4.0"
+format: "0.5.0"
 id: 2606455842
 title: "User authentication setup"
-priority: ""
-estimate: ""
-author: ""
-author_model: ""
-assignee: ""
-assignee_model: ""
+planner: ""
+planner_model: ""
+executor: ""
+executor_model: ""
 state: "backlog"
 backlog_date: "YYYY-MM-DDThh:mm"
 doing_date: ""
 done_date: ""
+priority: ""
+estimate: ""
 tracked_in: ""
 relations:
 ---
 
 # User authentication setup
 
+## Brief
+Two to four plain-language sentences: what was asked and what for, in the requester's intent.
+
 ## Objective
-Brief description of what this plan aims to achieve and why.
+One focused paragraph: what this plan delivers, what for, and its scope boundary.
 
 ## Progress
 ### Phase 1: Definition
