@@ -43,7 +43,7 @@ A plan must complete its **Phase 1: Definition** (entry gate) before moving to `
 
 When you ask an agent to create a plan, it should:
 
-1. Detect the author (`git config user.name`, OS username, or ask you).
+1. Detect the planner (`git config user.name`, OS username, or ask you), resolving the identity against the `people` roster when `settings.yml` declares one.
 2. Decide which branch to commit the plan on (only when the workplans folder is inside a Git repo or another VCS — skipped otherwise):
    - Follow any policy declared in your project's agent file (CLAUDE.md, AGENTS.md, etc.).
    - Use the current branch if you are not on `main`.
